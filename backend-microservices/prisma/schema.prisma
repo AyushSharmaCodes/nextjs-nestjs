@@ -110,6 +110,8 @@ model Session {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([refreshTokenHash, isRevoked], map: "sessions_refresh_token_hash_is_revoked_idx")
+  @@index([userId, isRevoked], map: "sessions_user_id_is_revoked_idx")
   @@map("sessions")
 }
 
@@ -127,6 +129,8 @@ model OTPChallenge {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, type, isVerified, createdAt], map: "otp_challenges_lookup_idx")
+  @@index([expiresAt], map: "otp_challenges_expires_at_idx")
   @@map("otp_challenges")
 }
 

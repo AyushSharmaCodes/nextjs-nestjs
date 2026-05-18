@@ -2,10 +2,37 @@
 
 import { cookies } from 'next/headers';
 import { LoginFormValues, SignupFormValues } from '../schemas/auth.schema';
+import {
+  AuthActionResult,
+  AuthApiEnvelope,
+  LoginInitData,
+  OtpType,
+  SignupInitData,
+  VerifyOtpData,
+} from '../types/auth.types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-export async function loginAction(data: LoginFormValues) {
+async function persistAuthCookies(response: Response) {
+  const cookieStore = await cookies();
+  const headerCookies = response.headers.getSetCookie();
+
+  for (const cookieHeader of headerCookies) {
+    const [pair] = cookieHeader.split(';');
+    const [name, ...valueParts] = pair.split('=');
+    const value = valueParts.join('=');
+    if (!name || !value) continue;
+
+    cookieStore.set(name.trim(), value.trim(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
+  }
+}
+
+export async function loginAction(data: LoginFormValues): Promise<AuthActionResult<LoginInitData>> {
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
@@ -13,7 +40,7 @@ export async function loginAction(data: LoginFormValues) {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
+    const result = (await response.json()) as AuthApiEnvelope<LoginInitData>;
 
     if (!response.ok) {
       return { 
@@ -30,7 +57,7 @@ export async function loginAction(data: LoginFormValues) {
   }
 }
 
-export async function verifyOtpAction(email: string, otp: string, type: 'LOGIN' | 'EMAIL_VERIFICATION') {
+export async function verifyOtpAction(email: string, otp: string, type: OtpType): Promise<AuthActionResult<VerifyOtpData>> {
   try {
     const endpoint = type === 'LOGIN' ? '/auth/verify-otp/login' : '/auth/verify-otp/registration';
     const response = await fetch(`${API_URL}${endpoint}`, {
@@ -39,16 +66,9 @@ export async function verifyOtpAction(email: string, otp: string, type: 'LOGIN' 
       body: JSON.stringify({ email, otp }),
     });
 
-    const setCookieHeader = response.headers.get('set-cookie');
-    if (setCookieHeader) {
-      const parts = setCookieHeader.split(';');
-      const [name, value] = parts[0].split('=');
-      if (name && value) {
-        (await cookies()).set(name, value, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' });
-      }
-    }
+    await persistAuthCookies(response);
 
-    const result = await response.json();
+    const result = (await response.json()) as AuthApiEnvelope<VerifyOtpData>;
 
     if (!response.ok) {
       return { 
@@ -65,7 +85,7 @@ export async function verifyOtpAction(email: string, otp: string, type: 'LOGIN' 
   }
 }
 
-export async function signupAction(data: SignupFormValues) {
+export async function signupAction(data: SignupFormValues): Promise<AuthActionResult<SignupInitData>> {
   try {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
@@ -73,7 +93,7 @@ export async function signupAction(data: SignupFormValues) {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
+    const result = (await response.json()) as AuthApiEnvelope<SignupInitData>;
 
     if (!response.ok) {
       return { 
