@@ -39,6 +39,10 @@ export interface VerifyOtpData {
   user?: User;
 }
 
+export interface ResendOtpData {
+  message: string;
+}
+
 export interface AuthActionSuccess<T> {
   success: true;
   data: T;

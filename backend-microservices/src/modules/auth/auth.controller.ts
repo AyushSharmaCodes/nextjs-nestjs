@@ -1,9 +1,18 @@
 import { Controller, Post, Get, Body, Req, Res, HttpCode, HttpStatus, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, VerifyOtpDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, VerifyOtpDto, ResendOtpDto } from './dto/auth.dto';
 import { Request, Response } from 'express';
 import { ApiResponse } from '../../common/utils/api-response';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+
+interface AuthenticatedRequest extends Request {
+  user: {
+    userId: string;
+    email: string;
+    role: string;
+    sessionId: string;
+  };
+}
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +36,13 @@ export class AuthController {
   async verifyRegistrationOtp(@Body() dto: VerifyOtpDto) {
     const result = (await this.authService.verifyOtp(dto, 'EMAIL_VERIFICATION')) as { message: string };
     return ApiResponse.success(null, result.message);
+  }
+
+  @Post('resend-otp')
+  @HttpCode(HttpStatus.OK)
+  async resendOtp(@Body() dto: ResendOtpDto) {
+    const result = await this.authService.resendOtp(dto.email);
+    return ApiResponse.success(result, result.message);
   }
 
   @Post('verify-otp/login')
@@ -92,8 +108,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getMe(@Req() req: any) {
-    // req.user is populated by JwtAuthGuard
+  async getMe(@Req() req: AuthenticatedRequest) {
     return ApiResponse.success({ user: req.user });
   }
 

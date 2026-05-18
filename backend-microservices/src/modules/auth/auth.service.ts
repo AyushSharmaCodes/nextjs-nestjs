@@ -17,6 +17,28 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
+  private async logSecurityEvent(params: {
+    userId?: string;
+    email?: string;
+    eventType: string;
+    status: 'SUCCESS' | 'FAILURE';
+    ipAddress?: string;
+    userAgent?: string;
+    metadata?: Record<string, string | number | boolean>;
+  }) {
+    await this.prisma.securityEvent.create({
+      data: {
+        userId: params.userId,
+        email: params.email,
+        eventType: params.eventType,
+        status: params.status,
+        ipAddress: params.ipAddress,
+        userAgent: params.userAgent,
+        metadata: params.metadata,
+      },
+    });
+  }
+
   async register(dto: RegisterDto) {
     const existing = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -38,6 +60,13 @@ export class AuthService {
     // Automatically send verification OTP
     await this.otpService.createChallenge(user.id, user.email, 'EMAIL_VERIFICATION');
 
+    await this.logSecurityEvent({
+      userId: user.id,
+      email: user.email,
+      eventType: 'AUTH_REGISTER',
+      status: 'SUCCESS',
+    });
+
     return {
       message: 'Registration successful. Please check your email for the OTP.',
       userId: user.id,
@@ -50,11 +79,24 @@ export class AuthService {
     });
 
     if (!user || !user.passwordHash) {
+      await this.logSecurityEvent({
+        email: dto.email,
+        eventType: 'AUTH_LOGIN',
+        status: 'FAILURE',
+        metadata: { reason: 'INVALID_CREDENTIALS' },
+      });
       throw new UnauthorizedException(getErrorResponse(ErrorCode.AUTH_INVALID_CREDENTIALS));
     }
 
     const isMatch = await bcryptjs.compare(dto.password, user.passwordHash);
     if (!isMatch) {
+      await this.logSecurityEvent({
+        userId: user.id,
+        email: user.email,
+        eventType: 'AUTH_LOGIN',
+        status: 'FAILURE',
+        metadata: { reason: 'INVALID_CREDENTIALS' },
+      });
       throw new UnauthorizedException(getErrorResponse(ErrorCode.AUTH_INVALID_CREDENTIALS));
     }
 
@@ -65,6 +107,13 @@ export class AuthService {
 
     // Trigger OTP challenge for login
     await this.otpService.createChallenge(user.id, user.email, 'LOGIN');
+
+    await this.logSecurityEvent({
+      userId: user.id,
+      email: user.email,
+      eventType: 'AUTH_LOGIN_OTP_CHALLENGE',
+      status: 'SUCCESS',
+    });
 
     return {
       message: 'Credentials valid. Please enter the OTP sent to your email.',
@@ -84,6 +133,15 @@ export class AuthService {
 
     await this.otpService.verifyChallenge(user.id, dto.otp, type);
 
+    await this.logSecurityEvent({
+      userId: user.id,
+      email: user.email,
+      eventType: `AUTH_OTP_VERIFY_${type}`,
+      status: 'SUCCESS',
+      ipAddress,
+      userAgent,
+    });
+
     if (type === 'EMAIL_VERIFICATION') {
       await this.prisma.user.update({
         where: { id: user.id },
@@ -94,6 +152,27 @@ export class AuthService {
 
     // LOGIN flow - Generate Tokens
     return this.generateTokens(user.id, userAgent, ipAddress);
+  }
+
+  async resendOtp(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new UnauthorizedException(getErrorResponse(ErrorCode.UNAUTHORIZED, 'Invalid user'));
+    }
+
+    const type = user.emailVerified ? 'LOGIN' : 'EMAIL_VERIFICATION';
+    await this.otpService.createChallenge(user.id, user.email, type);
+
+    await this.logSecurityEvent({
+      userId: user.id,
+      email: user.email,
+      eventType: 'AUTH_OTP_RESEND',
+      status: 'SUCCESS',
+      metadata: { type },
+    });
+
+    return { message: 'OTP resent successfully.' };
   }
 
   private async generateTokens(userId: string, userAgent?: string, ipAddress?: string) {

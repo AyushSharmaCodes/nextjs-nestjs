@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, signupSchema, LoginFormValues, SignupFormValues } from '../schemas/auth.schema';
+import { ApiErrorDetails, LoginInitData, OtpType, ResendOtpData, SignupInitData, VerifyOtpData } from '../types/auth.types';
 import { ApiErrorDetails, LoginInitData, OtpType, SignupInitData, VerifyOtpData } from '../types/auth.types';
 
 export type Mode = 'login' | 'signup';
@@ -36,6 +37,7 @@ export function useLogin(initialMode: Mode = 'login') {
     defaultValues: {
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
@@ -46,6 +48,7 @@ export function useLogin(initialMode: Mode = 'login') {
       lastName: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
@@ -99,6 +102,16 @@ export function useLogin(initialMode: Mode = 'login') {
     }
   });
 
+  const resendOtpMutation = useMutation<ResendOtpData, ApiError, string>({
+    mutationFn: async (email: string) => {
+      const res = await (await import('../actions/auth.actions')).resendOtpAction(email);
+      if (!res.success) {
+        throw new ApiError(res.error || 'BAD_REQUEST', res.message || 'Failed to resend OTP', res.details);
+      }
+      return res.data;
+    },
+  });
+
   return {
     mode,
     setMode,
@@ -113,5 +126,6 @@ export function useLogin(initialMode: Mode = 'login') {
     isOtpStep,
     setIsOtpStep,
     emailForOtp,
+    resendOtpMutation,
   };
 }

@@ -7,6 +7,7 @@ import {
   AuthApiEnvelope,
   LoginInitData,
   OtpType,
+  ResendOtpData,
   SignupInitData,
   VerifyOtpData,
 } from '../types/auth.types';
@@ -82,6 +83,31 @@ export async function verifyOtpAction(email: string, otp: string, type: OtpType)
     return { success: true, data: result.data };
   } catch (error) {
     return { success: false, error: 'CONNECTION_ERROR', message: 'Failed to connect to the authentication server.' };
+  }
+}
+
+export async function resendOtpAction(email: string): Promise<AuthActionResult<ResendOtpData>> {
+  try {
+    const response = await fetch(`${API_URL}/auth/resend-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    const result = (await response.json()) as AuthApiEnvelope<ResendOtpData>;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: result.error || 'BAD_REQUEST',
+        message: result.message || 'Failed to resend OTP',
+        details: result.details || null,
+      };
+    }
+
+    return { success: true, data: result.data };
+  } catch {
+    return { success: false, error: 'CONNECTION_ERROR', message: 'Failed to connect to the authentication server.', details: null };
   }
 }
 
