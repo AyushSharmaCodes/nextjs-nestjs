@@ -10,7 +10,9 @@ interface OTPVerificationModalProps {
   onClose: () => void;
   email: string;
   onVerify: (otp: string) => void;
+  onResend: () => void;
   isLoading: boolean;
+  isResendLoading: boolean;
   error?: string | null;
 }
 
@@ -19,7 +21,9 @@ export function OTPVerificationModal({
   onClose,
   email,
   onVerify,
+  onResend,
   isLoading,
+  isResendLoading,
   error
 }: OTPVerificationModalProps) {
   const t = useTranslations('Auth');
@@ -174,10 +178,12 @@ export function OTPVerificationModal({
                   )}
                 </p>
                 <button
-                  disabled={timeLeft > 570} // 30 sec cooldown
+                  type="button"
+                  onClick={onResend}
+                  disabled={timeLeft > 570 || isResendLoading} // 30 sec cooldown
                   className="mt-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 disabled:opacity-50 transition-colors"
                 >
-                  Resend code
+                  {isResendLoading ? 'Resending...' : 'Resend code'}
                 </button>
               </div>
             </div>

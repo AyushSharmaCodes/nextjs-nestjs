@@ -12,7 +12,11 @@ const passwordSchema = z.string()
 export const RegisterSchema = z.object({
   email: z.string().email('Invalid email address').transform(e => e.toLowerCase()),
   password: passwordSchema,
+  confirmPassword: z.string(),
   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
 });
 export class RegisterDto extends createZodDto(RegisterSchema) {}
 

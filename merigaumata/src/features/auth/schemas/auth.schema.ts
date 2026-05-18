@@ -10,6 +10,10 @@ export const signupSchema = z.object({
   lastName: z.string().min(1, 'validation.lastNameRequired'),
   email: z.string().email('validation.invalidEmail'),
   password: z.string().min(6, 'validation.passwordMinLength'),
+  confirmPassword: z.string().min(6, 'validation.passwordMinLength'),
+}).refine((data) => data.password === data.confirmPassword, {
+  path: ['confirmPassword'],
+  message: 'validation.passwordMismatch',
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
