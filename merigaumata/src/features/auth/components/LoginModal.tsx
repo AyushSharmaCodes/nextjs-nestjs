@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useLogin, Mode } from '../hooks/use-login';
 import { LoginFormValues, SignupFormValues } from '../schemas/auth.schema';
 import { logError } from '@/shared/lib/errors';
+import { OTPVerificationModal } from './OTPVerificationModal';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -27,6 +28,10 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
     signupForm,
     loginMutation,
     signupMutation,
+    otpMutation,
+    isOtpStep,
+    setIsOtpStep,
+    emailForOtp,
   } = useLogin(initialMode);
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -43,7 +48,12 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
     setStatusFeedback({ type: null, message: '' });
     loginMutation.mutate(values, {
       onSuccess: (data) => {
-        setStatusFeedback({ type: 'success', message: data.message });
+        if (data?.requiresOtp) {
+          setStatusFeedback({ type: 'success', message: data.message || 'OTP sent to your email.' });
+          return;
+        }
+
+        setStatusFeedback({ type: 'success', message: data.message || 'Login successful' });
         setTimeout(() => {
           onClose();
           redirectUser(data.user.role);
@@ -60,11 +70,7 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
     setStatusFeedback({ type: null, message: '' });
     signupMutation.mutate(values, {
       onSuccess: (data) => {
-        setStatusFeedback({ type: 'success', message: data.message });
-        setTimeout(() => {
-          onClose();
-          redirectUser(data.user.role);
-        }, 1200);
+        setStatusFeedback({ type: 'success', message: data.message || 'OTP sent to your email.' });
       },
       onError: (err) => {
         logError(err, { component: 'LoginModal', action: 'signup', email: values.email });
@@ -113,10 +119,12 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
   };
 
   const isPending = loginMutation.isPending || signupMutation.isPending;
+  const otpError = otpMutation.error?.message;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
+    <>
+      <AnimatePresence>
+        {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8">
           {/* Backdrop Blur */}
           <motion.div 
@@ -639,7 +647,17 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
             </div>
           </motion.div>
         </div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+
+      <OTPVerificationModal
+        isOpen={isOtpStep}
+        onClose={() => setIsOtpStep(false)}
+        email={emailForOtp}
+        onVerify={(otp) => otpMutation.mutate(otp, { onSuccess: () => window.location.reload() })}
+        isLoading={otpMutation.isPending}
+        error={otpError}
+      />
+    </>
   );
 }
