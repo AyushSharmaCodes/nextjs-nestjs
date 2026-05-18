@@ -688,6 +688,7 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
         }}
         isLoading={otpMutation.isPending}
         isResendLoading={resendOtpMutation.isPending}
+        isLoading={otpMutation.isPending}
         error={otpError}
       />
     </>

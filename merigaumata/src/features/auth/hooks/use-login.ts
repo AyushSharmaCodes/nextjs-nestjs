@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, signupSchema, LoginFormValues, SignupFormValues } from '../schemas/auth.schema';
 import { ApiErrorDetails, LoginInitData, OtpType, ResendOtpData, SignupInitData, VerifyOtpData } from '../types/auth.types';
+import { ApiErrorDetails, LoginInitData, OtpType, SignupInitData, VerifyOtpData } from '../types/auth.types';
 
 export type Mode = 'login' | 'signup';
 
