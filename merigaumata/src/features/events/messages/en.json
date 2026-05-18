@@ -1,0 +1,70 @@
+{
+  "title": "The Sacred Gatherings",
+  "back": "Back",
+  "guest": "Guest",
+  "book": "Book",
+  "startsIn": "Starts in {hours}H",
+  "happeningNow": "Happening Now",
+  "categories": {
+    "all": "All",
+    "art": "Art & Music",
+    "business": "Business",
+    "education": "Retreats & Education",
+    "festival": "Festivals & Celebrations",
+    "food": "Food & Feast",
+    "nightlife": "Nightlife",
+    "sports": "Sports & Yoga",
+    "more": "More"
+  },
+  "subtitle": "Join our community programs, spiritual experiences and connect with our missions across the region.",
+  "status": {
+    "comingSoon": "Coming soon",
+    "completed": "Completed",
+    "ongoing": "Ongoing"
+  },
+  "noEventsFound": "No Events Found",
+  "noEventsDesc": "We couldn't find any gatherings matching your current filters. Try resetting the filters to explore other events.",
+  "clearFilters": "Clear All Filters",
+  "bookSpot": "Book Your Spot",
+  "formDesc": "Please fill in your details to confirm your registration.",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "email": "Email Address",
+  "phone": "Phone Number",
+  "slots": "Slots to Book",
+  "confirmBooking": "Confirm Booking",
+  "cancel": "Cancel",
+  "registered": "Registered",
+  "registrationDeadline": "Registration Deadline",
+  "highlights": "Event Highlights",
+  "whatYouGet": "What You Get",
+  "registerNow": "Register Now",
+  "complimentary": "Complimentary",
+  "spotsLeft": "Spots Left",
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "invalidEmail": "Invalid email address",
+    "invalidPhone": "Phone must be at least 10 digits",
+    "minSlots": "Must book at least 1 slot",
+    "maxSlots": "Cannot book more than 5 slots"
+  },
+  "loading": "Loading gatherings...",
+  "featured": "Featured",
+  "ongoing": "Ongoing",
+  "workshop": "Workshop",
+  "sevaCamp": {
+    "title": "Weekend Gau Seva Camp",
+    "schedule": "Every Saturday & Sunday",
+    "hours": "6:00 AM - 10:00 AM",
+    "location": "Vrindavan Gaushala",
+    "description": "Experience ultimate peace by serving cows directly. Activities include feeding, cleaning, brushing, and guided spiritual meditation in the presence of Gaumata."
+  },
+  "farmingWorkshop": {
+    "title": "Organic Vedic Farming",
+    "date": "12th May, 2024",
+    "hours": "10:00 AM - 4:00 PM",
+    "location": "Mathura Organic Farm",
+    "description": "Learn ancient techniques for modern home gardens using Panchgavya elements. Hands-on experience with preparing organic fertilizers natively."
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "breadcrumbHome": "Home",
+  "breadcrumbAbout": "About",
+  "hero": {
+    "badge": "• SACRED COW SANCTUARY • CARE",
+    "title": "Nurturing the Sacred Bond",
+    "description": "At our core, we believe in the power of compassion and community to achieve outstanding results in animal welfare. With a dedicated team of volunteers and veterinary professionals, we work hand-in-hand to bring our vision of a cruelty-free world to life. Together, we create spaces and solutions that stand the test of time."
+  },
+  "intro": {
+    "text": "At our sanctuary, we are committed to revolutionizing cow welfare with innovative, sustainable, and compassionate solutions. With a proven track record of delivering exceptional care, we combine state-of-the-art veterinary practices, dedicated expertise, and community-centric approaches to bring our mission to life."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "description": "To provide exceptional care and sanctuary to cows that exceed welfare expectations through innovation, sustainable practices, and a commitment to cruelty-free environments. We aim to build lasting relationships and create spaces that enhance communities. With precision, expertise, and a community-centric approach, we strive to exceed expectations in every rescue operation. Our dedication to integrity and excellence drives us to build lasting relationships and a legacy of trust.",
+    "items": [
+      "Fostering Sustainable Growth and Green Development",
+      "Innovating for a Sustainable Future",
+      "Community-Centric Approach",
+      "Building Stronger Communities"
+    ]
+  },
+  "vision": {
+    "title": "Our Vision",
+    "description": "At our sanctuary, our vision is to redefine the future of animal welfare through innovation, sustainability, and excellence. We aim to create communities that not only inspire but also contribute to the well-being of all living beings and the environment. By embracing cutting-edge organic farming and eco-friendly practices, we strive to lead the movement toward a greener, smarter future. Our focus is on delivering value, quality, and longevity in every rescue we undertake. Together, we envision a world where compassion empowers progress and transforms lives.",
+    "items": [
+      "Inspiring Modern Agriculture",
+      "Pioneering Sustainable Practices",
+      "Empowering Communities Through Innovation",
+      "Leading the Future of Animal Welfare"
+    ]
+  },
+  "history": {
+    "title": "Our History",
+    "subtitle": "Founded on a commitment to quality and compassion, our journey began as a small team with a big vision. Over the years, we have grown into a trusted name in the animal welfare space, delivering exceptional rescues that stand the test of time."
+  },
+  "team": {
+    "title": "Crafting Excellence as a Team",
+    "subtitle": "Our success is built on the dedication and expertise of our team, who work together to bring innovative ideas and exceptional care to every project. Together, we turn visions into reality.",
+    "exploreAll": "Explore All",
+    "connect": "Connect"
+  },
+  "testimonials": {
+    "title": "What Say Our Customers",
+    "subtitle": "Our supporters trust us for our reliability, attention to detail, and dedication to delivering impact on time. Hear from those who have experienced the quality and professionalism that sets us apart."
+  },
+  "reviews": {
+    "title": "What Do You Think About Us?",
+    "subtitle": "Your feedback helps us improve and inspires others to join our cause. Share your experience with our community.",
+    "shareTitle": "Share Your Experience",
+    "shareSubtitle": "Your feedback matters to us.",
+    "signInPrompt": "Sign in to your account to let us know what you think about our services."
+  },
+  "join": {
+    "title": "Join Our Mission",
+    "subtitle": "Together we can make a lasting difference in cow welfare",
+    "donateNow": "Donate Now",
+    "volunteer": "Become a Volunteer"
+  }
+}

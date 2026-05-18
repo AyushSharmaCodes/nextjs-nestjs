@@ -1,0 +1,26 @@
+{
+  "signInTitle": "மேரிகௌமாதா உள்நுழைக",
+  "createAccountTitle": "கணக்கை உருவாக்கவும்",
+  "noAccount": "உங்களுக்கு கணக்கு இல்லையா?",
+  "createAccountBtn": "கணக்கை உருவாக்கவும்",
+  "hasAccount": "ஏற்கனவே கணக்கு உள்ளதா?",
+  "signInLink": "உள்நுழைக",
+  "firstName": "முதல் பெயர்",
+  "lastName": "கடைசி பெயர்",
+  "emailLabel": "மின்னஞ்சல் முகவரி",
+  "emailPlaceholder": "john52martinez@gmail.com",
+  "passwordLabel": "கடவுச்சொல்",
+  "forgotPassword": "கடவுச்சொல்லை மறந்துவிட்டீர்களா?",
+  "keepMeLoggedIn": "என்னை உள்நுழைந்திருக்க வைக்கவும்",
+  "agreeTerms": "விதிமுறைகள் மற்றும் நிபந்தனைகளை நான் ஒப்புக்கொள்கிறேன்",
+  "demoAccessTitle": "நிர்வாகி / மேலாளர் டெமோ அணுகல்:",
+  "demoAccessDesc": "நிர்வாக தளவமைப்புகளை ஆராய admin@merigaumata.com அல்லது manager@merigaumata.com உடன் உள்நுழையவும். பிற உள்நுழைவுகள் வாடிக்கையாளர் பாத்திரத்திற்கு இயல்புநிலையாக இருக்கும்.",
+  "loginBtn": "உள்நுழைக",
+  "continueWithGoogle": "கூகுள் மூலம் தொடரவும்",
+  "validation": {
+    "invalidEmail": "சரியான மின்னஞ்சலை உள்ளிடவும்.",
+    "passwordMinLength": "கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.",
+    "firstNameRequired": "முதல் பெயர் தேவை.",
+    "lastNameRequired": "கடைசி பெயர் தேவை."
+  }
+}

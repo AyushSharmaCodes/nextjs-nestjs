@@ -1,0 +1,12 @@
+{
+  "breadcrumbHome": "मुख्य पृष्ठ",
+  "breadcrumbGallery": "गैलरी",
+  "title": "मेरीगौमाता गैलरी के माध्यम से एक यात्रा",
+  "subtitle": "हमारी गतिविधियों, कार्यक्रमों और हमारे खेत में शांत जीवन का एक दृश्य इतिहास।",
+  "findFolders": "फ़ोल्डर खोजें",
+  "searchPlaceholder": "फ़ोल्डर खोजें...",
+  "noFoldersFound": "कोई फ़ोल्डर नहीं मिला",
+  "clickToOpen": "खोलने के लिए क्लिक करें",
+  "noFoldersMatched": "आपकी खोज से कोई फ़ोल्डर मेल नहीं खाता।",
+  "itemCounter": "{total} में से आइटम {index}"
+}

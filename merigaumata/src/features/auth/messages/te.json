@@ -1,0 +1,26 @@
+{
+  "signInTitle": "మేరిగౌమాత లోనికి లాగిన్ అవ్వండి",
+  "createAccountTitle": "ఖాతాను సృష్టించండి",
+  "noAccount": "మీకు ఖాతా లేదా?",
+  "createAccountBtn": "ఖాతాను సృష్టించండి",
+  "hasAccount": "ఇప్పటికే ఖాతా ఉందా?",
+  "signInLink": "సైన్ ఇన్ చేయండి",
+  "firstName": "మొదటి పేరు",
+  "lastName": "చివరి పేరు",
+  "emailLabel": "ఈమెయిల్ చిరునామా",
+  "emailPlaceholder": "john52martinez@gmail.com",
+  "passwordLabel": "పాస్వర్డ్",
+  "forgotPassword": "పాస్వర్డ్ మర్చిపోయారా?",
+  "keepMeLoggedIn": "నన్ను లాగిన్ లో ఉంచండి",
+  "agreeTerms": "నేను నిబంధనలు & షరతులకు అంగీకరిస్తున్నాను",
+  "demoAccessTitle": "అడ్మిన్ / మేనేజర్ డెమో యాక్సెస్:",
+  "demoAccessDesc": "పరిపాలనా లేఅవుట్లను అన్వేషించడానికి admin@merigaumata.com లేదా manager@merigaumata.com తో లాగిన్ అవ్వండి. ఇతర లాగిన్లు కస్టమర్ పాత్రకు డిఫాల్ట్ అవుతాయి.",
+  "loginBtn": "లాగిన్ అవ్వండి",
+  "continueWithGoogle": "గూగుల్ తో కొనసాగించండి",
+  "validation": {
+    "invalidEmail": "దయచేసి సరైన ఈమెయిల్ నమోదు చేయండి.",
+    "passwordMinLength": "పాస్వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.",
+    "firstNameRequired": "మొదటి పేరు తప్పనిసరి.",
+    "lastNameRequired": "చివరి పేరు తప్పనిసరి."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "loading": {
+    "generic": "Loading sacred essence...",
+    "shop": "Loading sacred shop...",
+    "blogs": "Fetching wisdom articles...",
+    "blogDetail": "Loading story...",
+    "events": "Preparing sacred gatherings...",
+    "eventDetail": "Loading event details...",
+    "contact": "Loading contact form...",
+    "gallery": "Loading divine gallery...",
+    "profile": "Accessing your profile...",
+    "about": "Loading Goshala story...",
+    "admin": "Loading admin portal..."
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "events": "Events",
+    "gallery": "Gallery",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login"
+  },
+  "hero": {
+    "title": "MeriGauMata",
+    "subtitle": "Sacred Vedic Essence"
+  },
+  "carousel": {
+    "slide1": {
+      "title": "Nurturing Life, Honoring the Sacred.",
+      "subtitle": "Discover authentic cow-based products, participate in uplifting events, and support our mission of cow welfare.",
+      "cta1": "Explore Products",
+      "cta2": "Support Us"
+    },
+    "slide2": {
+      "title": "Pure, Natural & Ethically Sourced.",
+      "subtitle": "From A2 Ghee to organic fertilizers, find products that bring purity to your home and harmony to nature.",
+      "cta1": "Shop Now",
+      "cta2": "Our Mission"
+    },
+    "slide3": {
+      "title": "Join Our Community Events.",
+      "subtitle": "Volunteer, learn organic farming, and celebrate the sacred bond between humanity and nature.",
+      "cta1": "View Events",
+      "cta2": "View Gallery"
+    }
+  },
+  "runningBanner": {
+    "text1": "Pure A2 Ghee Available Now! limited Stock",
+    "text2": "Join Our Upcoming Goshala Volunteering Event this Sunday",
+    "text3": "Support Cow Welfare - Donate Today and Make a Difference"
+  },
+  "featuredShowcase": {
+    "title": "Sacred Offerings",
+    "subtitle": "Pure, natural, and ethically sourced from our Goshala.",
+    "viewAll": "View All Products"
+  },
+  "benefits": {
+    "badge": "Sacred Vedic Essence",
+    "title": "The Essence of Purity",
+    "subtitle": "Why Choose Our Cow-Based Products?",
+    "b1Title": "100% Pure & Natural",
+    "b1Desc": "Sourced directly from indigenous cows raised with love, free from synthetic chemicals.",
+    "b2Title": "Cruelty Free",
+    "b2Desc": "Our cows are treated as family, respected and nurtured throughout their lives.",
+    "b3Title": "Vedic Traditions",
+    "b3Desc": "Prepared using ancient Ayurvedic methods to preserve nutritional and spiritual value.",
+    "b4Title": "Eco-Friendly",
+    "b4Desc": "Sustainable farming practices that enrich the soil and protect the environment."
+  },
+  "events": {
+    "title": "Upcoming Community Gatherings",
+    "subtitle": "Connect with nature, spirituality, and our mission through our upcoming events.",
+    "viewAll": "View All Events"
+  },
+  "blogs": {
+    "title": "Wisdom & Stories",
+    "subtitle": "Insights from our Goshala, Ayurvedic knowledge, and tales of devotion.",
+    "viewAll": "Read All Articles",
+    "readMore": "Read More"
+  },
+  "donation": {
+    "badge": "కారణానికి మద్దతు ఇవ్వండి",
+    "title": "Support Our Mission of Cow Welfare",
+    "subtitle": "Your contribution helps us provide shelter, medical care, and nutrition to hundreds of cows.",
+    "amount1": "₹501 (Feeds a cow for a day)",
+    "amount2": "₹1,100 (Medical care)",
+    "amount3": "₹5,100 (Shelter support)",
+    "amount4": "Custom Amount",
+    "customPlaceholder": "Enter amount",
+    "buttonText": "Donate Now"
+  },
+  "metadata": {
+    "title": "మేరిగోమాత - గోవుల సంక్షేమం & సహజ ఉత్పత్తులు",
+    "description": "గోవు ఆధారిత ఉత్పత్తులు, ఈవెంట్‌లు మరియు విరాళాల కోసం ఈ-కామర్స్ ప్లాట్‌ఫారమ్."
+  }
+}

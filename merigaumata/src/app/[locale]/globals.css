@@ -1,0 +1,140 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-primary-50: var(--color-amber-50);
+  --color-primary-100: var(--color-amber-100);
+  --color-primary-200: var(--color-amber-200);
+  --color-primary-300: var(--color-amber-300);
+  --color-primary-400: var(--color-amber-400);
+  --color-primary-500: var(--color-amber-500); /* #F59E0B */
+  --color-primary-600: var(--color-amber-600);
+  --color-primary-700: var(--color-amber-700);
+  --color-primary-800: var(--color-amber-800);
+  --color-primary-900: var(--color-amber-900);
+  --color-primary-950: var(--color-amber-950);
+
+  --color-secondary-50: var(--color-green-50);
+  --color-secondary-100: var(--color-green-100);
+  --color-secondary-200: var(--color-green-200);
+  --color-secondary-300: var(--color-green-300);
+  --color-secondary-400: var(--color-green-400);
+  --color-secondary-500: var(--color-green-500);
+  --color-secondary-600: var(--color-green-600); /* #16A34A */
+  --color-secondary-700: var(--color-green-700);
+  --color-secondary-800: var(--color-green-800);
+  --color-secondary-900: var(--color-green-900);
+  --color-secondary-950: var(--color-green-950);
+
+  --color-tertiary-50: #fdfaf6;
+  --color-tertiary-100: #f8efe4;
+  --color-tertiary-200: #efdac1;
+  --color-tertiary-300: #e3be96;
+  --color-tertiary-400: #d49a66;
+  --color-tertiary-500: #c67b40;
+  --color-tertiary-600: #b96332;
+  --color-tertiary-700: #9a4c2b;
+  --color-tertiary-800: #7d3f26;
+  --color-tertiary-900: #78350f; /* #78350F */
+  --color-tertiary-950: #451a03;
+
+  --color-earth-50: var(--color-stone-50);
+  --color-earth-100: var(--color-stone-100);
+  --color-earth-200: var(--color-stone-200);
+  --color-earth-300: var(--color-stone-300);
+  --color-earth-400: var(--color-stone-400);
+  --color-earth-500: var(--color-stone-500);
+  --color-earth-600: var(--color-stone-600);
+  --color-earth-700: var(--color-stone-700);
+  --color-earth-800: var(--color-stone-800);
+  --color-earth-900: var(--color-stone-900);
+  --color-earth-950: var(--color-stone-950);
+
+  /* Custom high-fidelity brand colors */
+  --color-stone-150: #f1f0ee;
+  --color-stone-250: #e7e5e0;
+  --color-stone-850: #24211f;
+
+  --color-neutral-50: #fafaf9; /* #FAFAF9 */
+  --color-neutral-100: var(--color-stone-100);
+  --color-neutral-200: var(--color-stone-200);
+  --color-neutral-300: var(--color-stone-300);
+  --color-neutral-400: var(--color-stone-400);
+  --color-neutral-500: var(--color-stone-500);
+  --color-neutral-600: var(--color-stone-600);
+  --color-neutral-700: var(--color-stone-700);
+  --color-neutral-800: var(--color-stone-800);
+  --color-neutral-900: var(--color-stone-900);
+  --color-neutral-950: var(--color-stone-950);
+
+  --color-background: var(--color-neutral-50);
+  --color-foreground: var(--color-neutral-900);
+  --color-card: #ffffff;
+  --color-card-foreground: var(--color-neutral-900);
+
+  --color-footer-bg: #e0d0b6;
+  --color-product-card: #F6F3E6;
+
+  --font-serif: var(--font-serif), "Playfair Display", serif;
+  --font-sans: var(--font-sans), "Inter", sans-serif;
+}
+
+@theme inline {
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 30s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  .dark {
+    --color-background: #121212;
+    --color-foreground: var(--color-neutral-50);
+    --color-card: #1c1917;
+    --color-card-foreground: var(--color-neutral-50);
+    
+    --color-footer-bg: #2b1f13; /* Darker variant for dark mode */
+
+    /* Custom translucent subtle dark outlines */
+    --color-stone-150: rgba(255, 255, 255, 0.04);
+    --color-stone-250: rgba(255, 255, 255, 0.055);
+    --color-stone-850: rgba(255, 255, 255, 0.05);
+  }
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+body.modal-open {
+  overflow: hidden;
+  touch-action: none;
+}

@@ -1,0 +1,66 @@
+{
+  "hero": {
+    "titleLine1": "We Would Love to Hear",
+    "titleLine2": "from You",
+    "description": "Thank you for your interest in MeriGauMata and our mission to uplift and shelter cows. We value your thoughts, questions, and feedback. Please don't hesitate to reach out to us. Our dedicated team is here to assist you."
+  },
+  "infoCards": {
+    "addressLabel": "Address",
+    "addressValue": "Vrindavan Valley, 452001",
+    "emailLabel": "You Can Email Here",
+    "emailValue": "support@merigaumata.org",
+    "phoneLabel": "Call us on",
+    "phoneValue": "+91 98765 43210",
+    "hoursLabel": "Working Hours",
+    "hoursWeekdays": "Mon - Sat: 10:00 am - 6:00 pm",
+    "hoursSunday": "Sun: Closed"
+  },
+  "infoOverlay": {
+    "title": "Contact Us",
+    "address": "Vrindavan Valley,\n452001, India",
+    "email": "support@merigaumata.org",
+    "phone": "+91 98765 43210"
+  },
+  "form": {
+    "title": "Get in Touch",
+    "subtitle": "We'd love to hear from you!",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "Your email",
+    "phonePlaceholder": "Your phone",
+    "subjectPlaceholder": "Subject",
+    "messagePlaceholder": "Message (50 - 100 words)",
+    "wordCount": "Word count: {count} / 100",
+    "submit": "SEND",
+    "successAlert": "Form submitted successfully!",
+    "errorMinWords": "Please enter at least 50 words. Current word count: {count}",
+    "errorMaxWords": "Please keep your message under 100 words. Current word count: {count}",
+    "validation": {
+      "nameMin": "Name must be at least 2 characters.",
+      "emailInvalid": "Please enter a valid email address.",
+      "phoneMin": "Phone number must be at least 10 digits.",
+      "subjectMin": "Subject must be at least 3 characters.",
+      "messageRequired": "Message is required."
+    }
+  },
+  "volunteerCard": {
+    "title": "Volunteer Opportunities",
+    "description": "Interested in becoming a volunteer and making a hands-on difference? Please visit our Volunteer page for more information and to fill out an application.",
+    "button": "Visit Page"
+  },
+  "donationCard": {
+    "title": "Donation Information",
+    "description": "To make a donation or learn more about our various giving options, visit our Donation page. Every contribution helps sustain our sanctuary.",
+    "button": "Donation Page"
+  },
+  "donateCTA": {
+    "title": "Donate Now and Help Level Up the Lives of Cows in Need",
+    "description": "Your donation will help provide essential services to cows in need, such as food, healthcare, shelter, and compassion.",
+    "prompt": "Click here to donate now and save lives.",
+    "button": "Donate Now"
+  },
+  "faqs": {
+    "title": "Frequently Asked Questions",
+    "description": "Find answers to common questions about our sanctuary, visits, and donations. If you need further assistance, don't hesitate to reach out.",
+    "button": "View All FAQ"
+  }
+}

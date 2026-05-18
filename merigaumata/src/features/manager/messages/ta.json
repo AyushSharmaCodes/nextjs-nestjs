@@ -1,0 +1,62 @@
+{
+  "title": "Manager Dashboard",
+  "eventsTab": "Sanctuary Events",
+  "productsTab": "Storefront Products",
+  "welfareTab": "Animal Welfare",
+  "donationsTab": "Donations Log",
+  "noAccess": "No access to this section",
+  "noAccessDesc": "Please contact an Administrator if you believe you should have access to this manager tab.",
+  "events": {
+    "addEvent": "Add New Event",
+    "name": "Event Name",
+    "location": "Location",
+    "status": "Status"
+  },
+  "products": {
+    "addProduct": "Add New Product",
+    "name": "Product Name",
+    "price": "Price",
+    "stock": "Stock"
+  },
+  "donations": {
+    "source": "Donor Name",
+    "amount": "Amount",
+    "purpose": "Purpose"
+  },
+  "mockData": {
+    "events": {
+      "gopashtami": {
+        "name": "Gopashtami Maha Utsav",
+        "location": "Main Sanctuary Hall",
+        "status": "Upcoming"
+      },
+      "kamadhenu": {
+        "name": "Kamadhenu Seva Yajna",
+        "location": "Vedic Yajna Shala",
+        "status": "Scheduled"
+      }
+    },
+    "products": {
+      "ghee": {
+        "name": "Vedic A2 Bilona Gir Cow Ghee"
+      },
+      "ark": {
+        "name": "Organic Holy Gau Ark (Distilled)"
+      }
+    },
+    "donations": {
+      "arjun": {
+        "source": "Arjun Sharma (Gir Cow Adoption)",
+        "purpose": "Gir Cow Adoption"
+      },
+      "priyah": {
+        "source": "Priyah Patel (Daily Green Fodder Seva)",
+        "purpose": "Daily Green Fodder Seva"
+      },
+      "karan": {
+        "source": "Karan Malhotra (General Sanctuary Welfare)",
+        "purpose": "General Sanctuary Welfare"
+      }
+    }
+  }
+}

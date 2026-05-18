@@ -1,0 +1,43 @@
+{
+  "title": "खाता सेटिंग्स",
+  "saveChanges": "बदलाव सहेजें",
+  "saving": "सहेज रहा है...",
+  "personalDetails": {
+    "title": "व्यक्तिगत विवरण",
+    "desc": "अपनी व्यक्तिगत जानकारी अपडेट करें और हम आप तक कैसे पहुँच सकते हैं।",
+    "fullName": "पूरा नाम",
+    "gender": "लिंग",
+    "dateOfBirth": "जन्म तिथि",
+    "nationality": "राष्ट्रीयता",
+    "phone": "फ़ोन नंबर",
+    "email": "ईमेल पता"
+  },
+  "accountDetails": {
+    "title": "खाता विवरण",
+    "desc": "अपनी खाता प्राथमिकताएं और सेटिंग्स प्रबंधित करें।",
+    "address": "पता",
+    "timeZone": "समय क्षेत्र",
+    "currency": "पसंदीदा मुद्रा",
+    "language": "भाषा",
+    "notifications": "ईमेल सूचनाएं",
+    "2fa": "द्वि-कारक प्रमाणीकरण"
+  },
+  "menu": {
+    "personal": "व्यक्तिगत विवरण",
+    "account": "खाता जानकारी"
+  },
+  "mockData": {
+    "roles": {
+      "user": "ग्राहक",
+      "manager": "प्रबंधक",
+      "admin": "व्यवस्थापक"
+    },
+    "profile": {
+      "defaultName": "वेजिटो",
+      "defaultGender": "पुरुष",
+      "defaultNationality": "भारतीय",
+      "defaultAddress": "सेक्टर 45, गुरुग्राम - भारत",
+      "defaultTimeZone": "जीएमटी+5:30 (भारतीय मानक समय)"
+    }
+  }
+}

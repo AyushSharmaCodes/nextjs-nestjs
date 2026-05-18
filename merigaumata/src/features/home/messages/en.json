@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "events": "Events",
+    "gallery": "Gallery",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login"
+  },
+  "hero": {
+    "title": "MeriGauMata",
+    "subtitle": "Sacred Vedic Essence"
+  },
+  "carousel": {
+    "slide1": {
+      "title": "Nurturing Life, Honoring the Sacred.",
+      "subtitle": "Discover authentic cow-based products, participate in uplifting events, and support our mission of cow welfare.",
+      "cta1": "Explore Products",
+      "cta2": "Support Us"
+    },
+    "slide2": {
+      "title": "Pure, Natural & Ethically Sourced.",
+      "subtitle": "From A2 Ghee to organic fertilizers, find products that bring purity to your home and harmony to nature.",
+      "cta1": "Shop Now",
+      "cta2": "Our Mission"
+    },
+    "slide3": {
+      "title": "Join Our Community Events.",
+      "subtitle": "Volunteer, learn organic farming, and celebrate the sacred bond between humanity and nature.",
+      "cta1": "View Events",
+      "cta2": "View Gallery"
+    }
+  },
+  "runningBanner": {
+    "text1": "Pure A2 Ghee Available Now! limited Stock",
+    "text2": "Join Our Upcoming Goshala Volunteering Event this Sunday",
+    "text3": "Support Cow Welfare - Donate Today and Make a Difference"
+  },
+  "featuredShowcase": {
+    "title": "Sacred Offerings",
+    "subtitle": "Pure, natural, and ethically sourced from our Goshala.",
+    "viewAll": "View All Products"
+  },
+  "benefits": {
+    "badge": "Sacred Vedic Essence",
+    "title": "Benefits of Cow",
+    "subtitle": "Discover the traditional and modern benefits of cow products",
+    "b1Title": "Panchgavya Products",
+    "b1Desc": "Fresh milk, ghee, and dairy products rich in nutrients",
+    "b2Title": "Organic & Natural",
+    "b2Desc": "Chemical-free, traditional farming methods",
+    "b3Title": "Eco-Friendly",
+    "b3Desc": "Sustainable farming with natural fertilizers",
+    "b4Title": "Cultural Heritage",
+    "b4Desc": "Preserving ancient wisdom and traditions"
+  },
+  "events": {
+    "badge": "Events",
+    "title": "Sacred Gatherings",
+    "subtitle": "Join our community programs, spiritual experiences and Connect with our missions",
+    "viewAll": "View All Events"
+  },
+  "blogs": {
+    "title": "Wisdom & Stories",
+    "subtitle": "Insights from our Goshala, Ayurvedic knowledge, and tales of devotion.",
+    "viewAll": "Read All Articles",
+    "readMore": "Read More"
+  },
+  "donation": {
+    "badge": "Support The Cause",
+    "title": "YOUR CONTRIBUTION <gradient>MATTERS</gradient>",
+    "subtitle": "Every donation helps us feed, shelter, and provide medical care to our sacred cows. Be a part of this noble cause.",
+    "amount1": "₹501 (Feeds a cow for a day)",
+    "amount2": "₹1,100 (Medical care)",
+    "amount3": "₹5,100 (Shelter support)",
+    "amount4": "Custom Amount",
+    "customPlaceholder": "Enter amount",
+    "buttonText": "Donate Now"
+  },
+  "metadata": {
+    "title": "MeriGauMata - Cow Welfare & Natural Products",
+    "description": "E-commerce platform for cow-based products, events, and donations."
+  }
+}

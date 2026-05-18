@@ -1,0 +1,43 @@
+{
+  "title": "Account Settings",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "personalDetails": {
+    "title": "Personal Details",
+    "desc": "Update your personal information and how we can reach you.",
+    "fullName": "Full Name",
+    "gender": "Gender",
+    "dateOfBirth": "Date of Birth",
+    "nationality": "Nationality",
+    "phone": "Phone Number",
+    "email": "Email Address"
+  },
+  "accountDetails": {
+    "title": "Account Details",
+    "desc": "Manage your account preferences and settings.",
+    "address": "Address",
+    "timeZone": "Time Zone",
+    "currency": "Preferred Currency",
+    "language": "Language",
+    "notifications": "Email Notifications",
+    "2fa": "Two-Factor Authentication"
+  },
+  "menu": {
+    "personal": "Personal Details",
+    "account": "Account Info"
+  },
+  "mockData": {
+    "roles": {
+      "user": "Customer",
+      "manager": "Manager",
+      "admin": "Admin"
+    },
+    "profile": {
+      "defaultName": "Vegeto",
+      "defaultGender": "Male",
+      "defaultNationality": "Indian",
+      "defaultAddress": "Sector 45, Gurugram - India",
+      "defaultTimeZone": "GMT+5:30 (India Standard Time)"
+    }
+  }
+}

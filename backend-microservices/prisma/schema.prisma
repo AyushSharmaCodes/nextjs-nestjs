@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                         String    @id @default(uuid())
+  email                      String    @unique
+  passwordHash               String?   @map("password_hash")
+  emailVerified              Boolean   @default(false) @map("email_verified")
+  emailVerificationToken     String?   @map("email_verification_token")
+  emailVerificationExpiresAt DateTime? @map("email_verification_expires_at")
+
+  isBlocked        Boolean   @default(false) @map("is_blocked")
+  isDeleted        Boolean   @default(false) @map("is_deleted")
+  deletionStatus   String?   @map("deletion_status")
+  authProvider     String    @default("local") @map("auth_provider")
+  lastLoginAt      DateTime? @map("last_login_at")
+  loginCount       Int       @default(0) @map("login_count")
+  
+  requiresPasswordChange Boolean @default(false) @map("requires_password_change")
+
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  roles         UserRole[]
+  sessions      Session[]
+  otpChallenges OTPChallenge[]
+  auditLogs     AuditLog[]     @relation("ActorLogs")
+
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // SUPER_ADMIN, ADMIN, MANAGER, STAFF, CUSTOMER
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system") // Cannot be deleted
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  action      String   // e.g., create, read, update, delete
+  resource    String   // e.g., products, orders, users
+  description String?
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  roles       RolePermission[]
+
+  @@unique([action, resource])
+  @@map("permissions")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  roleId    String   @map("role_id")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid())
+  roleId       String   @map("role_id")
+  permissionId String   @map("permission_id")
+  
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Session {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  refreshTokenHash String   @map("refresh_token_hash")
+  ipAddress        String?  @map("ip_address")
+  userAgent        String?  @map("user_agent")
+  expiresAt        DateTime @map("expires_at")
+  isRevoked        Boolean  @default(false) @map("is_revoked")
+  
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model OTPChallenge {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  otpHash   String   @map("otp_hash")
+  type      String   // EMAIL_VERIFICATION, LOGIN
+  expiresAt DateTime @map("expires_at")
+  attempts  Int      @default(0)
+  isVerified Boolean @default(false) @map("is_verified")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("otp_challenges")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?  @map("actor_id") // Nullable if system action
+  action    String
+  resource  String
+  ipAddress String?  @map("ip_address")
+  status    String   // SUCCESS, FAILURE
+  metadata  Json?
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  actor User? @relation("ActorLogs", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}

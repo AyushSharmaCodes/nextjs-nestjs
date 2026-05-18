@@ -1,0 +1,26 @@
+{
+  "signInTitle": "मेरीगौमाता में लॉग इन करें",
+  "createAccountTitle": "खाता बनाएं",
+  "noAccount": "क्या आपका खाता नहीं है?",
+  "createAccountBtn": "खाता बनाएं",
+  "hasAccount": "पहले से ही एक खाता है?",
+  "signInLink": "साइन इन करें",
+  "firstName": "पहला नाम",
+  "lastName": "अंतिम नाम",
+  "emailLabel": "ईमेल पता",
+  "emailPlaceholder": "john52martinez@gmail.com",
+  "passwordLabel": "पासवर्ड",
+  "forgotPassword": "पासवर्ड भूल गए?",
+  "keepMeLoggedIn": "मुझे लॉग इन रखें",
+  "agreeTerms": "मैं नियम व शर्तों से सहमत हूँ",
+  "demoAccessTitle": "एडमिन / मैनेजर डेमो एक्सेस:",
+  "demoAccessDesc": "प्रशासनिक लेआउट देखने के लिए admin@merigaumata.com या manager@merigaumata.com से लॉगिन करें। अन्य सभी लॉगिन या साइनअप कस्टमर रोल पर सेट हो जाएंगे।",
+  "loginBtn": "लॉग इन करें",
+  "continueWithGoogle": "गूगल के साथ जारी रखें",
+  "validation": {
+    "invalidEmail": "कृपया एक मान्य ईमेल पता दर्ज करें।",
+    "passwordMinLength": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+    "firstNameRequired": "पहला नाम आवश्यक है।",
+    "lastNameRequired": "अंतिम नाम आवश्यक है।"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "signInTitle": "Sign In to MeriGauMata",
+  "createAccountTitle": "Create an Account",
+  "noAccount": "Don't have an account?",
+  "createAccountBtn": "Create Account",
+  "hasAccount": "Already have an account?",
+  "signInLink": "Sign in",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "emailLabel": "Email Address",
+  "emailPlaceholder": "john52martinez@gmail.com",
+  "passwordLabel": "Password",
+  "forgotPassword": "Forgot Password?",
+  "keepMeLoggedIn": "Keep me logged in",
+  "agreeTerms": "I agree to the Terms & Condition",
+  "demoAccessTitle": "Admin / Manager Demo Access:",
+  "demoAccessDesc": "Log in with admin@merigaumata.com or manager@merigaumata.com to explore administrative layouts. Any other logins or signups default to Customer role.",
+  "loginBtn": "Log in",
+  "continueWithGoogle": "Continue with Google",
+  "validation": {
+    "invalidEmail": "Please enter a valid email address.",
+    "passwordMinLength": "Password must be at least 6 characters.",
+    "firstNameRequired": "First name is required.",
+    "lastNameRequired": "Last name is required."
+  }
+}
