@@ -1,7 +1,8 @@
 export type Role = 'USER' | 'ADMIN' | 'MANAGER';
 
 export interface PersonalDetails {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   dob: string;
   gender: 'Male' | 'Female' | 'Other' | string;
   nationality: string;

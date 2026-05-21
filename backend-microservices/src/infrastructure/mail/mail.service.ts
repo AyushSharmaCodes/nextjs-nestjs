@@ -8,6 +8,7 @@ export interface SendMailOptions {
   subject: string;
   text?: string;
   html?: string;
+  userId?: string;
 }
 
 @Injectable()
@@ -16,48 +17,52 @@ export class MailService {
   private transporter: nodemailer.Transporter | null = null;
   private sesClient: SESClient | null = null;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+  ) {
     this.initializeProvider();
   }
 
   private initializeProvider() {
-    const nodeEnv = this.configService.get<string>('NODE_ENV', 'development');
+    const provider = this.configService.get<string>('MAIL_PROVIDER', 'console').toLowerCase();
 
-    if (nodeEnv === 'production') {
+    if (provider === 'ses') {
       // Initialize Amazon SES
       this.logger.log('Initializing Amazon SES for email delivery');
       this.sesClient = new SESClient({
         region: this.configService.get<string>('AWS_REGION'),
         credentials: {
-          accessKeyId: this.configService.get<string>('AWS_ACCESS_KEY_ID')!,
-          secretAccessKey: this.configService.get<string>('AWS_SECRET_ACCESS_KEY')!,
+          accessKeyId: this.configService.get<string>('AWS_ACCESS_KEY_ID') || '',
+          secretAccessKey: this.configService.get<string>('AWS_SECRET_ACCESS_KEY') || '',
         },
       });
-    } else {
+    } else if (provider === 'smtp') {
       // Initialize SMTP
       const smtpHost = this.configService.get<string>('SMTP_HOST');
       if (smtpHost) {
         this.logger.log(`Initializing SMTP transport for email delivery via ${smtpHost}`);
         this.transporter = nodemailer.createTransport({
           host: smtpHost,
-          port: this.configService.get<number>('SMTP_PORT', 587),
-          secure: this.configService.get<boolean>('SMTP_SECURE', false),
-          auth: {
+          port: this.configService.get<number>('SMTP_PORT', 1025),
+          secure: this.configService.get<string>('SMTP_SECURE', 'false') === 'true',
+          auth: this.configService.get<string>('SMTP_USER') ? {
             user: this.configService.get<string>('SMTP_USER'),
             pass: this.configService.get<string>('SMTP_PASS'),
-          },
+          } : undefined, // Useful for local mailpit without auth
         });
       } else {
-        this.logger.warn('No SMTP configuration found. Defaulting to Console transport for email delivery');
+        this.logger.error('MAIL_PROVIDER is smtp but SMTP_HOST is not configured');
       }
+    } else {
+      this.logger.log('Initializing Console transport for email delivery');
     }
   }
 
   async sendMail(options: SendMailOptions): Promise<void> {
-    const nodeEnv = this.configService.get<string>('NODE_ENV', 'development');
+    const provider = this.configService.get<string>('MAIL_PROVIDER', 'console').toLowerCase();
     const from = this.configService.get<string>('MAIL_FROM', 'noreply@merigaumata.com');
 
-    if (nodeEnv === 'production' && this.sesClient) {
+    if (provider === 'ses' && this.sesClient) {
       try {
         const command = new SendEmailCommand({
           Destination: { ToAddresses: [options.to] },
@@ -75,7 +80,7 @@ export class MailService {
       } catch (error) {
         this.logger.error(`Failed to send email to ${options.to} via SES`, error);
       }
-    } else if (this.transporter) {
+    } else if (provider === 'smtp' && this.transporter) {
       try {
         await this.transporter.sendMail({
           from,

@@ -17,7 +17,8 @@ export const mockDefaultManagers: ManagerAccount[] = [
 ];
 
 export const mockDefaultProfilePersonal: PersonalDetails = {
-  fullName: 'MockData.profile.defaultName',
+  firstName: 'MockData.profile.defaultName',
+  lastName: '',
   dob: '1987-01-01',
   gender: 'MockData.profile.defaultGender',
   nationality: 'MockData.profile.defaultNationality',

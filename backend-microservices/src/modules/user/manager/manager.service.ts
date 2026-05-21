@@ -9,6 +9,22 @@ export interface ManagerFilters {
   limit?: number;
 }
 
+interface ManagerPermissions {
+  canManageProducts?: boolean;
+  canManageOrders?: boolean;
+  canManageCoupons?: boolean;
+  canManageBlogs?: boolean;
+  canManageFaqs?: boolean;
+  canManageGallery?: boolean;
+  canManageEvents?: boolean;
+  canManageDonations?: boolean;
+  canManageTestimonials?: boolean;
+  canManagePolicies?: boolean;
+  canManageAboutUs?: boolean;
+  canManageUsers?: boolean;
+  [key: string]: boolean | undefined;
+}
+
 @Injectable()
 export class ManagerService {
   constructor(private readonly managerRepo: ManagerRepository) {}

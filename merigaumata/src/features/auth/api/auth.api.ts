@@ -4,9 +4,11 @@ import { AuthResponse } from '../types/auth.types';
 
 export const authApi = {
   login: async (credentials: LoginFormValues): Promise<AuthResponse> => {
-    return apiInstance.post<any, AuthResponse>('/auth/login', credentials);
+    const response = await apiInstance.post<AuthResponse>('/auth/login', credentials);
+    return response.data;
   },
   signup: async (data: SignupFormValues): Promise<AuthResponse> => {
-    return apiInstance.post<any, AuthResponse>('/auth/signup', data);
+    const response = await apiInstance.post<AuthResponse>('/auth/signup', data);
+    return response.data;
   },
 };

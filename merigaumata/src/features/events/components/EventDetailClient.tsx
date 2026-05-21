@@ -3,7 +3,7 @@
 import { Event } from '../types/events.types';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { ChevronLeft, QrCode } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { EventTabs } from './EventTabs';
 import { EventRegistrationModal } from './EventRegistrationModal';
 import { format, differenceInHours } from 'date-fns';
@@ -50,7 +50,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
         {/* Top Bar Navigation */}
         <div className="flex items-center justify-between mb-8">
           <Link href="/events" className="flex items-center gap-2 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md px-4 py-2 rounded-full text-sm font-medium text-stone-700 dark:text-stone-300 shadow-sm border border-stone-200/50 dark:border-neutral-800 hover:bg-white dark:hover:bg-neutral-900 transition-colors">
-            <ChevronLeft className="w-4 h-4" />
+            <AppIcon name="chevronLeft" size="sm" />
             <span>{t('back')}</span>
           </Link>
         </div>
@@ -112,10 +112,10 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             className={`px-8 py-3.5 rounded-full font-medium flex items-center gap-2 shadow-md transition-all duration-300 ease-out mb-12 cursor-pointer ${
               event.status === 'completed' 
                 ? 'bg-stone-300 text-stone-500 cursor-not-allowed shadow-none dark:bg-neutral-800 dark:text-neutral-600' 
-                : 'bg-stone-900 dark:bg-neutral-800 hover:bg-[#1B8057] dark:hover:bg-[#1B8057] text-white hover:scale-[1.04] hover:shadow-xl hover:shadow-emerald-900/20 active:scale-95'
+                 : 'bg-stone-900 dark:bg-neutral-800 hover:bg-[#1B8057] dark:hover:bg-[#1B8057] text-white hover:scale-[1.04] hover:shadow-xl hover:shadow-emerald-900/20 active:scale-95'
             }`}
           >
-            <QrCode className="w-5 h-5" />
+            <AppIcon name="qrCode" size="md" />
             <span>{t('book')}</span>
           </button>
 

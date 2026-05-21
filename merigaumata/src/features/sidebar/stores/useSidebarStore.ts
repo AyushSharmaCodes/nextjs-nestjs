@@ -1,6 +1,17 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist, createJSONStorage, StorageValue } from 'zustand/middleware';
 import { SidebarState } from '../types';
+
+const getStorage = () => {
+  if (typeof window === 'undefined') {
+    return {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+    };
+  }
+  return window.localStorage;
+};
 
 export const useSidebarStore = create<SidebarState>()(
   persist(
@@ -8,7 +19,7 @@ export const useSidebarStore = create<SidebarState>()(
       isCollapsed: false,
       isMobileOpen: false,
       expandedGroups: [],
-      
+
       setCollapsed: (collapsed) => set({ isCollapsed: collapsed }),
       toggleCollapsed: () => set((state) => ({ isCollapsed: !state.isCollapsed })),
       setMobileOpen: (open) => set({ isMobileOpen: open }),
@@ -23,7 +34,7 @@ export const useSidebarStore = create<SidebarState>()(
     }),
     {
       name: 'merigaumata-sidebar-preferences',
-      storage: createJSONStorage(() => typeof window !== 'undefined' ? window.localStorage : (null as any)),
+      storage: createJSONStorage(getStorage),
       partialize: (state) => ({
         isCollapsed: state.isCollapsed,
         expandedGroups: state.expandedGroups,

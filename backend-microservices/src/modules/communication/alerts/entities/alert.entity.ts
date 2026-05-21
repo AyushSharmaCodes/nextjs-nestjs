@@ -30,8 +30,8 @@ export class AdminAlert {
   @Column() title: string;
   @Column({ type: 'text' }) message: string;
   @Column({ type: 'jsonb', nullable: true }) metadata: Record<string, any>;
-  @Column({ name: 'created_by', type: 'uuid', nullable: true }) createdBy: string | null;
-  @Column({ name: 'resolved_by', type: 'uuid', nullable: true }) resolvedBy: string | null;
-  @Column({ name: 'resolved_at', type: 'timestamptz', nullable: true }) resolvedAt: Date | null;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @Column({ name: 'createdBy', type: 'uuid', nullable: true }) createdBy: string | null;
+  @Column({ name: 'resolvedBy', type: 'uuid', nullable: true }) resolvedBy: string | null;
+  @Column({ name: 'resolvedAt', type: 'timestamptz', nullable: true }) resolvedAt: Date | null;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }

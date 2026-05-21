@@ -2,20 +2,7 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { 
-  Box, 
-  DollarSign, 
-  TrendingDown, 
-  TrendingUp, 
-  MoreHorizontal,
-  ChevronUp,
-  ChevronDown,
-  ArrowUpRight,
-  Filter,
-  RefreshCcw,
-  Trash2,
-  Pen
-} from 'lucide-react';
+import { AppIcon, type IconName } from '@/shared/icons';
 import { 
   BarChart, 
   Bar, 
@@ -34,7 +21,7 @@ import clsx from 'clsx';
 interface GradientKpiCardProps {
   title: string;
   value: string;
-  icon: React.ElementType;
+  icon: IconName;
   gradientFrom: string;
   gradientTo: string;
   cash?: string;
@@ -42,7 +29,7 @@ interface GradientKpiCardProps {
   credit?: string;
 }
 
-export function GradientKpiCard({ title, value, icon: Icon, gradientFrom, gradientTo, cash, card, credit }: GradientKpiCardProps) {
+export function GradientKpiCard({ title, value, icon, gradientFrom, gradientTo, cash, card, credit }: GradientKpiCardProps) {
   const isBottomLayout = cash === undefined && card === undefined && credit === undefined;
 
   return (
@@ -52,7 +39,7 @@ export function GradientKpiCard({ title, value, icon: Icon, gradientFrom, gradie
     )}>
       {/* Top: Icon Badge */}
       <div className="h-8 w-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-600 border border-slate-100/50 self-start">
-        <Icon className="h-4 w-4" />
+        <AppIcon name={icon} className="h-4 w-4" />
       </div>
 
       {isBottomLayout ? (
@@ -93,20 +80,20 @@ export function GradientKpiCard({ title, value, icon: Icon, gradientFrom, gradie
 interface SmallKpiCardProps {
   title: string;
   value: string;
-  icon: React.ElementType;
+  icon: IconName;
   iconColor: string;
   badgeText?: string;
   badgeColor?: string;
 }
 
-export function SmallKpiCard({ title, value, icon: Icon, iconColor, badgeText, badgeColor }: SmallKpiCardProps) {
+export function SmallKpiCard({ title, value, icon, iconColor, badgeText, badgeColor }: SmallKpiCardProps) {
   const bgColorClass = iconColor.replace('text-', 'bg-').replace('-500', '-50').replace('-400', '-50');
   
   return (
     <div className="bg-white rounded-[20px] p-5 shadow-sm border border-slate-200/30 flex flex-col justify-between h-[135px] transition-all duration-300 hover:shadow-md">
        {/* Rounded Square Icon Badge */}
        <div className={clsx("h-9 w-9 rounded-[12px] flex items-center justify-center self-start", bgColorClass, iconColor)}>
-          <Icon className="h-4.5 w-4.5" />
+          <AppIcon name={icon} className="h-4.5 w-4.5" />
        </div>
        <div>
          <div className="flex items-center gap-1.5 mb-1.5">
@@ -142,7 +129,7 @@ export function SalesRevenueChart() {
     <div className="bg-card rounded-2xl p-6 border border-earth-200 shadow-sm flex flex-col h-[400px]">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-foreground/50" />
+          <AppIcon name="trendingUp" className="h-5 w-5 text-foreground/50" />
           {t.has('salesRevenue') ? t('salesRevenue') : 'Sales Revenue'}
         </h3>
         <div className="flex bg-earth-50 rounded-xl p-1">
@@ -200,7 +187,7 @@ export function TopCategoriesChart() {
     <div className="bg-card rounded-2xl p-6 border border-earth-200 shadow-sm flex flex-col h-[400px]">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <span className="h-5 w-5 rounded-full border-2 border-foreground/50 flex items-center justify-center"><ArrowUpRight className="h-3 w-3" /></span>
+          <span className="h-5 w-5 rounded-full border-2 border-foreground/50 flex items-center justify-center"><AppIcon name="arrowUpRight" className="h-3 w-3" /></span>
           Top Categories
         </h3>
         <button className="text-sm font-semibold text-foreground/70 bg-earth-50 hover:bg-earth-100 px-3 py-1.5 rounded-lg transition-colors">
@@ -254,10 +241,10 @@ export function TopCategoriesChart() {
 
 // --- Recent Activity Widget ---
 const activities = [
-  { id: 1, type: 'order', title: 'Order #2048', subtitle: 'John Doe • 12 Jan 25', tag: 'New Order', tagColor: 'bg-indigo-50 text-indigo-600', icon: Box, iconColor: 'text-indigo-500 bg-indigo-50' },
-  { id: 2, type: 'alert', title: 'Low Stock Alert', subtitle: 'MacBook Air M2 • 10 Jan 25', tag: 'Low Stock', tagColor: 'bg-red-50 text-red-600', icon: Box, iconColor: 'text-red-500 bg-red-50' },
-  { id: 3, type: 'promo', title: 'Promo code "SUMMER20"', subtitle: 'Applied 52 times • 8 Jan 25', tag: 'Campaign', tagColor: 'bg-purple-50 text-purple-600', icon: DollarSign, iconColor: 'text-purple-500 bg-purple-50' },
-  { id: 4, type: 'system', title: 'System Update', subtitle: 'Version 1.2.1 • 2 Jan 25', tag: 'System', tagColor: 'bg-earth-100 text-foreground/70', icon: ArrowUpRight, iconColor: 'text-foreground/60 bg-earth-100' },
+  { id: 1, type: 'order', title: 'Order #2048', subtitle: 'John Doe • 12 Jan 25', tag: 'New Order', tagColor: 'bg-indigo-50 text-indigo-600', icon: 'box' as IconName, iconColor: 'text-indigo-500 bg-indigo-50' },
+  { id: 2, type: 'alert', title: 'Low Stock Alert', subtitle: 'MacBook Air M2 • 10 Jan 25', tag: 'Low Stock', tagColor: 'bg-red-50 text-red-600', icon: 'box' as IconName, iconColor: 'text-red-500 bg-red-50' },
+  { id: 3, type: 'promo', title: 'Promo code "SUMMER20"', subtitle: 'Applied 52 times • 8 Jan 25', tag: 'Campaign', tagColor: 'bg-purple-50 text-purple-600', icon: 'dollar' as IconName, iconColor: 'text-purple-500 bg-purple-50' },
+  { id: 4, type: 'system', title: 'System Update', subtitle: 'Version 1.2.1 • 2 Jan 25', tag: 'System', tagColor: 'bg-earth-100 text-foreground/70', icon: 'arrowUpRight' as IconName, iconColor: 'text-foreground/60 bg-earth-100' },
 ];
 
 export function RecentActivityFeed() {
@@ -265,7 +252,7 @@ export function RecentActivityFeed() {
     <div className="bg-card rounded-2xl p-6 border border-earth-200 shadow-sm flex flex-col h-full">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <RefreshCcw className="h-5 w-5 text-foreground/50" />
+          <AppIcon name="refresh" className="h-5 w-5 text-foreground/50" />
           Recent Activity
         </h3>
         <button className="text-sm font-semibold text-foreground/70 bg-earth-50 hover:bg-earth-100 px-3 py-1.5 rounded-lg transition-colors">
@@ -278,7 +265,7 @@ export function RecentActivityFeed() {
           <div key={item.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-earth-50 transition-colors">
             <div className="flex items-center gap-4">
               <div className={clsx("h-10 w-10 rounded-full flex items-center justify-center", item.iconColor)}>
-                <item.icon className="h-5 w-5" />
+                <AppIcon name={item.icon} className="h-5 w-5" />
               </div>
               <div>
                 <p className="text-sm font-bold text-foreground">{item.title}</p>
@@ -309,15 +296,15 @@ export function TopProductsTable() {
     <div className="bg-card rounded-2xl p-6 border border-earth-200 shadow-sm flex flex-col h-full overflow-hidden">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <Box className="h-5 w-5 text-foreground/50" />
+          <AppIcon name="box" className="h-5 w-5 text-foreground/50" />
           Top Products
         </h3>
         <div className="flex gap-2">
           <button className="flex items-center gap-1.5 text-sm font-semibold text-foreground border border-earth-200 bg-white hover:bg-earth-50 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
-            Sort <ChevronDown className="h-4 w-4 text-foreground/50" />
+            Sort <AppIcon name="chevronDown" className="h-4 w-4 text-foreground/50" />
           </button>
           <button className="flex items-center gap-1.5 text-sm font-semibold text-foreground border border-earth-200 bg-white hover:bg-earth-50 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
-            <Filter className="h-4 w-4 text-foreground/50" /> Filter
+            <AppIcon name="filter" className="h-4 w-4 text-foreground/50" /> Filter
           </button>
         </div>
       </div>
@@ -413,10 +400,10 @@ export function RecentOrdersTable() {
                 <td className="py-4">
                   <div className="flex items-center justify-center gap-3">
                     <button className="text-slate-400 hover:text-red-500 transition-colors">
-                      <Trash2 className="h-4.5 w-4.5" />
+                      <AppIcon name="trash" className="h-4.5 w-4.5" />
                     </button>
                     <button className="text-slate-400 hover:text-purple-600 transition-colors">
-                      <Pen className="h-4.5 w-4.5" />
+                      <AppIcon name="edit" className="h-4.5 w-4.5" />
                     </button>
                   </div>
                 </td>

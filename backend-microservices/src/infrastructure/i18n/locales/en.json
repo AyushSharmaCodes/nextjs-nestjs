@@ -2402,7 +2402,10 @@
       "detail": {
         "title": "Order #{{id}}",
         "header": {
-          "placedOn": "Placed on {{date}}"
+          "backToOrders": "Back to Orders",
+          "title": "Order #{{number}}",
+          "printPage": "Print Invoice",
+          "deleteOrder": "Delete Order"
         },
         "audit": {
           "title": "Action Required: Return Audit Pending",
@@ -2505,12 +2508,6 @@
           "deleteOrder": "Failed to delete order",
           "print": "Failed to open invoice"
         },
-        "header": {
-          "backToOrders": "Back to Orders",
-          "title": "Order #{{number}}",
-          "printPage": "Print Invoice",
-          "deleteOrder": "Delete Order"
-        },
         "orderItems": {
           "title": "Order Items",
           "product": "Product",
@@ -2556,7 +2553,21 @@
           "itemRefundCount": "ITEM REFUND #{{count}}"
         },
         "timeline": {
-          "recommendedTransition": "Recommended Transition"
+          "admin": "Administrator",
+          "placedSuccess": "Order placed successfully",
+          "staff": "Staff",
+          "system": "System",
+          "title": "Timeline",
+          "transitionedTo": "Transitioned to {{status}}",
+          "unknown": "Unknown",
+          "user": "User",
+          "trackingTitle": "Order Tracking Progress",
+          "historyTitle": "Order Event Logs & Audit",
+          "timestamp": "Timestamp",
+          "event": "Event Activity",
+          "actor": "Responsibility",
+          "noNotes": "No additional metadata provided for this status change.",
+          "systemService": "Automated Service"
         },
         "tax": {
           "refundable": "Refundable",
@@ -2693,23 +2704,6 @@
           "title": "Sync Refunds"
         },
         "syncRefundsBtn": "Sync / Mark Refunded",
-        "timeline": {
-          "admin": "Administrator",
-          "placedSuccess": "Order placed successfully",
-          "staff": "Staff",
-          "system": "System",
-          "title": "Timeline",
-          "transitionedTo": "Transitioned to {{status}}",
-          "unknown": "Unknown",
-          "user": "User",
-          "trackingTitle": "Order Tracking Progress",
-          "historyTitle": "Order Event Logs & Audit",
-          "timestamp": "Timestamp",
-          "event": "Event Activity",
-          "actor": "Responsibility",
-          "noNotes": "No additional metadata provided for this status change.",
-          "systemService": "Automated Service"
-        },
         "taxAudit": {
           "title": "Detailed Tax Summary & Audit",
           "active": "Audit Active"
@@ -4080,7 +4074,25 @@
     "verifyingPermissions": "Verifying permissions...",
     "verifyLogin": "Verify & Login",
     "welcomeBack": "Welcome Back",
-    "welcomeBackUser": "Welcome back, {{name}}!"
+    "welcomeBackUser": "Welcome back, {{name}}!",
+    "errors": {
+      "INVALID_CREDENTIALS": "Invalid email or password. Please check your credentials and try again.",
+      "EMAIL_ALREADY_EXISTS": "An account with this email address already exists. Try signing in or resetting your password.",
+      "EMAIL_NOT_VERIFIED": "Your email address has not been verified yet. Please check your inbox for a verification code.",
+      "OTP_EXPIRED": "The verification code has expired. Please request a new one.",
+      "OTP_INVALID": "The verification code you entered is incorrect. Please try again.",
+      "MAGIC_LINK_EXPIRED": "This magic link has expired. Please request a new sign-in link.",
+      "MAGIC_LINK_INVALID": "This magic link is invalid or not recognized. Please request a new one.",
+      "MAGIC_LINK_ALREADY_USED": "This magic link has already been used. Please request a new sign-in link.",
+      "TOKEN_EXPIRED": "Your session has expired. Please sign in again to continue.",
+      "TOKEN_INVALID": "Your session is invalid or has been revoked. Please sign in again.",
+      "REFRESH_TOKEN_REUSE": "A security issue was detected with your session. You have been signed out for your protection.",
+      "GOOGLE_AUTH_FAILED": "Google sign-in encountered an error. Please try again or use a different sign-in method.",
+      "ACCOUNT_LOCKED": "Your account has been temporarily locked due to too many failed attempts. Please try again later or contact support.",
+      "ACCOUNT_DISABLED": "Your account has been disabled. Please contact support for assistance.",
+      "TOKEN_GENERATION_FAILED": "We encountered an issue creating your session. Please try again.",
+      "DB_WRITE_FAILED": "We encountered a database error. Please try again."
+    }
   },
   "benefits": {
     "subtitle": "Discover the traditional and modern benefits of cow products",
@@ -4456,7 +4468,6 @@
       "qrCodeName": "Donation QR"
     },
     "edit": "Edit",
-    "freeUppercase": "FREE",
     "countries": {
       "india": "India"
     },
@@ -4574,7 +4585,6 @@
     "phoneCode": "Code",
     "phoneLabel": "Phone:",
     "pickDate": "Pick a Date",
-    "pleaseWait": "Please wait...",
     "pm": "PM",
     "previous": "Previous",
     "primary": "Primary",
@@ -4582,7 +4592,6 @@
     "processing": "Processing...",
     "rating": "Rating",
     "responseTimeLabel": "Response Time:",
-    "save": "Save",
     "saveChanges": "Save Changes",
     "saving": "Saving...",
     "search": "Search",
@@ -4597,7 +4606,6 @@
     "system": "System",
     "tagline": "Sacred Vedic Essence",
     "thankYou": "Thank You",
-    "title": "Title",
     "titlePlaceholder": "Enter title",
     "tooShort": "Text is too short",
     "twitter": "Twitter",
@@ -4638,7 +4646,6 @@
     "attemptRemaining": "attempt remaining",
     "attemptsRemaining": "attempts remaining",
     "live": "Live",
-    "verified": "Verified",
     "orgName": "Meri Gau Mata",
     "lang": "Language",
     "noLocation": "Location not available",
@@ -4652,7 +4659,11 @@
       "gstLabel": "{{rate}} GST"
     },
     "logoAlt": "Meri Gau Mata Logo",
-    "previewAlt": "Preview"
+    "previewAlt": "Preview",
+    "errors": {
+      "unexpectedError": "An unexpected error occurred. Please try again later.",
+      "validationFailed": "Validation failed. Please check your input and try again."
+    }
   },
   "contact": {
     "address": "Address",
@@ -7635,13 +7646,11 @@
     "selectItems": "Select Items to Return",
     "selectItemsRequired": "Please select at least one item to return",
     "selectItemToReturn": "Select Item To Return",
-    "shipping": "Shipping Address",
     "staff": "Staff",
     "status": "Status",
     "submitReturn": "Submit Return Request",
     "submitting": "Submitting...",
     "submittingReturn": "Submitting Return",
-    "subtotal": "Subtotal",
     "summary": "Order Summary",
     "systemReference": "System Reference",
     "tax": "Tax",
@@ -8164,7 +8173,6 @@
     "noSponsorships": "You haven't sponsored any cows yet",
     "of": "of",
     "orderHistory": "Order History",
-    "orders": "Orders",
     "paid": "Paid",
     "password": {
       "securityVeil": "Security Veil",

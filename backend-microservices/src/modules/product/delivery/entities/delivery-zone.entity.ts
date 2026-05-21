@@ -10,20 +10,20 @@ export class DeliveryZone {
   @Column({ type: 'jsonb', nullable: true }) coordinates: any;
   @Column({ default: true }) isActive: boolean;
   @Column({ default: 0 }) priority: number;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }
 
 @Entity('delivery_charges')
 export class DeliveryCharge {
   @PrimaryGeneratedColumn('uuid') id: string;
-  @Column({ name: 'zone_id' }) zoneId: string;
-  @Column({ name: 'min_weight', default: 0 }) minWeight: number;
-  @Column({ name: 'max_weight', type: 'numeric', precision: 10, scale: 2, nullable: true }) maxWeight: number | null;
+  @Column({ name: 'zoneId' }) zoneId: string;
+  @Column({ name: 'minWeight', default: 0 }) minWeight: number;
+  @Column({ name: 'maxWeight', type: 'numeric', precision: 10, scale: 2, nullable: true }) maxWeight: number | null;
   @Column({ type: 'decimal', precision: 10, scale: 2 }) charge: number;
-  @Column({ name: 'delivery_days_min', default: 1 }) deliveryDaysMin: number;
-  @Column({ name: 'delivery_days_max', default: 3 }) deliveryDaysMax: number;
+  @Column({ name: 'deliveryDaysMin', default: 1 }) deliveryDaysMin: number;
+  @Column({ name: 'deliveryDaysMax', default: 3 }) deliveryDaysMax: number;
   @Column({ default: true }) isActive: boolean;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }
 
 @Entity('delivery_partners')
@@ -35,5 +35,5 @@ export class DeliveryPartner {
   @Column({ type: 'varchar', nullable: true }) trackingUrl: string | null;
   @Column({ default: true }) isActive: boolean;
   @Column({ default: 0 }) priority: number;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }

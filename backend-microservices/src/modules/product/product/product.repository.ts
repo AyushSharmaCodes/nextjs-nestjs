@@ -28,6 +28,15 @@ export class ProductRepository {
     });
   }
 
+  async findFeatured(limit = 10): Promise<Product[]> {
+    return this.productRepo.find({
+      where: { isFeatured: true, isActive: true },
+      relations: ['variants', 'category'],
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findAll(query: ProductQueryDto) {
     const { page = 1, limit = 20, categoryId, search, minPrice, maxPrice, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
 

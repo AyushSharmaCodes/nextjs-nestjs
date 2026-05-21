@@ -1,32 +1,48 @@
 /**
- * Safe client-server isomorphic session manager.
- * Now exclusively uses memory to avoid localStorage leaks.
- * Production auth relies on secure HTTP-only cookies and Server Actions.
+ * Client-side session state manager.
+ * 
+ * IMPORTANT: Auth tokens (JWTs) are now managed exclusively via secure HTTP-Only cookies.
+ * This vault is used only to keep track of user metadata (role, email) for UI logic 
+ * and hydration, ensuring a consistent user experience without exposing sensitive tokens to JS.
  */
 
-let memoryUserRole: string | null = null;
-let memoryUserEmail: string | null = null;
 
 export const tokenVault = {
-  // Tokens are now managed securely via HTTP-Only cookies. 
-  // The client should not access them.
   getToken: (): string | null => null,
   setToken: (token: string): void => {},
   clearToken: (): void => {},
 
-  getUserRole: (): string | null => memoryUserRole,
+  getUserRole: (): string | null => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('mgm_user_role');
+    }
+    return null;
+  },
   setUserRole: (role: string): void => {
-    memoryUserRole = role;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mgm_user_role', role);
+    }
   },
   clearUserRole: (): void => {
-    memoryUserRole = null;
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('mgm_user_role');
+    }
   },
 
-  getUserEmail: (): string | null => memoryUserEmail,
+  getUserEmail: (): string | null => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('mgm_user_email');
+    }
+    return null;
+  },
   setUserEmail: (email: string): void => {
-    memoryUserEmail = email;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mgm_user_email', email);
+    }
   },
   clearUserEmail: (): void => {
-    memoryUserEmail = null;
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('mgm_user_email');
+    }
   }
 };

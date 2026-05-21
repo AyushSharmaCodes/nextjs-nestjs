@@ -2,6 +2,8 @@ import { configure, Sink } from '@logtape/logtape';
 import { createConsoleSink } from './sinks/console.sink';
 import { createSentrySink } from './sinks/sentry.sink';
 import { createFileSink } from './sinks/file.sink';
+import { serverEnv } from '@/core/env/server';
+import { clientEnv } from '@/core/env/client';
 
 let isLoggingInitialized = false;
 
@@ -15,7 +17,7 @@ export async function initLogTape() {
   if (isLoggingInitialized) return;
   isLoggingInitialized = true;
 
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = serverEnv.NODE_ENV === 'production';
   
   // In production, log info and above. In development, log debug and above.
   const lowestLevel = isProduction ? 'info' : 'debug';
@@ -26,11 +28,12 @@ export async function initLogTape() {
 
   const activeSinks: string[] = ['console'];
 
-  // 1. Conditionally configure Sentry Sink
+  // Enable Sentry sink if DSN is configured
+  type SentryWindow = { _sentry?: unknown };
+  const windowWithSentry = (typeof window !== 'undefined' ? window : null) as SentryWindow | null;
   const hasSentry = !!(
-    process.env.NEXT_PUBLIC_SENTRY_DSN || 
-    process.env.SENTRY_DSN || 
-    (typeof window !== 'undefined' && (window as any).__SENTRY__)
+    clientEnv.NEXT_PUBLIC_SENTRY_DSN ||
+    (windowWithSentry && windowWithSentry._sentry !== undefined)
   );
 
   if (hasSentry) {

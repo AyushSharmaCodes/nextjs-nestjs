@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { Search, SlidersHorizontal, RefreshCw } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useNotificationStore } from '../store/useNotificationStore';
 import { NotificationStatus, NotificationType } from '../types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -36,7 +36,7 @@ export function NotificationFilters() {
       <div className="flex flex-col md:flex-row items-center gap-4 justify-between">
         {/* Search Input */}
         <div className="relative w-full md:max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+          <AppIcon name="search" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
           <input
             type="text"
             value={filters.search || ''}
@@ -49,7 +49,7 @@ export function NotificationFilters() {
         {/* Filters dropdown and actions */}
         <div className="flex items-center gap-3 w-full md:w-auto self-stretch md:self-auto justify-end">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-foreground/40" />
+            <AppIcon name="filter" className="w-4 h-4 text-foreground/40" />
             <select
               value={filters.type}
               onChange={(e) => setType(e.target.value as NotificationType | 'all')}
@@ -65,10 +65,10 @@ export function NotificationFilters() {
 
           <button
             onClick={handleRefresh}
-            className="p-2.5 rounded-[12px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 dark:hover:text-primary-400 active:scale-95 transition-all outline-none"
+            className="p-2.5 rounded-[12px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 dark:hover:text-primary-400 active:scale-95 transition-all outline-none flex items-center justify-center"
             title="Refresh list"
           >
-            <RefreshCw className="w-4 h-4" />
+            <AppIcon name="refresh" className="w-4 h-4" />
           </button>
           
           <button

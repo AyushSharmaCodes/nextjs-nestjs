@@ -11,43 +11,43 @@ export class Coupon {
   @Column({ length: 20 })
   type: string;
 
-  @Column({ name: 'discount_percentage', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({ name: 'discountPercentage', type: 'numeric', precision: 5, scale: 2, nullable: true })
   discountPercentage: number | null;
 
-  @Column({ name: 'discount_amount', type: 'numeric', precision: 10, scale: 2, nullable: true })
+  @Column({ name: 'discountAmount', type: 'numeric', precision: 10, scale: 2, nullable: true })
   discountAmount: number | null;
 
-  @Column({ name: 'target_id', type: 'uuid', nullable: true })
+  @Column({ name: 'targetId', type: 'uuid', nullable: true })
   targetId: string | null;
 
-  @Column({ name: 'min_purchase_amount', type: 'numeric', precision: 10, scale: 2, default: 0 })
+  @Column({ name: 'minPurchaseAmount', type: 'numeric', precision: 10, scale: 2, default: 0 })
   minPurchaseAmount: number;
 
-  @Column({ name: 'max_discount_amount', type: 'numeric', precision: 10, scale: 2, nullable: true })
+  @Column({ name: 'maxDiscountAmount', type: 'numeric', precision: 10, scale: 2, nullable: true })
   maxDiscountAmount: number | null;
 
-  @Column({ name: 'valid_from', type: 'timestamptz' })
+  @Column({ name: 'validFrom', type: 'timestamptz' })
   validFrom: Date;
 
-  @Column({ name: 'valid_until', type: 'timestamptz' })
+  @Column({ name: 'validUntil', type: 'timestamptz' })
   validUntil: Date;
 
-  @Column({ name: 'usage_limit', type: 'integer', nullable: true })
+  @Column({ name: 'usageLimit', type: 'integer', nullable: true })
   usageLimit: number | null;
 
-  @Column({ name: 'usage_count', default: 0 })
+  @Column({ name: 'usageCount', default: 0 })
   usageCount: number;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'isActive', default: true })
   isActive: boolean;
 
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }
 
@@ -56,18 +56,18 @@ export class CouponUsage {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'coupon_id' })
+  @Column({ name: 'couponId' })
   couponId: string;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'userId' })
   userId: string;
 
-  @Column({ name: 'order_id', type: 'uuid', nullable: true })
+  @Column({ name: 'orderId', type: 'uuid', nullable: true })
   orderId: string | null;
 
-  @Column({ name: 'discount_amount', type: 'numeric', precision: 10, scale: 2 })
+  @Column({ name: 'discountAmount', type: 'numeric', precision: 10, scale: 2 })
   discountAmount: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 }

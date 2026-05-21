@@ -1,3 +1,4 @@
+import { logger } from '@/shared/lib/logger';
 import { Category, CategoryType } from '../types';
 import { delay } from '@/lib/utils';
 
@@ -282,7 +283,7 @@ const loadState = (): Category[] => {
   try {
     return JSON.parse(saved);
   } catch (err) {
-    console.error('Failed to parse categories store, falling back to seed data:', err);
+    logger.error(`Failed to parse categories store, falling back to seed data:: {error}`, { error: String(err) });
     return SEED_CATEGORIES;
   }
 };

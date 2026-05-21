@@ -9,7 +9,7 @@ import { EventFiltersBar } from './EventFiltersBar';
 import { useEventsQuery } from '../hooks/use-events';
 import { Event } from '../types/events.types';
 import { useTranslations, useLocale, useFormatter } from 'next-intl';
-import { Loader2 } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 
 interface EventsCatalogProps {
   initialEvents: Event[];
@@ -142,7 +142,7 @@ export function EventsCatalog({ initialEvents }: EventsCatalogProps) {
   if (isPending && allEvents.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-stone-400">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500 mb-2" />
+        <AppIcon name="loading" size="lg" className="animate-spin text-primary-500 mb-2" />
         <span className="text-sm font-medium">{t('loading')}</span>
       </div>
     );
@@ -207,8 +207,8 @@ export function EventsCatalog({ initialEvents }: EventsCatalogProps) {
       {/* Dynamic Events Results Grid */}
       {displayedEvents.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-stone-900 rounded-[2.5rem] border border-earth-200/50 dark:border-stone-850 p-8 shadow-md max-w-md mx-auto">
-          <div className="w-16 h-16 bg-earth-50 dark:bg-stone-800 rounded-full flex items-center justify-center mx-auto mb-6 text-earth-500 dark:text-stone-400 text-2xl">
-            📍
+          <div className="w-16 h-16 bg-earth-50 dark:bg-stone-800 rounded-full flex items-center justify-center mx-auto mb-6 text-earth-500 dark:text-stone-400">
+            <AppIcon name="mapPin" size="lg" />
           </div>
           <h3 className="text-xl font-bold text-tertiary-900 dark:text-white mb-2 font-serif">{t('noEventsFound')}</h3>
           <p className="text-stone-500 dark:text-stone-400 text-sm mb-6 max-w-xs mx-auto">
@@ -297,7 +297,7 @@ export function EventsCatalog({ initialEvents }: EventsCatalogProps) {
                     {event.subtitle || event.description}
                   </p>
                   <p className="text-sm font-medium text-tertiary-500 dark:text-stone-500 mt-2 flex items-center gap-1.5">
-                    📍 {event.location}
+                    <AppIcon name="mapPin" size="xs" /> {event.location}
                   </p>
                 </div>
               </Link>

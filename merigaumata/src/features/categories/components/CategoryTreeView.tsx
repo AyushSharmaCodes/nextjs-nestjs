@@ -1,21 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  ChevronRight, 
-  ChevronDown, 
-  GripVertical, 
-  Edit3, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  Plus, 
-  CornerDownRight, 
-  ArrowUp, 
-  ArrowDown, 
-  FolderPlus,
-  Info
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Category, CategoryType } from '../types';
 import clsx from 'clsx';
 
@@ -160,13 +146,13 @@ export function CategoryTreeView({
                 className="flex items-center text-foreground/20"
                 style={{ marginLeft: '-18px', marginRight: '6px' }}
               >
-                <CornerDownRight className="h-4 w-4" />
+                <AppIcon name="cornerDownRight" className="h-4 w-4" />
               </div>
             )}
 
             {/* Tree Drag handle simulator */}
             <div className="p-1 cursor-grab text-foreground/30 hover:text-foreground/60 transition-colors">
-              <GripVertical className="h-4 w-4" />
+              <AppIcon name="gripVertical" className="h-4 w-4" />
             </div>
 
             {/* Expand / Collapse clicker */}
@@ -180,9 +166,9 @@ export function CategoryTreeView({
               disabled={!hasChildren}
             >
               {isExpanded ? (
-                <ChevronDown className="h-4 w-4 text-foreground/60" />
+                <AppIcon name="chevronDown" className="h-4 w-4 text-foreground/60" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-foreground/60" />
+                <AppIcon name="chevronRight" className="h-4 w-4 text-foreground/60" />
               )}
             </button>
 
@@ -245,23 +231,23 @@ export function CategoryTreeView({
               type="button"
               onClick={() => handleMoveSibling(node, 'up')}
               className={clsx(
-                "p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors",
+                "p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center",
                 index === 0 && "opacity-20 pointer-events-none"
               )}
               title="Move Up"
             >
-              <ArrowUp className="h-3.5 w-3.5" />
+              <AppIcon name="arrowUp" className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
               onClick={() => handleMoveSibling(node, 'down')}
               className={clsx(
-                "p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors",
+                "p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center",
                 index === totalSiblings - 1 && "opacity-20 pointer-events-none"
               )}
               title="Move Down"
             >
-              <ArrowDown className="h-3.5 w-3.5" />
+              <AppIcon name="arrowDown" className="h-3.5 w-3.5" />
             </button>
             
             {/* Indent (Nest) buttons */}
@@ -269,22 +255,22 @@ export function CategoryTreeView({
               type="button"
               onClick={() => handleIndent(node, 'nest', depth)}
               className={clsx(
-                "p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors",
+                "p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center",
                 (index === 0 || depth >= MAX_DEPTH) && "opacity-20 pointer-events-none"
               )}
               title={`Nest under previous sibling (Max depth: ${MAX_DEPTH})`}
             >
-              <CornerDownRight className="h-3.5 w-3.5" />
+              <AppIcon name="cornerDownRight" className="h-3.5 w-3.5" />
             </button>
 
             {node.parentId && (
               <button
                 type="button"
                 onClick={() => handleIndent(node, 'unnest', depth)}
-                className="p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors"
+                className="p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center"
                 title="Unnest (Move Out One Level)"
               >
-                <CornerDownRight className="h-3.5 w-3.5 rotate-180" />
+                <AppIcon name="cornerDownRight" className="h-3.5 w-3.5 rotate-180" />
               </button>
             )}
 
@@ -295,10 +281,10 @@ export function CategoryTreeView({
               <button
                 type="button"
                 onClick={() => onAddSub(node.id)}
-                className="p-1.5 text-foreground/45 hover:text-secondary-600 rounded-xl hover:bg-earth-100 transition-colors"
+                className="p-1.5 text-foreground/45 hover:text-secondary-600 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center"
                 title="Add Nest-Level Child"
               >
-                <FolderPlus className="h-3.5 w-3.5" />
+                <AppIcon name="folderPlus" className="h-3.5 w-3.5" />
               </button>
             )}
 
@@ -307,30 +293,30 @@ export function CategoryTreeView({
               type="button"
               onClick={() => onToggleActive(node.id, !node.isActive)}
               className={clsx(
-                "p-1.5 rounded-xl hover:bg-earth-100 transition-colors",
+                "p-1.5 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center",
                 node.isActive ? "text-secondary-600 hover:text-secondary-700" : "text-foreground/30 hover:text-foreground/50"
               )}
               title={node.isActive ? "Disable Category" : "Enable Category"}
             >
-              {node.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+              {node.isActive ? <AppIcon name="eye" className="h-3.5 w-3.5" /> : <AppIcon name="eyeOff" className="h-3.5 w-3.5" />}
             </button>
 
             {/* Edit and Delete */}
             <button
               type="button"
               onClick={() => onEdit(node.id)}
-              className="p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors"
+              className="p-1.5 text-foreground/45 hover:text-primary-500 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center"
               title="Edit Fields"
             >
-              <Edit3 className="h-3.5 w-3.5" />
+              <AppIcon name="edit" className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
               onClick={() => onDelete(node.id)}
-              className="p-1.5 text-foreground/45 hover:text-red-500 rounded-xl hover:bg-earth-100 transition-colors"
+              className="p-1.5 text-foreground/45 hover:text-red-500 rounded-xl hover:bg-earth-100 transition-colors flex items-center justify-center"
               title="Delete Category"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <AppIcon name="trash" className="h-3.5 w-3.5" />
             </button>
 
           </div>
@@ -354,7 +340,7 @@ export function CategoryTreeView({
       
       {/* Help header banner */}
       <div className="flex items-start gap-3 p-4 bg-earth-50 rounded-2xl border border-earth-200 mb-6">
-        <Info className="h-5 w-5 text-primary-500 mt-0.5 flex-shrink-0" />
+        <AppIcon name="info" className="h-5 w-5 text-primary-500 mt-0.5 flex-shrink-0" />
         <div className="text-xs text-foreground/60 leading-relaxed">
           <p className="font-semibold text-foreground mb-0.5">Hierarchy Controls</p>
           Drag handles denote visual ordering. Hover over any row to reveal context controls: 
@@ -371,7 +357,7 @@ export function CategoryTreeView({
         </div>
       ) : (
         <div className="text-center py-12 bg-earth-50 rounded-2xl border-2 border-dashed border-earth-200">
-          <FolderPlus className="h-10 w-10 text-foreground/20 mx-auto mb-3" />
+          <AppIcon name="folderPlus" className="h-10 w-10 text-foreground/20 mx-auto mb-3" />
           <h4 className="text-sm font-semibold text-foreground">No Categories Configured</h4>
           <p className="text-xs text-foreground/40 mt-1 max-w-sm mx-auto">
             Get started by adding your primary root-level {categoryType} category.

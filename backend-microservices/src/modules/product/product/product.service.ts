@@ -10,6 +10,10 @@ export class ProductService {
     return this.productRepo.findAll(query);
   }
 
+  async getFeaturedProducts(limit = 10) {
+    return this.productRepo.findFeatured(limit);
+  }
+
   async getProductById(id: string) {
     const product = await this.productRepo.findById(id);
     if (!product) {

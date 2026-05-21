@@ -2,18 +2,30 @@ import { NestFactory } from '@nestjs/core';
 import { INestApplication, Logger } from '@nestjs/common';
 import { Logger as PinoLogger } from 'nestjs-pino';
 import { ZodValidationPipe } from 'nestjs-zod';
-import helmet from 'helmet';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
+import { I18nService } from 'nestjs-i18n';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import fastifyHelmet from '@fastify/helmet';
+import fastifyCompress from '@fastify/compress';
+import fastifyCookie from '@fastify/cookie';
+import fastifyMultipart from '@fastify/multipart';
 import { AppModule } from './app.module';
 import { FriendlyErrorFilter } from './common/filters/friendly-error.filter';
+import { AppConfigService } from './infrastructure/config/app-config.service';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, {
-    bufferLogs: true,
-  });
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter({
+      logger: false, // NestJS Pino handles logging
+      trustProxy: true, // Enable trust proxy for load balancer compatibility
+    }),
+    {
+      bufferLogs: true,
+    },
+  );
 
   const logger = app.get(PinoLogger);
+  const cfg = app.get(AppConfigService);
 
   // ═══════════════════════════════════════
   // 1. Structured Logging (Pino)
@@ -28,26 +40,53 @@ async function bootstrap(): Promise<void> {
   // ═══════════════════════════════════════
   // 3. Security Middlewares
   // ═══════════════════════════════════════
-  app.use(helmet({
+  await app.register(fastifyHelmet, {
     contentSecurityPolicy: false,
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-  }));
+  });
 
   // ═══════════════════════════════════════
-  // 4. Compression & Cookie Parsing
+  // 4. Compression, Cookie Parsing & Multipart
   // ═══════════════════════════════════════
-  app.use(compression());
-  app.use(cookieParser());
+  await app.register(fastifyCompress);
+  await app.register(fastifyCookie, { secret: cfg.betterAuthSecret });
+  await app.register(fastifyMultipart);
 
   // ═══════════════════════════════════════
   // 5. CORS
   // ═══════════════════════════════════════
-  const origins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',')
-    : (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']);
   app.enableCors({
-    origin: origins,
+    origin: (origin: string, callback: (err: Error | null, allow: boolean) => void) => {
+      // Allow requests with no origin (like curl or direct server-to-server calls)
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+      
+      const allowedOrigins = cfg.allowedOrigins;
+
+      if (
+        allowedOrigins.indexOf(origin) !== -1 ||
+        cfg.isDevelopment
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'), false);
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Accept',
+      'Origin',
+      'X-Requested-With',
+      'x-better-auth-handshake',
+      'better-auth-agent',
+      'cookie',
+    ],
+    exposedHeaders: ['set-cookie'],
   });
 
   // ═══════════════════════════════════════
@@ -60,18 +99,21 @@ async function bootstrap(): Promise<void> {
   // ═══════════════════════════════════════
   // 7. Global Exception Filter
   // ═══════════════════════════════════════
-  app.useGlobalFilters(new FriendlyErrorFilter(logger));
+  // I18nService is retrieved from the app container so the filter can
+  // resolve translated error messages via Accept-Language header.
+  const i18n = app.get<I18nService>(I18nService);
+  app.useGlobalFilters(new FriendlyErrorFilter(logger, i18n));
 
   // ═══════════════════════════════════════
   // 8. Start HTTP Server
   // ═══════════════════════════════════════
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  const port = cfg.port;
+  await app.listen(port, '0.0.0.0');
 
   const appLogger = new Logger('Bootstrap');
   appLogger.log(`🚀 MeriGauMata API running on port ${port}`);
   appLogger.log(`📋 Health check: http://localhost:${port}/health`);
-  appLogger.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  appLogger.log(`🌍 Environment: ${cfg.nodeEnv}`);
 
   // ═══════════════════════════════════════
   // 9. Graceful Shutdown Handlers

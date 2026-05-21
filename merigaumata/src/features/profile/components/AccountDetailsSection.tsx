@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit2 } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 import { AccountDetails } from '../types/profile.types';
 
@@ -45,7 +45,7 @@ export function AccountDetailsSection({
             onClick={() => { setIsEditingAccount(true); setTempAccountDetails(accountDetails); }} 
             className="text-neutral-500 hover:text-foreground transition-colors flex items-center gap-1.5 text-sm font-medium focus:outline-none"
           >
-            <Edit2 className="w-3.5 h-3.5" /> Edit
+            <AppIcon name="edit2" size="xs" /> Edit
           </button>
         )}
       </div>

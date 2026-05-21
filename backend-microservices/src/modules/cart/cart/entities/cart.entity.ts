@@ -6,27 +6,27 @@ export class Cart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'user_id', type: 'uuid', nullable: true })
+  @Column({ name: 'userId', type: 'uuid', nullable: true })
   userId: string | null;
 
-  @Column({ name: 'session_id', type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'sessionId', type: 'varchar', length: 255, nullable: true })
   sessionId: string | null;
 
   @Column({ length: 20, default: 'ACTIVE' })
   status: string;
 
-  @Column({ name: 'expires_at', type: 'timestamptz', nullable: true })
+  @Column({ name: 'expiresAt', type: 'timestamptz', nullable: true })
   expiresAt: Date | null;
 
   @OneToMany(() => CartItem, (item) => item.cart, { cascade: true })
   items: CartItem[];
 
-  @Column({ name: 'applied_coupon_id', type: 'uuid', nullable: true })
+  @Column({ name: 'appliedCouponId', type: 'uuid', nullable: true })
   appliedCouponId: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { Clock } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { BlogPost } from '../types/blogs.types';
 
 interface BlogCardProps {
@@ -40,7 +40,7 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
             </p>
           )}
           <div className="flex items-center gap-2 text-white/50 text-[11px] font-bold uppercase tracking-widest mt-auto">
-            <Clock size={14} className="shrink-0" />
+            <AppIcon name="clock" size="xs" className="shrink-0" />
             <span>{date}</span>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
           </p>
         )}
         <div className="flex items-center gap-2 text-foreground/50 dark:text-neutral-500 text-[11px] font-bold uppercase tracking-widest mt-auto pt-1">
-          <Clock size={14} className="shrink-0" />
+          <AppIcon name="clock" size="xs" className="shrink-0" />
           <span>{date}</span>
         </div>
       </div>

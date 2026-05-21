@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><title>Your OTP Code</title></head>
+<body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f9fafb;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 0;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);">
+        <tr><td style="background:linear-gradient(135deg,#6366f1,#4f46e5);padding:32px 40px;text-align:center;">
+          <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:700;">Verification Code</h1>
+          <p style="margin:8px 0 0;color:rgba(255,255,255,.8);font-size:14px;">{{purpose}}</p>
+        </td></tr>
+        <tr><td style="padding:40px;text-align:center;">
+          <p style="color:#6b7280;line-height:1.7;margin:0 0 28px;text-align:left;">Use the following one-time passcode to complete your verification. This code is valid for a limited time.</p>
+          <div style="background:#f3f4f6;border-radius:12px;padding:28px;margin:0 0 28px;display:inline-block;width:100%;box-sizing:border-box;">
+            <span style="font-size:42px;font-weight:700;letter-spacing:10px;color:#6366f1;font-family:monospace;">{{otpCode}}</span>
+          </div>
+          <p style="color:#6b7280;font-size:13px;line-height:1.6;text-align:left;">⏰ Expires at: <strong>{{expiresAt}}</strong><br/>🔒 Never share this code with anyone. MeriGauMata will never ask for it.</p>
+          {{#if attemptCount}}<p style="color:#f59e0b;font-size:12px;margin-top:16px;">Attempt {{attemptCount}} — if you did not request this, please secure your account.</p>{{/if}}
+        </td></tr>
+        <tr><td style="background:#f9fafb;padding:20px 40px;text-align:center;border-top:1px solid #e5e7eb;">
+          <p style="margin:0;color:#9ca3af;font-size:12px;">© {{year}} MeriGauMata. All rights reserved.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

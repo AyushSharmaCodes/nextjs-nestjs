@@ -5,7 +5,8 @@
   "personalDetails": {
     "title": "Personal Details",
     "desc": "Update your personal information and how we can reach you.",
-    "fullName": "Full Name",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "gender": "Gender",
     "dateOfBirth": "Date of Birth",
     "nationality": "Nationality",

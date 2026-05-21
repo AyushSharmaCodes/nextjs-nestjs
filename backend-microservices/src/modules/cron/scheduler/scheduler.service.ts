@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { JobService } from '../jobs/job.service';
-import { JobType } from '../jobs/entities/job.entity';
+import { JobType, JobPriority } from '../jobs/entities/job.entity';
 
 @Injectable()
 export class SchedulerService {
@@ -47,7 +47,7 @@ export class SchedulerService {
             name: job.name,
             description: job.description || undefined,
             payload: job.payload,
-            priority: job.priority as any,
+            priority: job.priority as JobPriority,
             timeoutSeconds: job.timeoutSeconds || undefined,
             createdBy: 'system',
           });

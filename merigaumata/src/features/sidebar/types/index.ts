@@ -1,9 +1,9 @@
-import React from 'react';
+import { IconName } from '@/shared/icons';
 
 export interface SidebarRoute {
   id: string;
   labelKey: string; // References keys in the locales dictionary (e.g. "dashboard")
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: IconName;
   href?: string;
   badge?: {
     textKey: string; // Can be a direct string or lookup key

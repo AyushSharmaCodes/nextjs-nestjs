@@ -1,7 +1,7 @@
 'use client';
 
 import { Link, usePathname } from '@/i18n/navigation';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useSearchParams } from 'next/navigation';
 
 interface PaginationProps {
@@ -68,21 +68,21 @@ export function Pagination({ totalPages, currentPage, onPageChange }: Pagination
       <div className="flex items-center gap-2">
         {onPageChange ? (
           <button onClick={handlePrev} className={prevClass} disabled={currentPage === 1}>
-            <ArrowLeft className="w-5 h-5" />
+            <AppIcon name="arrowLeft" size="md" />
           </button>
         ) : (
           <Link href={createPageURL(currentPage - 1)} className={prevClass} aria-disabled={currentPage === 1}>
-            <ArrowLeft className="w-5 h-5" />
+            <AppIcon name="arrowLeft" size="md" />
           </Link>
         )}
         
         {onPageChange ? (
           <button onClick={handleNext} className={nextClass} disabled={currentPage === totalPages}>
-            <ArrowRight className="w-5 h-5" />
+            <AppIcon name="arrowRight" size="md" />
           </button>
         ) : (
           <Link href={createPageURL(currentPage + 1)} className={nextClass} aria-disabled={currentPage === totalPages}>
-            <ArrowRight className="w-5 h-5" />
+            <AppIcon name="arrowRight" size="md" />
           </Link>
         )}
       </div>

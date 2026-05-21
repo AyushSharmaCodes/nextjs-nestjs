@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { Pagination } from '@/shared/components/Pagination';
-import { ChevronLeft, ChevronRight, Bookmark, Facebook, Twitter, Linkedin } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { BlogPost } from '../types/blogs.types';
 import { useTranslations } from 'next-intl';
 import { useBlogs } from '../hooks/use-blogs';
@@ -122,14 +122,14 @@ export default function BlogsClient({ initialPosts = [] }: BlogsClientProps) {
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm cursor-pointer"
                 aria-label="Previous slide"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <AppIcon name="chevronLeft" className="w-6 h-6" />
               </button>
               <button 
                 onClick={nextSlide}
                 className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm cursor-pointer"
                 aria-label="Next slide"
               >
-                <ChevronRight className="w-6 h-6" />
+                <AppIcon name="chevronRight" className="w-6 h-6" />
               </button>
               
               {/* Dots */}
@@ -177,7 +177,7 @@ export default function BlogsClient({ initialPosts = [] }: BlogsClientProps) {
                         aria-label={isSaved ? 'Remove from saved' : 'Save for later'}
                         title={isSaved ? 'Remove from saved' : 'Save for later'}
                       >
-                        <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
+                        <AppIcon name="bookmark" className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
                       </button>
                     </div>
                     
@@ -209,13 +209,13 @@ export default function BlogsClient({ initialPosts = [] }: BlogsClientProps) {
                       
                       <div className="flex items-center gap-1">
                         <button onClick={(e) => handleShare(e, 'facebook', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#1877F2] transition-colors cursor-pointer" aria-label="Share on Facebook">
-                          <Facebook className="w-4 h-4" />
+                          <AppIcon name="facebook" size="xs" className="w-4 h-4" />
                         </button>
                         <button onClick={(e) => handleShare(e, 'twitter', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#1DA1F2] transition-colors cursor-pointer" aria-label="Share on Twitter">
-                          <Twitter className="w-4 h-4" />
+                          <AppIcon name="twitter" size="xs" className="w-4 h-4" />
                         </button>
                         <button onClick={(e) => handleShare(e, 'linkedin', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#0A66C2] transition-colors cursor-pointer" aria-label="Share on LinkedIn">
-                          <Linkedin className="w-4 h-4" />
+                          <AppIcon name="linkedin" size="xs" className="w-4 h-4" />
                         </button>
                       </div>
                     </div>

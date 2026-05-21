@@ -6,19 +6,19 @@ export class CronMigration1700000000012 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'cron_jobs',
+        name: 'cronJobs',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
           { name: 'name', type: 'varchar' },
-          { name: 'cron_expression', type: 'varchar' },
+          { name: 'cronExpression', type: 'varchar' },
           { name: 'handler', type: 'varchar' },
           { name: 'payload', type: 'jsonb', isNullable: true },
-          { name: 'is_active', type: 'boolean', default: true },
+          { name: 'isActive', type: 'boolean', default: true },
           { name: 'timezone', type: 'varchar', default: 'Asia/Kolkata' },
-          { name: 'last_run_at', type: 'timestamp', isNullable: true },
-          { name: 'next_run_at', type: 'timestamp', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'lastRunAt', type: 'timestamp', isNullable: true },
+          { name: 'nextRunAt', type: 'timestamp', isNullable: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -26,16 +26,16 @@ export class CronMigration1700000000012 implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: 'job_runs',
+        name: 'jobRuns',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'job_id', type: 'uuid' },
+          { name: 'jobId', type: 'uuid' },
           { name: 'status', type: 'varchar', default: 'RUNNING' },
-          { name: 'started_at', type: 'timestamp', default: 'now()' },
-          { name: 'completed_at', type: 'timestamp', isNullable: true },
-          { name: 'error_message', type: 'text', isNullable: true },
+          { name: 'startedAt', type: 'timestamp', default: 'now()' },
+          { name: 'completedAt', type: 'timestamp', isNullable: true },
+          { name: 'errorMessage', type: 'text', isNullable: true },
           { name: 'result', type: 'jsonb', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -43,7 +43,7 @@ export class CronMigration1700000000012 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('job_runs');
-    await queryRunner.dropTable('cron_jobs');
+    await queryRunner.dropTable('jobRuns');
+    await queryRunner.dropTable('cronJobs');
   }
 }

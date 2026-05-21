@@ -1,70 +1,76 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
+import { AppConfigService } from '../../../infrastructure/config/app-config.service';
+import { SuspiciousSessionService } from '../session/suspicious-session.service';
+import { GlobalSuspiciousSessionDispatcher } from '../../../infrastructure/events/global-suspicious-session-dispatcher';
 import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class BootstrapService implements OnModuleInit {
   private readonly logger = new Logger(BootstrapService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly appConfig: AppConfigService,
+    private readonly suspiciousSessionService: SuspiciousSessionService,
+  ) {}
 
   async onModuleInit() {
-    await this.bootstrapRoles();
+    // Wire SuspiciousSessionService into the Better Auth hooks bridge
+    GlobalSuspiciousSessionDispatcher.setService(this.suspiciousSessionService);
     await this.bootstrapAdmin();
   }
 
-  private async bootstrapRoles() {
-    const roles = ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER'];
-    
-    for (const roleName of roles) {
-      const exists = await this.prisma.role.findUnique({ where: { name: roleName } });
-      if (!exists) {
-        await this.prisma.role.create({
-          data: {
-            name: roleName,
-            description: `System defined ${roleName} role`,
-            isSystem: true,
-          },
-        });
-        this.logger.log(`Created system role: ${roleName}`);
-      }
-    }
-  }
 
   private async bootstrapAdmin() {
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@merigaumata.com';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'ChangeMe123!';
+    const adminEmail = this.appConfig.adminEmail;
+    const adminPassword = this.appConfig.adminPassword;
 
-    const existingAdmin = await this.prisma.user.findUnique({
+    // Warn if the password looks like a known weak default value
+    if (adminPassword === 'admin123' || adminPassword === 'ChangeMe123!') {
+      this.logger.warn(
+        '⚠️  [Security] ADMIN_PASSWORD is using a known weak default. ' +
+        'Set a strong ADMIN_PASSWORD in your environment variables before deploying to production.',
+      );
+    }
+
+    let admin = await this.prisma.user.findUnique({
       where: { email: adminEmail },
     });
 
-    if (!existingAdmin) {
-      const passwordHash = await bcryptjs.hash(adminPassword, 12);
-      
-      const admin = await this.prisma.user.create({
+    if (!admin) {
+      admin = await this.prisma.user.create({
         data: {
           email: adminEmail,
-          passwordHash,
-          emailVerified: true,
-          requiresPasswordChange: true, // Force password change on first login
+          firstName: 'Admin',
+          lastName: 'User',
+          emailVerified: false,
+          role: 'ADMIN',
         },
       });
+      this.logger.log(`Created initial admin user record: ${adminEmail}`);
+    }
 
-      const superAdminRole = await this.prisma.role.findUnique({
-        where: { name: 'SUPER_ADMIN' },
+
+    // Bootstrap the password account if it doesn't exist
+    const existingAccount = await this.prisma.account.findFirst({
+      where: {
+        userId: admin.id,
+        providerId: 'credential',
+      },
+    });
+
+    if (!existingAccount) {
+      const passwordHash = await bcryptjs.hash(adminPassword, 12);
+      await this.prisma.account.create({
+        data: {
+          userId: admin.id,
+          accountId: admin.id,
+          providerId: 'credential',
+          password: passwordHash,
+        },
       });
-
-      if (superAdminRole) {
-        await this.prisma.userRole.create({
-          data: {
-            userId: admin.id,
-            roleId: superAdminRole.id,
-          },
-        });
-      }
-
-      this.logger.log(`Bootstrapped initial SUPER_ADMIN account: ${adminEmail}`);
+      this.logger.log(`Bootstrapped password account for admin user: ${adminEmail}`);
     }
   }
 }

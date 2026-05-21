@@ -1,4 +1,13 @@
 import { SetMetadata } from '@nestjs/common';
-import { IS_PUBLIC_KEY } from '../guards/jwt-auth.guard';
 
+export const IS_PUBLIC_KEY = 'isPublic';
+
+/**
+ * Bypasses Global Authentication for this route.
+ */
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+
+/**
+ * Legacy compatibility decorator for public routes.
+ */
 export const PublicRoute = () => SetMetadata(IS_PUBLIC_KEY, true);

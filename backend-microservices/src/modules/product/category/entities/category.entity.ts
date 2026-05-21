@@ -8,7 +8,7 @@ export class Category {
   @Column({ length: 100 })
   name: string;
 
-  @Column({ name: 'name_i18n', type: 'jsonb', default: {} })
+  @Column({ name: 'nameI18n', type: 'jsonb', default: {} })
   nameI18n: Record<string, string>;
 
   @Column({ length: 150, unique: true })
@@ -17,17 +17,17 @@ export class Category {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ name: 'description_i18n', type: 'jsonb', default: {} })
+  @Column({ name: 'descriptionI18n', type: 'jsonb', default: {} })
   descriptionI18n: Record<string, string>;
 
-  @Column({ name: 'image_url', type: 'text', nullable: true })
+  @Column({ name: 'imageUrl', type: 'text', nullable: true })
   imageUrl: string | null;
 
-  @Column({ name: 'parent_id', nullable: true })
+  @Column({ name: 'parentId', nullable: true })
   parentId: string | null;
 
   @ManyToOne(() => Category, (category) => category.children, { nullable: true })
-  @JoinColumn({ name: 'parent_id' })
+  @JoinColumn({ name: 'parentId' })
   parent: Category;
 
   @OneToMany(() => Category, (category) => category.parent)
@@ -36,15 +36,15 @@ export class Category {
   @Column({ length: 20 })
   type: string;
 
-  @Column({ name: 'display_order', default: 0 })
+  @Column({ name: 'displayOrder', default: 0 })
   displayOrder: number;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'isActive', default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

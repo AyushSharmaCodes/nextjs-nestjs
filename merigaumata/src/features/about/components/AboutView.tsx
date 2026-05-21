@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { CheckCircle2, ChevronRight, Star } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { getTranslations } from 'next-intl/server';
 import { CowStat, TimelineItem, TeamMember, Testimonial } from '../types/about.types';
 
@@ -128,7 +128,7 @@ export async function AboutView({
             <ul className="space-y-4">
               {[0, 1, 2, 3].map((idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary-500 shrink-0" />
+                  <AppIcon name="checkCircle2" className="w-6 h-6 text-primary-500 shrink-0" />
                   <span className="text-neutral-700 dark:text-neutral-300 font-medium">{t(`mission.items.${idx}`)}</span>
                 </li>
               ))}
@@ -146,7 +146,7 @@ export async function AboutView({
             <ul className="space-y-4">
               {[0, 1, 2, 3].map((idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary-500 shrink-0" />
+                  <AppIcon name="checkCircle2" className="w-6 h-6 text-primary-500 shrink-0" />
                   <span className="text-neutral-700 dark:text-neutral-300 font-medium">{t(`vision.items.${idx}`)}</span>
                 </li>
               ))}
@@ -287,7 +287,7 @@ export async function AboutView({
                   </div>
                   <div className="ml-auto flex shrink-0">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                      <AppIcon key={i} name="star" className="w-4 h-4 text-primary-500 fill-primary-500" />
                     ))}
                   </div>
                 </div>
@@ -314,7 +314,7 @@ export async function AboutView({
                   </div>
                   <div className="ml-auto flex shrink-0">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-primary-500 fill-primary-500" />
+                      <AppIcon key={i} name="star" className="w-4 h-4 text-primary-500 fill-primary-500" />
                     ))}
                   </div>
                 </div>
@@ -373,7 +373,7 @@ export async function AboutView({
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
               <button className="w-full sm:w-auto px-8 py-4 bg-white text-tertiary-700 hover:bg-neutral-50 hover:text-tertiary-900 rounded-full font-bold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group">
                 {t('join.donateNow')}
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <AppIcon name="chevronRight" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
               <button className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-white text-white hover:bg-white/10 rounded-full font-bold transition-all flex items-center justify-center">
                 {t('join.volunteer')}

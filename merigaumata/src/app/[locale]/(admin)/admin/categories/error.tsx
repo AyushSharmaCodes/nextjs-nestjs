@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/shared/lib/logger';
 import React, { useEffect } from 'react';
 import { AlertTriangle, RotateCcw, Home } from 'lucide-react';
 import { useRouter } from '@/i18n/navigation';
@@ -17,7 +18,7 @@ export default function CategoriesErrorBoundary({
 
   useEffect(() => {
     // Log exception to logging services
-    console.error('Categories boundary exception:', error);
+    logger.error(`Categories boundary exception:: {error}`, { error: String(error) });
   }, [error]);
 
   return (

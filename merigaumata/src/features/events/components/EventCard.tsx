@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { MapPin, Clock } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Event } from '../types/events.types';
 import { format } from 'date-fns';
 
@@ -77,12 +77,12 @@ export default function EventCard({ event }: EventCardProps) {
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-foreground/70 dark:text-neutral-300 border-t border-earth-200 dark:border-neutral-800 pt-4 mt-auto">
           {startTime && (
             <div className="flex items-center gap-2">
-              <Clock size={16} className="text-[#3B543D] dark:text-[#4A6B4C] shrink-0" />
+              <AppIcon name="clock" size="sm" className="text-[#3B543D] dark:text-[#4A6B4C] shrink-0" />
               <span className="text-sm font-medium">{startTime}</span>
             </div>
           )}
           <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-[#3B543D] dark:text-[#4A6B4C] shrink-0" />
+            <AppIcon name="mapPin" size="sm" className="text-[#3B543D] dark:text-[#4A6B4C] shrink-0" />
             <span className="text-sm font-medium">{location}</span>
           </div>
         </div>

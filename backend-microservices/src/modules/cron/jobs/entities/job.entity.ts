@@ -31,11 +31,11 @@ export enum JobType {
 }
 
 @Index(['status', 'scheduledAt'])
-@Entity('cron_jobs')
+@Entity({ name: 'cronJobs', schema: 'cron' })
 export class CronJob {
   @PrimaryGeneratedColumn('uuid') id: string;
 
-  @Column({ unique: true }) jobId: string;
+  @Column({ name: 'jobId', unique: true }) jobId: string;
 
   @Column({ type: 'enum', enum: JobType }) type: JobType;
 
@@ -53,43 +53,43 @@ export class CronJob {
 
   @Column({ type: 'text', nullable: true }) error: string | null;
 
-  @Column({ name: 'scheduled_at', type: 'timestamptz', nullable: true }) scheduledAt: Date | null;
+  @Column({ name: 'scheduledAt', type: 'timestamptz', nullable: true }) scheduledAt: Date | null;
 
-  @Column({ name: 'started_at', type: 'timestamptz', nullable: true }) startedAt: Date | null;
+  @Column({ name: 'startedAt', type: 'timestamptz', nullable: true }) startedAt: Date | null;
 
-  @Column({ name: 'completed_at', type: 'timestamptz', nullable: true }) completedAt: Date | null;
+  @Column({ name: 'completedAt', type: 'timestamptz', nullable: true }) completedAt: Date | null;
 
-  @Column({ name: 'retry_count', default: 0 }) retryCount: number;
+  @Column({ name: 'retryCount', default: 0 }) retryCount: number;
 
-  @Column({ name: 'max_retries', default: 3 }) maxRetries: number;
+  @Column({ name: 'maxRetries', default: 3 }) maxRetries: number;
 
-  @Column({ name: 'timeout_seconds', type: 'integer', nullable: true }) timeoutSeconds: number | null;
+  @Column({ name: 'timeoutSeconds', type: 'integer', nullable: true }) timeoutSeconds: number | null;
 
-  @Column({ name: 'cron_expression', type: 'varchar', nullable: true }) cronExpression: string | null;
+  @Column({ name: 'cronExpression', type: 'varchar', nullable: true }) cronExpression: string | null;
 
-  @Column({ name: 'is_recurring', default: false }) isRecurring: boolean;
+  @Column({ name: 'isRecurring', default: false }) isRecurring: boolean;
 
-  @Column({ name: 'created_by', type: 'uuid', nullable: true }) createdBy: string | null;
+  @Column({ name: 'createdBy', type: 'uuid', nullable: true }) createdBy: string | null;
 
-  @Column({ name: 'last_run_at', type: 'timestamptz', nullable: true }) lastRunAt: Date | null;
+  @Column({ name: 'lastRunAt', type: 'timestamptz', nullable: true }) lastRunAt: Date | null;
 
-  @Column({ name: 'next_run_at', type: 'timestamptz', nullable: true }) nextRunAt: Date | null;
+  @Column({ name: 'nextRunAt', type: 'timestamptz', nullable: true }) nextRunAt: Date | null;
 
-  @Column({ name: 'is_active', default: true }) isActive: boolean;
+  @Column({ name: 'isActive', default: true }) isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt: Date;
+  @UpdateDateColumn({ name: 'updatedAt' }) updatedAt: Date;
 }
 
 @Index(['status', 'createdAt'])
-@Entity('job_runs')
+@Entity({ name: 'jobRuns', schema: 'cron' })
 export class JobRun {
   @PrimaryGeneratedColumn('uuid') id: string;
 
-  @Column({ name: 'job_id' }) jobId: string;
+  @Column({ name: 'jobId' }) jobId: string;
 
-  @Column({ name: 'cron_job_id', type: 'uuid', nullable: true }) cronJobId: string | null;
+  @Column({ name: 'cronJobId', type: 'uuid', nullable: true }) cronJobId: string | null;
 
   @Column({ type: 'enum', enum: JobStatus, default: JobStatus.PENDING }) status: JobStatus;
 
@@ -99,11 +99,11 @@ export class JobRun {
 
   @Column({ type: 'text', nullable: true }) error: string | null;
 
-  @Column({ name: 'started_at', type: 'timestamptz', nullable: true }) startedAt: Date | null;
+  @Column({ name: 'startedAt', type: 'timestamptz', nullable: true }) startedAt: Date | null;
 
-  @Column({ name: 'completed_at', type: 'timestamptz', nullable: true }) completedAt: Date | null;
+  @Column({ name: 'completedAt', type: 'timestamptz', nullable: true }) completedAt: Date | null;
 
-  @Column({ name: 'retry_count', default: 0 }) retryCount: number;
+  @Column({ name: 'retryCount', default: 0 }) retryCount: number;
 
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }

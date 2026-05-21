@@ -1,169 +1,322 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["app_auth"]
 }
 
 model User {
-  id                         String    @id @default(uuid())
-  email                      String    @unique
-  passwordHash               String?   @map("password_hash")
-  emailVerified              Boolean   @default(false) @map("email_verified")
-  emailVerificationToken     String?   @map("email_verification_token")
-  emailVerificationExpiresAt DateTime? @map("email_verification_expires_at")
+  id               String   @id @default(uuid())
+  firstName        String?
+  lastName         String?
+  email            String   @unique
+  emailVerified    Boolean  @default(false)
+  twoFactorEnabled Boolean  @default(false)
+  image            String?
+  role             String   @default("CUSTOMER")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  isBlocked        Boolean   @default(false) @map("is_blocked")
-  isDeleted        Boolean   @default(false) @map("is_deleted")
-  deletionStatus   String?   @map("deletion_status")
-  authProvider     String    @default("local") @map("auth_provider")
-  lastLoginAt      DateTime? @map("last_login_at")
-  loginCount       Int       @default(0) @map("login_count")
-  
-  requiresPasswordChange Boolean @default(false) @map("requires_password_change")
+  sessions        Session[]
+  accounts        Account[]
+  securityEvents  SecurityEvent[]   @relation("UserSecurityEvents")
+  otpEmailHistory OTPEmailHistory[] @relation("UserOtpHistory")
+  twoFactor       TwoFactor?
+  deviceSessions  DeviceSession[]   @relation("UserDeviceSessions")
+  roleRelation    Role              @relation(fields: [role], references: [name], onDelete: Restrict)
 
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  @@index([role])
+  @@map("user")
+  @@schema("app_auth")
+}
 
-  roles         UserRole[]
-  sessions      Session[]
-  otpChallenges OTPChallenge[]
-  auditLogs     AuditLog[]     @relation("ActorLogs")
+model Session {
+  id                String   @id @default(uuid())
+  expiresAt         DateTime
+  token             String   @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  ipAddress         String?
+  userAgent         String?
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  twoFactorVerified Boolean?
 
-  @@map("users")
+  @@index([userId])
+  @@map("session")
+  @@schema("app_auth")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("account")
+  @@schema("app_auth")
+}
+
+model Verification {
+  id         String    @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@unique([identifier, value])
+  @@map("verification")
+  @@schema("app_auth")
+}
+
+model TwoFactor {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  secret      String
+  backupCodes String[]
+  verified    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("two_factors")
+  @@schema("app_auth")
 }
 
 model Role {
   id          String   @id @default(uuid())
-  name        String   @unique // SUPER_ADMIN, ADMIN, MANAGER, STAFF, CUSTOMER
+  name        String   @unique
   description String?
-  isSystem    Boolean  @default(false) @map("is_system") // Cannot be deleted
-  
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 
-  users       UserRole[]
   permissions RolePermission[]
+  users       User[]
 
   @@map("roles")
+  @@schema("app_auth")
 }
 
 model Permission {
   id          String   @id @default(uuid())
-  action      String   // e.g., create, read, update, delete
-  resource    String   // e.g., products, orders, users
+  action      String
+  resource    String
   description String?
-  
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  roles       RolePermission[]
+  rolePermissions RolePermission[]
 
   @@unique([action, resource])
   @@map("permissions")
-}
-
-model UserRole {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  roleId    String   @map("role_id")
-  
-  createdAt DateTime @default(now()) @map("created_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, roleId])
-  @@map("user_roles")
+  @@schema("app_auth")
 }
 
 model RolePermission {
-  id           String   @id @default(uuid())
-  roleId       String   @map("role_id")
-  permissionId String   @map("permission_id")
-  
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  id           String     @id @default(uuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime   @default(now())
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, permissionId])
   @@map("role_permissions")
-}
-
-model Session {
-  id               String   @id @default(uuid())
-  userId           String   @map("user_id")
-  refreshTokenHash String   @map("refresh_token_hash")
-  ipAddress        String?  @map("ip_address")
-  userAgent        String?  @map("user_agent")
-  expiresAt        DateTime @map("expires_at")
-  isRevoked        Boolean  @default(false) @map("is_revoked")
-  
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([refreshTokenHash, isRevoked], map: "sessions_refresh_token_hash_is_revoked_idx")
-  @@index([userId, isRevoked], map: "sessions_user_id_is_revoked_idx")
-  @@map("sessions")
-}
-
-model OTPChallenge {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  otpHash   String   @map("otp_hash")
-  type      String   // EMAIL_VERIFICATION, LOGIN
-  expiresAt DateTime @map("expires_at")
-  attempts  Int      @default(0)
-  isVerified Boolean @default(false) @map("is_verified")
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, type, isVerified, createdAt], map: "otp_challenges_lookup_idx")
-  @@index([expiresAt], map: "otp_challenges_expires_at_idx")
-  @@map("otp_challenges")
-}
-
-model AuditLog {
-  id        String   @id @default(uuid())
-  actorId   String?  @map("actor_id") // Nullable if system action
-  action    String
-  resource  String
-  ipAddress String?  @map("ip_address")
-  status    String   // SUCCESS, FAILURE
-  metadata  Json?
-  
-  createdAt DateTime @default(now()) @map("created_at")
-
-  actor User? @relation("ActorLogs", fields: [actorId], references: [id], onDelete: SetNull)
-
-  @@map("audit_logs")
+  @@schema("app_auth")
 }
 
 model SecurityEvent {
   id            String   @id @default(uuid())
-  userId        String?  @map("user_id")
-  email         String?  
-  eventType     String   @map("event_type")
+  userId        String?
+  email         String?
+  eventType     String
   status        String
-  ipAddress     String?  @map("ip_address")
-  userAgent     String?  @map("user_agent")
-  correlationId String?  @map("correlation_id")
+  ipAddress     String?
+  userAgent     String?
+  correlationId String?
   metadata      Json?
+  createdAt     DateTime @default(now())
+  user          User?    @relation("UserSecurityEvents", fields: [userId], references: [id], onDelete: SetNull)
 
-  createdAt     DateTime @default(now()) @map("created_at")
-
-  @@index([eventType, createdAt], map: "security_events_event_type_created_at_idx")
-  @@index([userId, createdAt], map: "security_events_user_id_created_at_idx")
+  @@index([eventType, createdAt])
+  @@index([userId, createdAt])
   @@map("security_events")
+  @@schema("app_auth")
+}
+
+model OTPEmailHistory {
+  id        String   @id @default(uuid())
+  userId    String?
+  email     String
+  subject   String
+  body      String
+  status    String
+  createdAt DateTime @default(now())
+  user      User?    @relation("UserOtpHistory", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("otp_email_history")
+  @@schema("app_auth")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Communication module: Email Audit
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * EmailAudit records every email send attempt with full lifecycle tracking.
+ * - eventId is the idempotency key (UUID v4 from the auth event payload).
+ * Unique constraint prevents double-processing of replayed events.
+ * - status flows: PENDING → SENT | FAILED | SKIPPED
+ * - requestId links the audit record back to the originating HTTP request
+ * for distributed tracing.
+ */
+model EmailAudit {
+  id                String      @id @default(uuid())
+  eventId           String      @unique // idempotency key — UUID v4 from event payload
+  eventName         String // AUTH_EVENTS constant string
+  userId            String
+  toEmail           String
+  status            EmailStatus
+  providerMessageId String? // Resend ID / SES MessageId / null on FAILED
+  failReason        String? // populated on FAILED status
+  requestId         String // trace ID from originating HTTP request
+  sentAt            DateTime?
+  failedAt          DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([eventName, createdAt])
+  @@map("email_audit")
+  @@schema("app_auth")
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+
+  @@schema("app_auth")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth module: Suspicious Session Detection
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * DeviceSession is a WRITE-ONCE security audit record per sign-in.
+ * Architecture: This is NOT a session store. It does NOT participate
+ * in auth validation. The JWT signature is the only thing verified per request.
+ * - betterAuthSessionId: FK to Better Auth's session.id (for BA revocation)
+ * - sessionId: = BA session.token (= JWT sessionId claim), used as correlation ID
+ * - Written once at sign-in. Never updated (isActive/liveness = owned by BA)
+ * - queried at the NEXT sign-in to compare history for anomaly detection
+ */
+model DeviceSession {
+  id                  String           @id @default(uuid())
+  userId              String
+  betterAuthSessionId String           @unique // BA session.id (for revocation calls)
+  sessionId           String           @unique // BA session.token = JWT sessionId claim
+  ipAddress           String
+  city                String?
+  region              String?
+  country             String // ISO 3166-1 alpha-2 (or 'XX' for unknown)
+  latitude            Float?
+  longitude           Float?
+  isp                 String?
+  deviceType          DeviceType
+  os                  String
+  osVersion           String
+  browser             String
+  browserVersion      String
+  fingerprint         String // SHA-256(ua + os + osVersion + browser)
+  isTrusted           Boolean          @default(false)
+  trustGrantedAt      DateTime?
+  riskLevel           SessionRiskLevel
+  suspicionReasons    String[]
+  createdAt           DateTime         @default(now()) // = sign-in time
+  updatedAt           DateTime         @updatedAt
+
+  user User @relation("UserDeviceSessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, fingerprint])
+  @@index([userId, ipAddress])
+  @@map("device_sessions")
+  @@schema("app_auth")
+}
+
+/**
+ * SuspiciousSessionAudit records every flagged session with full context
+ * for compliance review, user self-service, and admin tooling.
+ * - eventId is the idempotency key matching the emitted auth event.
+ * - resolvedAt/resolvedBy/resolution track the lifecycle of a flag.
+ */
+model SuspiciousSessionAudit {
+  id               String           @id @default(uuid())
+  deviceSessionId  String
+  userId           String
+  eventId          String           @unique // idempotency — matches auth event
+  riskLevel        SessionRiskLevel
+  suspicionReasons String[]
+  ipAddress        String
+  country          String
+  fingerprint      String
+  resolvedAt       DateTime?
+  resolvedBy       String? // 'user' | 'admin' | 'system'
+  resolution       AuditResolution?
+  emailSentAt      DateTime?
+  requestId        String
+  createdAt        DateTime         @default(now())
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([deviceSessionId])
+  @@map("suspicious_session_audits")
+  @@schema("app_auth")
+}
+
+enum DeviceType {
+  DESKTOP
+  MOBILE
+  TABLET
+  BOT
+  UNKNOWN
+
+  @@schema("app_auth")
+}
+
+enum SessionRiskLevel {
+  NORMAL
+  SUSPICIOUS
+  HIGH_RISK
+
+  @@schema("app_auth")
+}
+
+enum AuditResolution {
+  CONFIRMED_BY_USER // user clicked "This was me"
+  REVOKED_BY_USER // user clicked "This wasn't me"
+  AUTO_REVOKED // system revoked on HIGH_RISK
+  EXPIRED // audit record aged out
+
+  @@schema("app_auth")
 }

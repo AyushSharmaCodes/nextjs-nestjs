@@ -1,258 +1,132 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '../../infrastructure/database/prisma/prisma.service';
-import { JwtService } from '@nestjs/jwt';
-import { OtpService } from './otp/otp.service';
-import { RegisterDto, LoginDto, VerifyOtpDto } from './dto/auth.dto';
-import * as bcryptjs from 'bcryptjs';
-import * as crypto from 'crypto';
-import { ConfigService } from '@nestjs/config';
-import { ErrorCode, getErrorResponse } from '../../common/constants/error-codes';
+/**
+ * @file auth.service.ts
+ *
+ * Orchestration-only service for the auth domain.
+ *
+ * Rules:
+ *  1. No Prisma calls here — all DB access goes through AuthRepository.
+ *  2. No raw Better Auth errors escape this layer — all are caught and
+ *     re-thrown as typed AuthException subclasses.
+ *  3. Returns typed DTOs only.
+ *  4. Business logic lives here, not in the controller or repository.
+ */
+
+import { Injectable, Logger } from '@nestjs/common';
+import { AuthRepository } from './auth.repository';
+import { UserResponseDto } from './dto/response/user.response.dto';
+import { AuthResponseDto } from './dto/response/auth.response.dto';
+import { toUserId, toSessionId, isUserRole } from './types/auth.types';
+import type { UserId } from './types/auth.types';
+import {
+  TokenInvalidException,
+  DbWriteFailedException,
+} from './exceptions/auth.exceptions';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService,
-    private otpService: OtpService,
-    private configService: ConfigService,
-  ) {}
+  private readonly logger = new Logger(AuthService.name);
 
-  private async logSecurityEvent(params: {
-    userId?: string;
-    email?: string;
-    eventType: string;
-    status: 'SUCCESS' | 'FAILURE';
-    ipAddress?: string;
-    userAgent?: string;
-    metadata?: Record<string, string | number | boolean>;
-  }) {
-    await this.prisma.securityEvent.create({
-      data: {
-        userId: params.userId,
-        email: params.email,
-        eventType: params.eventType,
-        status: params.status,
-        ipAddress: params.ipAddress,
-        userAgent: params.userAgent,
-        metadata: params.metadata,
-      },
+  constructor(private readonly authRepository: AuthRepository) {}
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Session / Profile
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Get the currently authenticated user's profile.
+   * Called by `GET /api/auth/me` after BetterAuthGuard has validated the session.
+   */
+  async getCurrentUser(userId: UserId): Promise<UserResponseDto> {
+    return this.authRepository.findUserById(userId);
+  }
+
+  /**
+   * Get the full auth context (user + session) for the /me response.
+   * Joins user + latest session via the repository.
+   */
+  async getAuthContext(userId: UserId): Promise<AuthResponseDto> {
+    return this.authRepository.getUserWithActiveSession(userId);
+  }
+
+  /**
+   * Build an AuthResponseDto directly from the BetterAuth guard's session data.
+   * Avoids an extra DB round-trip when the guard already fetched the session.
+   *
+   * Trade-off: Trusts the guard cache rather than DB — acceptable for /me
+   * but NOT for sensitive security operations (prefer getAuthContext() there).
+   *
+   * @param rawSession - The raw session object from BetterAuthGuard (request.session + request.user)
+   */
+  buildAuthResponseFromRawSession(params: {
+    userId: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    image: string | null;
+    role: string;
+    emailVerified: boolean;
+    twoFactorEnabled: boolean;
+    sessionId: string;
+    tokenExpiresAt: Date | string;
+    twoFactorVerified: boolean;
+    createdAt: string;
+  }): AuthResponseDto {
+    const upperRole = params.role.toUpperCase();
+    // isUserRole is a type-guard → narrow explicitly so TS is satisfied
+    const resolvedRole = isUserRole(upperRole) ? upperRole : ('CUSTOMER' as const);
+
+    const expiresAt = params.tokenExpiresAt instanceof Date
+      ? params.tokenExpiresAt.toISOString()
+      : params.tokenExpiresAt;
+
+    return new AuthResponseDto({
+      userId: toUserId(params.userId),
+      email: params.email,
+      firstName: params.firstName,
+      lastName: params.lastName,
+      image: params.image,
+      role: resolvedRole,
+      emailVerified: params.emailVerified,
+      twoFactorEnabled: params.twoFactorEnabled,
+      sessionId: toSessionId(params.sessionId),
+      tokenExpiresAt: expiresAt,
+      twoFactorVerified: params.twoFactorVerified,
+      createdAt: params.createdAt,
     });
   }
 
-  async register(dto: RegisterDto) {
-    const existing = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
+  // ─────────────────────────────────────────────────────────────────────────
+  // Session management
+  // ─────────────────────────────────────────────────────────────────────────
 
-    if (existing) {
-      throw new BadRequestException(getErrorResponse(ErrorCode.AUTH_EMAIL_EXISTS));
+  /**
+   * Revoke the current session (sign-out).
+   * Clears the session from DB — the client must clear its cookies.
+   */
+  async revokeSession(sessionToken: string): Promise<void> {
+    try {
+      await this.authRepository.revokeSessionByToken(sessionToken);
+    } catch (err) {
+      if (err instanceof DbWriteFailedException) throw err;
+      this.logger.error({ err }, 'revokeSession failed');
+      throw new DbWriteFailedException();
     }
-
-    const passwordHash = await bcryptjs.hash(dto.password, 12);
-
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        passwordHash,
-      },
-    });
-
-    // Automatically send verification OTP
-    await this.otpService.createChallenge(user.id, user.email, 'EMAIL_VERIFICATION');
-
-    await this.logSecurityEvent({
-      userId: user.id,
-      email: user.email,
-      eventType: 'AUTH_REGISTER',
-      status: 'SUCCESS',
-    });
-
-    return {
-      message: 'Registration successful. Please check your email for the OTP.',
-      userId: user.id,
-    };
   }
 
-  async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
-
-    if (!user || !user.passwordHash) {
-      await this.logSecurityEvent({
-        email: dto.email,
-        eventType: 'AUTH_LOGIN',
-        status: 'FAILURE',
-        metadata: { reason: 'INVALID_CREDENTIALS' },
-      });
-      throw new UnauthorizedException(getErrorResponse(ErrorCode.AUTH_INVALID_CREDENTIALS));
+  /**
+   * Revoke all sessions except the current one.
+   * Called after password change or 2FA toggle.
+   */
+  async revokeOtherSessions(
+    userId: UserId,
+    currentToken: string,
+  ): Promise<void> {
+    try {
+      await this.authRepository.revokeOtherSessions(userId, currentToken);
+    } catch (err) {
+      if (err instanceof DbWriteFailedException) throw err;
+      this.logger.error({ err, userId }, 'revokeOtherSessions failed');
+      throw new DbWriteFailedException();
     }
-
-    const isMatch = await bcryptjs.compare(dto.password, user.passwordHash);
-    if (!isMatch) {
-      await this.logSecurityEvent({
-        userId: user.id,
-        email: user.email,
-        eventType: 'AUTH_LOGIN',
-        status: 'FAILURE',
-        metadata: { reason: 'INVALID_CREDENTIALS' },
-      });
-      throw new UnauthorizedException(getErrorResponse(ErrorCode.AUTH_INVALID_CREDENTIALS));
-    }
-
-    if (!user.emailVerified) {
-      await this.otpService.createChallenge(user.id, user.email, 'EMAIL_VERIFICATION');
-      throw new UnauthorizedException(getErrorResponse(ErrorCode.AUTH_EMAIL_NOT_VERIFIED));
-    }
-
-    // Trigger OTP challenge for login
-    await this.otpService.createChallenge(user.id, user.email, 'LOGIN');
-
-    await this.logSecurityEvent({
-      userId: user.id,
-      email: user.email,
-      eventType: 'AUTH_LOGIN_OTP_CHALLENGE',
-      status: 'SUCCESS',
-    });
-
-    return {
-      message: 'Credentials valid. Please enter the OTP sent to your email.',
-      requiresOtp: true,
-      userId: user.id,
-    };
-  }
-
-  async verifyOtp(dto: VerifyOtpDto, type: 'EMAIL_VERIFICATION' | 'LOGIN', userAgent?: string, ipAddress?: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException(getErrorResponse(ErrorCode.UNAUTHORIZED, 'Invalid user'));
-    }
-
-    await this.otpService.verifyChallenge(user.id, dto.otp, type);
-
-    await this.logSecurityEvent({
-      userId: user.id,
-      email: user.email,
-      eventType: `AUTH_OTP_VERIFY_${type}`,
-      status: 'SUCCESS',
-      ipAddress,
-      userAgent,
-    });
-
-    if (type === 'EMAIL_VERIFICATION') {
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: { emailVerified: true },
-      });
-      return { message: 'Email verified successfully. You can now login.' };
-    }
-
-    // LOGIN flow - Generate Tokens
-    return this.generateTokens(user.id, userAgent, ipAddress);
-  }
-
-  async resendOtp(email: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-
-    if (!user) {
-      throw new UnauthorizedException(getErrorResponse(ErrorCode.UNAUTHORIZED, 'Invalid user'));
-    }
-
-    const type = user.emailVerified ? 'LOGIN' : 'EMAIL_VERIFICATION';
-    await this.otpService.createChallenge(user.id, user.email, type);
-
-    await this.logSecurityEvent({
-      userId: user.id,
-      email: user.email,
-      eventType: 'AUTH_OTP_RESEND',
-      status: 'SUCCESS',
-      metadata: { type },
-    });
-
-    return { message: 'OTP resent successfully.' };
-  }
-
-  private async generateTokens(userId: string, userAgent?: string, ipAddress?: string) {
-    const userRoles = await this.prisma.userRole.findMany({
-      where: { userId },
-      include: { role: true },
-    });
-
-    const roles = userRoles.map(ur => ur.role.name);
-
-    const payload = { sub: userId, roles };
-    
-    const privateKey = this.configService.get<string>('JWT_PRIVATE_KEY');
-    const secretKey = this.configService.get<string>('JWT_SECRET');
-
-    if (!privateKey || !secretKey) {
-      throw new Error('JWT_PRIVATE_KEY and JWT_SECRET must both be set in production');
-    }
-
-    const secretOrKey = Buffer.from(privateKey, 'base64').toString('ascii');
-    const accessToken = this.jwtService.sign(payload, { secret: secretOrKey, algorithm: 'RS256', expiresIn: '15m' });
-    const refreshToken = crypto.randomBytes(40).toString('hex');
-    const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
-
-    await this.prisma.session.create({
-      data: {
-        userId,
-        refreshTokenHash,
-        userAgent,
-        ipAddress,
-        expiresAt,
-      },
-    });
-
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: userId,
-        roles,
-      }
-    };
-  }
-
-  async refreshTokens(oldRefreshToken: string, userAgent?: string, ipAddress?: string) {
-    const refreshTokenHash = crypto.createHash('sha256').update(oldRefreshToken).digest('hex');
-
-    const session = await this.prisma.session.findFirst({
-      where: { refreshTokenHash, isRevoked: false },
-    });
-
-    if (!session) {
-      throw new UnauthorizedException(getErrorResponse(ErrorCode.AUTH_SESSION_REVOKED));
-    }
-
-    if (session.expiresAt < new Date()) {
-      await this.prisma.session.update({
-        where: { id: session.id },
-        data: { isRevoked: true },
-      });
-      throw new UnauthorizedException(getErrorResponse(ErrorCode.AUTH_SESSION_EXPIRED));
-    }
-
-    // Revoke old session
-    await this.prisma.session.update({
-      where: { id: session.id },
-      data: { isRevoked: true },
-    });
-
-    return this.generateTokens(session.userId, userAgent, ipAddress);
-  }
-
-  async logout(refreshToken: string) {
-    const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    await this.prisma.session.updateMany({
-      where: { refreshTokenHash },
-      data: { isRevoked: true },
-    });
   }
 }

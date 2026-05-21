@@ -4,7 +4,7 @@ import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { motion, HTMLMotionProps } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
+import { AppIcon, IconName } from '@/shared/icons';
 
 // Container
 export interface SidebarContainerProps extends HTMLMotionProps<"aside"> {
@@ -161,13 +161,13 @@ export const navItemVariants = cva(
 export interface SidebarNavItemProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof navItemVariants> {
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: IconName;
   isExpanded?: boolean;
   hasChildren?: boolean;
 }
 
 export const SidebarNavItem = React.forwardRef<HTMLButtonElement, SidebarNavItemProps>(
-  ({ className, active, collapsed, icon: Icon, isExpanded, hasChildren, children, ...props }, ref) => {
+  ({ className, active, collapsed, icon, isExpanded, hasChildren, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -175,8 +175,9 @@ export const SidebarNavItem = React.forwardRef<HTMLButtonElement, SidebarNavItem
         {...props}
       >
         <div className={cn("flex items-center w-full", collapsed && "justify-center")}>
-          {Icon && (
-            <Icon
+          {icon && (
+            <AppIcon
+              name={icon}
               className={cn(
                 "h-[18px] w-[18px] flex-shrink-0 transition-colors duration-150",
                 active 
@@ -189,7 +190,8 @@ export const SidebarNavItem = React.forwardRef<HTMLButtonElement, SidebarNavItem
           {!collapsed && <span className="flex-1 truncate">{children}</span>}
         </div>
         {hasChildren && !collapsed && (
-          <ChevronDown
+          <AppIcon
+            name="chevronDown"
             className={cn(
               "h-3.5 w-3.5 flex-shrink-0 transition-transform duration-200 text-foreground/40",
               isExpanded && "rotate-180"

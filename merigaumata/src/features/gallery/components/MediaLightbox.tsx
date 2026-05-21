@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 
 interface MediaLightboxProps {
   activeMediaUrl: string;
@@ -59,20 +59,20 @@ export default function MediaLightbox({
       {/* Close Button */}
       <button 
         onClick={(e) => { e.stopPropagation(); onClose(); }}
-        className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-200 z-50 shadow-md cursor-pointer hover:scale-105"
+        className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-200 z-50 shadow-md cursor-pointer hover:scale-105 flex items-center justify-center"
         aria-label="Close viewport"
       >
-        <X className="w-6 h-6" />
+        <AppIcon name="close" className="w-6 h-6" />
       </button>
 
       {/* Navigation Left */}
       {totalImages > 1 && (
         <button 
           onClick={(e) => { e.stopPropagation(); onPrev(); }}
-          className="absolute left-4 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-white/5 hover:bg-white/15 p-3 sm:p-4 rounded-full transition-all duration-200 z-50 shadow-md cursor-pointer hover:scale-105"
+          className="absolute left-4 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-white/5 hover:bg-white/15 p-3 sm:p-4 rounded-full transition-all duration-200 z-50 shadow-md cursor-pointer hover:scale-105 flex items-center justify-center"
           aria-label="Previous media"
         >
-          <ChevronLeft className="w-6 h-6 sm:w-8 h-8" />
+          <AppIcon name="chevronLeft" className="w-6 h-6 sm:w-8 h-8" />
         </button>
       )}
 
@@ -109,10 +109,10 @@ export default function MediaLightbox({
       {totalImages > 1 && (
         <button 
           onClick={(e) => { e.stopPropagation(); onNext(); }}
-          className="absolute right-4 sm:right-6 md:right-10 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-white/5 hover:bg-white/15 p-3 sm:p-4 rounded-full transition-all duration-200 z-50 shadow-md cursor-pointer hover:scale-105"
+          className="absolute right-4 sm:right-6 md:right-10 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-white/5 hover:bg-white/15 p-3 sm:p-4 rounded-full transition-all duration-200 z-50 shadow-md cursor-pointer hover:scale-105 flex items-center justify-center"
           aria-label="Next media"
         >
-          <ChevronRight className="w-6 h-6 sm:w-8 h-8" />
+          <AppIcon name="chevronRight" className="w-6 h-6 sm:w-8 h-8" />
         </button>
       )}
 

@@ -5,14 +5,14 @@ export class ReturnItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'return_id' })
+  @Column({ name: 'returnId' })
   returnId: string;
 
   @ManyToOne('Return', 'items', { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'return_id' })
+  @JoinColumn({ name: 'returnId' })
   return: any;
 
-  @Column({ name: 'order_item_id' })
+  @Column({ name: 'orderItemId' })
   orderItemId: string;
 
   @Column()
@@ -24,7 +24,7 @@ export class ReturnItem {
   @Column({ length: 20, default: 'PENDING' })
   status: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 }
 
@@ -33,16 +33,16 @@ export class ReturnQCResult {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'return_item_id' })
+  @Column({ name: 'returnItemId' })
   returnItemId: string;
 
-  @Column({ name: 'inspected_by', type: 'varchar', length: 100, nullable: true })
+  @Column({ name: 'inspectedBy', type: 'varchar', length: 100, nullable: true })
   inspectedBy: string | null;
 
   @Column({ length: 50 })
   condition: string;
 
-  @Column({ name: 'is_approved' })
+  @Column({ name: 'isApproved' })
   isApproved: boolean;
 
   @Column({ type: 'text', nullable: true })
@@ -51,6 +51,6 @@ export class ReturnQCResult {
   @Column({ type: 'jsonb', nullable: true })
   photos: string[] | null;
 
-  @CreateDateColumn({ name: 'inspected_at' })
+  @CreateDateColumn({ name: 'inspectedAt' })
   inspectedAt: Date;
 }

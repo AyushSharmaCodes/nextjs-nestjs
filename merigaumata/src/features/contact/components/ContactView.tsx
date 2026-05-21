@@ -1,5 +1,5 @@
 import { Link } from '@/i18n/navigation';
-import { Mail, MapPin, Phone, ArrowUpRight, Facebook, Twitter, Linkedin } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { getTranslations } from 'next-intl/server';
 import { ContactForm } from '@/features/contact/components/ContactForm';
 import { FAQSection } from '@/features/contact/components/FAQSection';
@@ -40,13 +40,13 @@ export async function ContactView({ faqs }: ContactViewProps) {
               </p>
               <div className="bg-white dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800 shadow-sm rounded-[2rem] p-2 inline-flex gap-3 items-center">
                 <a href="#" className="w-12 h-12 bg-[#CCFF66] hover:bg-[#BDEB5B] dark:bg-primary-900/60 dark:hover:bg-primary-900/80 text-tertiary-900 dark:text-white rounded-full flex items-center justify-center transition-colors" aria-label="Facebook">
-                  <Facebook className="w-5 h-5 fill-current" />
+                  <AppIcon name="facebook" className="w-5 h-5 fill-current" />
                 </a>
                 <a href="#" className="w-12 h-12 bg-[#CCFF66] hover:bg-[#BDEB5B] dark:bg-primary-900/60 dark:hover:bg-primary-900/80 text-tertiary-900 dark:text-white rounded-full flex items-center justify-center transition-colors" aria-label="Twitter">
-                  <Twitter className="w-5 h-5 fill-current" />
+                  <AppIcon name="twitter" className="w-5 h-5 fill-current" />
                 </a>
                 <a href="#" className="w-12 h-12 bg-[#CCFF66] hover:bg-[#BDEB5B] dark:bg-primary-900/60 dark:hover:bg-primary-900/80 text-tertiary-900 dark:text-white rounded-full flex items-center justify-center transition-colors" aria-label="LinkedIn">
-                  <Linkedin className="w-5 h-5 fill-current" />
+                  <AppIcon name="linkedin" className="w-5 h-5 fill-current" />
                 </a>
               </div>
             </div>
@@ -59,7 +59,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
             <div className="flex justify-between items-start mb-6">
               <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{t('infoCards.addressLabel')}</span>
               <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-tertiary-800 flex items-center justify-center text-tertiary-900 dark:text-white group-hover:bg-tertiary-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-tertiary-900 transition-colors">
-                <ArrowUpRight className="w-5 h-5" />
+                <AppIcon name="arrowUpRight" className="w-5 h-5" />
               </div>
             </div>
             <p className="font-semibold text-tertiary-900 dark:text-white text-lg pr-4">{t('infoCards.addressValue')}</p>
@@ -69,7 +69,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
             <div className="flex justify-between items-start mb-6">
               <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{t('infoCards.emailLabel')}</span>
               <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-tertiary-800 flex items-center justify-center text-tertiary-900 dark:text-white group-hover:bg-tertiary-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-tertiary-900 transition-colors">
-                <ArrowUpRight className="w-5 h-5" />
+                <AppIcon name="arrowUpRight" className="w-5 h-5" />
               </div>
             </div>
             <p className="font-semibold text-tertiary-900 dark:text-white text-lg pr-4">{t('infoCards.emailValue')}</p>
@@ -79,7 +79,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
             <div className="flex justify-between items-start mb-6">
               <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{t('infoCards.phoneLabel')}</span>
               <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-tertiary-800 flex items-center justify-center text-tertiary-900 dark:text-white group-hover:bg-tertiary-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-tertiary-900 transition-colors">
-                <ArrowUpRight className="w-5 h-5" />
+                <AppIcon name="arrowUpRight" className="w-5 h-5" />
               </div>
             </div>
             <p className="font-semibold text-tertiary-900 dark:text-white text-lg pr-4">{t('infoCards.phoneValue')}</p>
@@ -89,7 +89,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
             <div className="flex justify-between items-start mb-6">
               <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{t('infoCards.hoursLabel')}</span>
               <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-tertiary-800 flex items-center justify-center text-tertiary-900 dark:text-white group-hover:bg-tertiary-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-tertiary-900 transition-colors">
-                <ArrowUpRight className="w-5 h-5" />
+                <AppIcon name="arrowUpRight" className="w-5 h-5" />
               </div>
             </div>
             <div className="font-semibold text-tertiary-900 dark:text-white text-lg pr-4">
@@ -107,7 +107,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
               <h3 className="text-2xl font-semibold mb-10 tracking-tight">{t('infoOverlay.title')}</h3>
               <div className="space-y-8">
                 <div className="flex items-start gap-4">
-                  <MapPin className="w-6 h-6 shrink-0 opacity-80" />
+                  <AppIcon name="mapPin" className="w-6 h-6 shrink-0 opacity-80" />
                   <p className="text-white/90 leading-relaxed font-medium">
                     {t.rich('infoOverlay.address', {
                       br: () => <br />
@@ -115,11 +115,11 @@ export async function ContactView({ faqs }: ContactViewProps) {
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Mail className="w-6 h-6 shrink-0 opacity-80" />
+                  <AppIcon name="mail" className="w-6 h-6 shrink-0 opacity-80" />
                   <p className="text-white/90 font-medium tracking-wide">{t('infoOverlay.email')}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Phone className="w-6 h-6 shrink-0 opacity-80" />
+                  <AppIcon name="phone" className="w-6 h-6 shrink-0 opacity-80" />
                   <p className="text-white/90 font-medium tracking-wide">{t('infoOverlay.phone')}</p>
                 </div>
               </div>
@@ -127,13 +127,13 @@ export async function ContactView({ faqs }: ContactViewProps) {
             
             <div className="flex items-center gap-6 mt-12 pt-8">
               <a href="#" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-tertiary-900 transition-colors" aria-label="Facebook link">
-                <Facebook className="w-4 h-4" />
+                <AppIcon name="facebook" className="w-4 h-4" />
               </a>
               <a href="#" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-tertiary-900 transition-colors" aria-label="Twitter link">
-                <Twitter className="w-4 h-4" />
+                <AppIcon name="twitter" className="w-4 h-4" />
               </a>
               <a href="#" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-tertiary-900 transition-colors" aria-label="LinkedIn link">
-                <Linkedin className="w-4 h-4" />
+                <AppIcon name="linkedin" className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -153,7 +153,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
             </div>
             <Link href="/volunteer" className="inline-flex items-center gap-3 bg-tertiary-900 dark:bg-white text-white dark:text-tertiary-900 px-6 py-3 rounded-full font-medium hover:bg-tertiary-800 dark:hover:bg-neutral-200 transition-colors w-fit">
               {t('volunteerCard.button')}
-              <ArrowUpRight className="w-4 h-4" />
+              <AppIcon name="arrowUpRight" className="w-4 h-4" />
             </Link>
           </div>
           <div className="bg-white dark:bg-[#1A1A1A] rounded-[2.5rem] p-8 md:p-10 border shadow-sm border-neutral-200 dark:border-neutral-800 flex flex-col justify-between h-full">
@@ -165,7 +165,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
             </div>
             <Link href="/donate" className="inline-flex items-center gap-3 bg-tertiary-900 dark:bg-white text-white dark:text-tertiary-900 px-6 py-3 rounded-full font-medium hover:bg-tertiary-800 dark:hover:bg-neutral-200 transition-colors w-fit">
               {t('donationCard.button')}
-              <ArrowUpRight className="w-4 h-4" />
+              <AppIcon name="arrowUpRight" className="w-4 h-4" />
             </Link>
           </div>
         </section>
@@ -203,7 +203,7 @@ export async function ContactView({ faqs }: ContactViewProps) {
                 <span className="text-tertiary-950 dark:text-white font-medium text-sm sm:text-base">{t('donateCTA.prompt')}</span>
                 <Link href="/donate" className="bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500 text-white px-6 py-4 rounded-full font-bold transition-all flex items-center gap-2 group shadow-md shrink-0">
                   {t('donateCTA.button')}
-                  <ArrowUpRight className="w-4 h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                  <AppIcon name="arrowUpRight" className="w-4 h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
               </div>
             </div>

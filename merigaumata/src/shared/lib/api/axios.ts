@@ -1,13 +1,14 @@
 import axios from 'axios';
-import { env } from '@/core/env/client';
+import { clientEnv } from '@/core/env/client';
 import { requestAuthInterceptor, setupResponseInterceptor } from './interceptors';
 
 /**
  * Enterprise standard Axios client singleton configured with global limits.
  */
 export const apiInstance = axios.create({
-  baseURL: env.NEXT_PUBLIC_API_URL || '/api',
+  baseURL: clientEnv.NEXT_PUBLIC_API_URL,
   timeout: 15000,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

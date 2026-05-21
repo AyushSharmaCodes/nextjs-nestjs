@@ -4,35 +4,23 @@ import { ApiError, normalizeError } from '@/shared/lib/errors';
 import { apiLogger } from '@/shared/lib/logger';
 import * as Sentry from '@sentry/nextjs';
 
-// Queue to hold requests while token is refreshing
-interface PendingRequest {
-  resolve: (token: string) => void;
-  reject: (error: unknown) => void;
+interface ExtendedAxiosConfig extends InternalAxiosRequestConfig {
+  _startTime?: number;
+  _requestId?: string;
 }
 
-let isRefreshing = false;
-let failedQueue: PendingRequest[] = [];
-
-const processQueue = (error: unknown, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else if (token) {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-};
+// Session management is handled exclusively via secure HTTP-Only cookies.
+// Active session tokens are automatically validated by Better Auth on the backend.
 
 /**
  * Request interceptor to safely inject JWT authorization headers, correlation IDs, and Sentry distributed traces.
  */
-export const requestAuthInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+export const requestAuthInterceptor = (config: ExtendedAxiosConfig): ExtendedAxiosConfig => {
   const requestId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  
+
   // Save startup telemetry inside metadata
-  (config as any)._startTime = performance.now();
-  (config as any)._requestId = requestId;
+  config._startTime = performance.now();
+  config._requestId = requestId;
 
   if (config.headers) {
     config.headers['X-Request-ID'] = requestId;
@@ -49,10 +37,8 @@ export const requestAuthInterceptor = (config: InternalAxiosRequestConfig): Inte
       // Sentry trace context fallback
     }
 
-    const token = tokenVault.getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Cookies are automatically attached via withCredentials.
+    // No need to inject Bearer token headers in requestAuthInterceptor.
   }
 
   apiLogger.debug('🚀 API request starting: {method} {url} | RequestID: {requestId}', {
@@ -71,9 +57,9 @@ export const requestAuthInterceptor = (config: InternalAxiosRequestConfig): Inte
 export const setupResponseInterceptor = (apiInstance: AxiosInstance) => {
   apiInstance.interceptors.response.use(
     (response: AxiosResponse) => {
-      const config = response.config;
-      const startTime = (config as any)._startTime;
-      const requestId = (config as any)._requestId;
+      const config = response.config as ExtendedAxiosConfig;
+      const startTime = config._startTime;
+      const requestId = config._requestId;
       const duration = startTime ? Math.round(performance.now() - startTime) : 0;
 
       apiLogger.info('✅ API request success: {method} {url} | Status: {status} | Latency: {duration}ms | RequestID: {requestId}', {
@@ -96,9 +82,9 @@ export const setupResponseInterceptor = (apiInstance: AxiosInstance) => {
       return response;
     },
     async (error: AxiosError) => {
-      const config = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-      const startTime = config ? (config as any)._startTime : undefined;
-      const requestId = config ? (config as any)._requestId : undefined;
+      const config = error.config as ExtendedAxiosConfig & { _retry?: boolean };
+      const startTime = config ? config._startTime : undefined;
+      const requestId = config ? config._requestId : undefined;
       const duration = startTime ? Math.round(performance.now() - startTime) : 0;
       const apiErr = normalizeError(error);
 
@@ -113,61 +99,18 @@ export const setupResponseInterceptor = (apiInstance: AxiosInstance) => {
       });
 
       const originalRequest = config;
-      
-      // If error is 401 and request has not been retried yet
-      if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-        apiLogger.warn('🔑 Token expired. Attempting token refresh queue...', { requestId });
 
-        if (isRefreshing) {
-          // Token is already refreshing, queue this request
-          return new Promise<string>((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-          })
-            .then((token) => {
-              if (originalRequest.headers) {
-                originalRequest.headers.Authorization = `Bearer ${token}`;
-              }
-              return apiInstance(originalRequest);
-            })
-            .catch((err) => Promise.reject(normalizeError(err)));
+      // If session is expired or unauthorized, clear vault metadata and redirect to login
+      if (error.response?.status === 401) {
+        apiLogger.error('❌ Session expired or unauthorized. Redirecting to login...', { requestId });
+        tokenVault.clearToken();
+        tokenVault.clearUserRole();
+        tokenVault.clearUserEmail();
+
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('mgm_session_logout', Date.now().toString());
+          window.location.href = '/';
         }
-
-        originalRequest._retry = true;
-        isRefreshing = true;
-
-        return new Promise<string>((resolve, reject) => {
-          // Simulate backend refresh token exchange
-          setTimeout(() => {
-            const mockNewToken = 'mock_jwt_token_refreshed';
-            tokenVault.setToken(mockNewToken);
-            resolve(mockNewToken);
-          }, 600);
-        })
-          .then((token) => {
-            isRefreshing = false;
-            processQueue(null, token);
-            
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            apiLogger.info('🔑 Token refresh succeeded. Retrying failed request...', { requestId });
-            return apiInstance(originalRequest);
-          })
-          .catch((err) => {
-            isRefreshing = false;
-            processQueue(err, null);
-            tokenVault.clearToken();
-            tokenVault.clearUserRole();
-            tokenVault.clearUserEmail();
-            
-            apiLogger.error('❌ Token refresh failed. Redirecting user to login...', { requestId });
-
-            // Redirect to login if on the client browser
-            if (typeof window !== 'undefined') {
-              window.location.href = '/';
-            }
-            return Promise.reject(normalizeError(err));
-          });
       }
 
       return Promise.reject(apiErr);

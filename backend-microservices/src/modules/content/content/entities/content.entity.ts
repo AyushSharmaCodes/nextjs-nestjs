@@ -10,8 +10,8 @@ export class Page {
   @Column({ type: 'text', nullable: true }) metaDescription: string | null;
   @Column({ default: 'draft' }) status: string;
   @Column({ default: false }) isPublished: boolean;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
+  @UpdateDateColumn({ name: 'updatedAt' }) updatedAt: Date;
 }
 
 @Entity('policies')
@@ -23,8 +23,8 @@ export class Policy {
   @Column({ default: 'privacy' }) type: string;
   @Column({ default: true }) isActive: boolean;
   @Column({ type: 'varchar', nullable: true }) version: string | null;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
+  @UpdateDateColumn({ name: 'updatedAt' }) updatedAt: Date;
 }
 
 @Entity('testimonials')
@@ -37,7 +37,7 @@ export class Testimonial {
   @Column({ default: 5 }) rating: number;
   @Column({ default: true }) isActive: boolean;
   @Column({ default: 0 }) displayOrder: number;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }
 
 @Entity('social_media')
@@ -48,5 +48,5 @@ export class SocialMedia {
   @Column({ type: 'varchar', nullable: true }) icon: string | null;
   @Column({ default: true }) isActive: boolean;
   @Column({ default: 0 }) displayOrder: number;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Edit2 } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 import { PersonalDetails } from '../types/profile.types';
 
@@ -43,21 +43,32 @@ export function PersonalDetailsSection({
             onClick={() => { setIsEditingPersonal(true); setTempPersonalDetails(personalDetails); }} 
             className="text-neutral-500 hover:text-foreground transition-colors flex items-center gap-1.5 text-sm font-medium focus:outline-none"
           >
-            <Edit2 className="w-3.5 h-3.5" /> Edit
+            <AppIcon name="edit2" size="xs" /> Edit
           </button>
         )}
       </div>
       <div className="flex flex-col py-1 flex-1">
         {isEditingPersonal ? (
           <div className="p-6 grid grid-cols-1 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">Full name</label>
-              <input 
-                type="text" 
-                className="w-full px-4 py-2 border rounded-lg bg-card border-neutral-200 dark:border-neutral-700 text-foreground text-sm focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-500" 
-                value={translateIfKey(tempPersonalDetails.fullName)} 
-                onChange={e => setTempPersonalDetails({...tempPersonalDetails, fullName: e.target.value})} 
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">First name</label>
+                <input 
+                  type="text" 
+                  className="w-full px-4 py-2 border rounded-lg bg-card border-neutral-200 dark:border-neutral-700 text-foreground text-sm focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-500" 
+                  value={translateIfKey(tempPersonalDetails.firstName)} 
+                  onChange={e => setTempPersonalDetails({...tempPersonalDetails, firstName: e.target.value})} 
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">Last name</label>
+                <input 
+                  type="text" 
+                  className="w-full px-4 py-2 border rounded-lg bg-card border-neutral-200 dark:border-neutral-700 text-foreground text-sm focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-500" 
+                  value={translateIfKey(tempPersonalDetails.lastName)} 
+                  onChange={e => setTempPersonalDetails({...tempPersonalDetails, lastName: e.target.value})} 
+                />
+              </div>
             </div>
             <div className="space-y-1.5">
               <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">Date of Birth</label>
@@ -125,11 +136,12 @@ export function PersonalDetailsSection({
           </div>
         ) : (
           <>
-            <DetailRow label="Full name:" value={translateIfKey(personalDetails.fullName)} />
+            <DetailRow label="First name:" value={translateIfKey(personalDetails.firstName)} />
+            <DetailRow label="Last name:" value={translateIfKey(personalDetails.lastName)} />
             <DetailRow label="Date of Birth:" value={personalDetails.dob ? new Date(personalDetails.dob).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'}) : ''} />
             <DetailRow label="Gender:" value={translateIfKey(personalDetails.gender)} />
             <DetailRow label="Nationality:" value={translateIfKey(personalDetails.nationality)} />
-            <DetailRow label="Address:" value={<span className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-neutral-400" /> {translateIfKey(personalDetails.address)}</span>} />
+            <DetailRow label="Address:" value={<span className="flex items-center gap-2"><AppIcon name="mapPin" size="xs" className="text-neutral-400" /> {translateIfKey(personalDetails.address)}</span>} />
             <DetailRow label="Phone Number:" value={personalDetails.phone} />
             <DetailRow label="Email:" value="fuse.vegeto@gmail.com" />
           </>

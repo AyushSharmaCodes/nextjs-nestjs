@@ -5,28 +5,28 @@ export class Invoice {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'order_id', unique: true })
+  @Column({ name: 'orderId', unique: true })
   orderId: string;
 
   @ManyToOne('Order')
-  @JoinColumn({ name: 'order_id' })
+  @JoinColumn({ name: 'orderId' })
   order: any;
 
-  @Column({ name: 'invoice_number', length: 30, unique: true })
+  @Column({ name: 'invoiceNumber', length: 30, unique: true })
   invoiceNumber: string;
 
-  @Column({ name: 'invoice_url', type: 'text', nullable: true })
+  @Column({ name: 'invoiceUrl', type: 'text', nullable: true })
   invoiceUrl: string | null;
 
-  @Column({ name: 'storage_path', type: 'text', nullable: true })
+  @Column({ name: 'storagePath', type: 'text', nullable: true })
   storagePath: string | null;
 
-  @Column({ name: 'file_type', length: 20, default: 'pdf' })
+  @Column({ name: 'fileType', length: 20, default: 'pdf' })
   fileType: string;
 
-  @Column({ name: 'generated_at', type: 'timestamptz', nullable: true })
+  @Column({ name: 'generatedAt', type: 'timestamptz', nullable: true })
   generatedAt: Date | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 }

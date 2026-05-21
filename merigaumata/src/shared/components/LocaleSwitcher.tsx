@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import { Languages } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 
 export default function LocaleSwitcher() {
   const router = useRouter();
@@ -53,7 +53,7 @@ export default function LocaleSwitcher() {
         className="p-2 sm:p-2.5 text-neutral-500 dark:text-neutral-400 hover:text-tertiary-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition-colors relative"
         aria-label="Toggle language"
       >
-        <Languages className="h-[22px] w-[22px]" strokeWidth={1.5} />
+        <AppIcon name="languages" className="h-[22px] w-[22px]" strokeWidth={1.5} />
       </button>
 
       {isOpen && (

@@ -21,19 +21,21 @@ export default getRequestConfig(async ({requestLocale}) => {
 
   // Scan features directory to load feature-specific messages
   const featuresPath = path.join(process.cwd(), 'src/features');
-  if (fs.existsSync(featuresPath)) {
-    const features = fs.readdirSync(featuresPath);
+  try {
+    const features = await fs.promises.readdir(featuresPath);
     for (const feature of features) {
       const messagePath = path.join(featuresPath, feature, 'messages', `${locale}.json`);
-      if (fs.existsSync(messagePath)) {
-        try {
-          const featureMessages = JSON.parse(fs.readFileSync(messagePath, 'utf8'));
-          // Namespace feature translations under feature name
-          messages = {
-            ...messages,
-            [feature]: featureMessages
-          };
-        } catch (err) {
+      try {
+        const fileContent = await fs.promises.readFile(messagePath, 'utf8');
+        const featureMessages = JSON.parse(fileContent);
+        // Namespace feature translations under feature name
+        messages = {
+          ...messages,
+          [feature]: featureMessages
+        };
+      } catch (err: any) {
+        // Ignore ENOENT (file not found), log actual parsing/read errors
+        if (err.code !== 'ENOENT') {
           logger.error('Failed to parse messages for feature {feature} in locale {locale}: {error}', { 
             feature, 
             locale, 
@@ -41,6 +43,11 @@ export default getRequestConfig(async ({requestLocale}) => {
           });
         }
       }
+    }
+  } catch (err: any) {
+    // Ignore ENOENT if the features directory does not exist yet
+    if (err.code !== 'ENOENT') {
+      logger.warn('Failed to read features directory: {error}', { error: err.message });
     }
   }
 

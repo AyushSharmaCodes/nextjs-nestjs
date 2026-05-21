@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { X, ShoppingBag, Plus, Minus, Trash2, Tag, Sparkles } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 import { useCartStore } from '../store/useCartStore';
@@ -153,7 +153,7 @@ export function CartDrawer() {
                 className="p-2 -mr-2 text-stone-400 hover:text-[#2E1F30] dark:hover:text-white transition-colors cursor-pointer"
                 aria-label="Close cart"
               >
-                <X className="w-5 h-5" strokeWidth={2} />
+                <AppIcon name="close" className="w-5 h-5" strokeWidth={2} />
               </button>
             </div>
 
@@ -167,7 +167,7 @@ export function CartDrawer() {
                 /* Empty State */
                 <div className="flex-1 flex flex-col items-center justify-center p-8 mt-12 text-center">
                   <div className="w-20 h-20 bg-stone-100 dark:bg-stone-900 rounded-none flex items-center justify-center mb-6 border border-stone-200 dark:border-stone-800">
-                    <ShoppingBag className="w-8 h-8 text-stone-300 dark:text-stone-700" strokeWidth={1.5} />
+                    <AppIcon name="products" className="w-8 h-8 text-stone-300 dark:text-stone-700" strokeWidth={1.5} />
                   </div>
                   <p className="text-stone-600 dark:text-stone-400 text-xs sm:text-sm font-serif font-bold uppercase tracking-widest mb-8">
                     {t('emptyCart')}
@@ -252,7 +252,7 @@ export function CartDrawer() {
                             <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover rounded-none" referrerPolicy="no-referrer" />
                             {item.isFree && (
                               <div className="absolute top-1 left-1 bg-emerald-600 text-[#FAF9F6] text-[7px] font-black uppercase tracking-widest px-1 py-0.5 rounded-none shadow-sm flex items-center gap-0.5">
-                                <Sparkles className="w-2 h-2 fill-current" /> {t('gift')}
+                                <AppIcon name="sparkles" className="w-2 h-2 fill-current" /> {t('gift')}
                               </div>
                             )}
                           </div>
@@ -292,7 +292,7 @@ export function CartDrawer() {
                                   className="p-2 text-stone-450 hover:text-red-650 dark:hover:text-red-400 hover:bg-stone-100 dark:hover:bg-stone-850 transition-colors border border-stone-200 dark:border-stone-800 rounded-none shrink-0 cursor-pointer"
                                   aria-label="Remove item"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <AppIcon name="trash" className="w-3.5 h-3.5" />
                                 </button>
                               ) : (
                                 <div className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest shrink-0">
@@ -308,7 +308,7 @@ export function CartDrawer() {
                                     className="w-8 h-full flex items-center justify-center text-stone-500 hover:text-[#2E1F30] dark:hover:text-white disabled:opacity-30 rounded-none hover:bg-stone-50 cursor-pointer"
                                     disabled={item.quantity <= 1}
                                   >
-                                    <Minus className="w-3 h-3" />
+                                    <AppIcon name="minus" className="w-3 h-3" />
                                   </button>
                                   <span className="w-7 text-center text-xs font-black text-[#2E1F30] dark:text-white">
                                     {item.quantity}
@@ -317,7 +317,7 @@ export function CartDrawer() {
                                     onClick={() => updateQuantity(item.id, item.quantity + 1, item.variant)}
                                     className="w-8 h-full flex items-center justify-center text-stone-500 hover:text-[#2E1F30] dark:hover:text-white rounded-none hover:bg-stone-50 cursor-pointer"
                                   >
-                                    <Plus className="w-3 h-3" />
+                                    <AppIcon name="plus" className="w-3 h-3" />
                                   </button>
                                 </div>
                               )}
@@ -332,7 +332,7 @@ export function CartDrawer() {
                   <div className="px-6 pb-6 space-y-3.5">
                     {/* Coupon Input Box */}
                     <div className="flex items-center gap-3 w-full border border-stone-200 dark:border-stone-800 rounded-none px-4 py-3.5 bg-white dark:bg-black/20 focus-within:border-[#2E1F30] transition-colors">
-                      <Tag className="w-4 h-4 text-stone-400" strokeWidth={1.5} />
+                      <AppIcon name="tag" className="w-4 h-4 text-stone-400" strokeWidth={1.5} />
                       <input 
                         type="text" 
                         placeholder={t('enterCoupon')} 
@@ -362,7 +362,7 @@ export function CartDrawer() {
                   {suggestedProducts.length > 0 && (
                     <div className="px-6 pb-6 pt-2 border-t border-stone-200/50 dark:border-stone-800/50">
                       <h4 className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-extrabold text-[#2E1F30] dark:text-stone-200 mb-4 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-current animate-pulse" /> {t('bestOffers')}
+                        <AppIcon name="sparkles" className="w-3.5 h-3.5 text-amber-500 fill-current animate-pulse" /> {t('bestOffers')}
                       </h4>
                       
                       {/* Horizontal Scrolling suggestions */}

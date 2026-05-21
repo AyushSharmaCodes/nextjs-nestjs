@@ -6,26 +6,26 @@ export class CartItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'cart_id' })
+  @Column({ name: 'cartId' })
   cartId: string;
 
   @ManyToOne(() => Cart, (cart) => cart.items, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'cart_id' })
+  @JoinColumn({ name: 'cartId' })
   cart: Cart;
 
-  @Column({ name: 'product_id' })
+  @Column({ name: 'productId' })
   productId: string;
 
-  @Column({ name: 'variant_id', type: 'uuid', nullable: true })
+  @Column({ name: 'variantId', type: 'uuid', nullable: true })
   variantId: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   title: string | null;
 
-  @Column({ name: 'image_url', type: 'varchar', nullable: true })
+  @Column({ name: 'imageUrl', type: 'varchar', nullable: true })
   imageUrl: string | null;
 
-  @Column({ name: 'price_per_unit', type: 'numeric', precision: 10, scale: 2 })
+  @Column({ name: 'pricePerUnit', type: 'numeric', precision: 10, scale: 2 })
   pricePerUnit: number;
 
   @Column({ type: 'numeric', precision: 10, scale: 2, nullable: true })
@@ -34,12 +34,12 @@ export class CartItem {
   @Column({ default: 1 })
   quantity: number;
 
-  @Column({ name: 'variant_label', type: 'varchar', nullable: true })
+  @Column({ name: 'variantLabel', type: 'varchar', nullable: true })
   variantLabel: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

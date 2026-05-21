@@ -1,6 +1,6 @@
 import React from 'react';
 import { clsx } from 'clsx';
-import { Check } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'checked' | 'onChange'> {
   checked?: boolean;
@@ -21,7 +21,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           className
         )}
       >
-        {checked && <Check className="h-3 w-3 stroke-[3]" />}
+        {checked && <AppIcon name="check" className="h-3 w-3" strokeWidth={3} />}
         <input
           type="checkbox"
           ref={ref}

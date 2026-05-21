@@ -14,13 +14,9 @@ import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
       imports: [ConfigModule],
       useFactory: (config: ConfigService): TypeOrmModuleOptions => ({
         type: 'postgres',
-        host: config.get<string>('DB_HOST', 'localhost'),
-        port: config.get<number>('DB_PORT', 5432),
-        username: config.get<string>('DB_USERNAME', 'postgres'),
-        password: config.get<string>('DB_PASSWORD', 'postgres'),
-        database: config.get<string>('DB_NAME', 'merigaumata'),
+        url: config.get<string>('DATABASE_URL'),
         ssl: config.get('DB_SSL', 'false') === 'true'
-          ? { rejectUnauthorized: true }
+          ? { rejectUnauthorized: false } // Relaxed for Supabase/Cloud
           : false,
         extra: {
           max: config.get<number>('DB_POOL_MAX', 20),

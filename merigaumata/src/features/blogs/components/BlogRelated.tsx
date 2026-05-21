@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { ArrowRight } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { BlogPost } from '../types/blogs.types';
 import { useTranslations } from 'next-intl';
 
@@ -67,7 +67,7 @@ export function BlogRelated({ relatedPosts }: BlogRelatedProps) {
                   className="text-[#DE7A41] hover:text-[#c45a27] font-extrabold text-[10px] uppercase tracking-wider inline-flex items-center gap-1 mt-2 transition-colors cursor-pointer"
                 >
                   <span>Read More</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <AppIcon name="arrowRight" size="xs" className="w-3 h-3" />
                 </Link>
               </div>
             </article>

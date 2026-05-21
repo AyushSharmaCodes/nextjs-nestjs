@@ -2538,7 +2538,21 @@
           "itemRefundCount": "ITEM REFUND #{{count}}"
         },
         "timeline": {
-          "recommendedTransition": "Recommended Transition"
+          "admin": "అడ్మిన్",
+          "placedSuccess": "ఆర్డర్ విజయవంతంగా ఉంచబడింది",
+          "staff": "సిబ్బంది",
+          "system": "వ్యవస్థ",
+          "title": "కాలక్రమం",
+          "transitionedTo": "స్థితి {{status}} కి మార్చబడింది",
+          "unknown": "తెలియదు",
+          "user": "వినియోగదారు",
+          "trackingTitle": "ఆర్డర్ ట్రాకింగ్ పురోగతి",
+          "historyTitle": "ఆర్డర్ ఈవెంట్ లాగ్లు మరియు ఆడిట్",
+          "timestamp": "టైమ్స్టాంప్",
+          "event": "ఈవెంట్ కార్యాచరణ",
+          "actor": "బాధ్యతా వ్యక్తి",
+          "noNotes": "ఈ స్థితి మార్పు కోసం అదనపు మెటాడేటా ఏదీ అందించబడలేదు.",
+          "systemService": "ఆటోమేటెడ్ సర్వీస్"
         },
         "tax": {
           "refundable": "Refundable",
@@ -2678,23 +2692,6 @@
           "title": "రీఫండ్‌లను సమకాలీకరించండి"
         },
         "syncRefundsBtn": "సింక్ / రీఫండ్ అయినట్లు గుర్తు పెట్టు",
-        "timeline": {
-          "admin": "అడ్మిన్",
-          "placedSuccess": "ఆర్డర్ విజయవంతంగా ఉంచబడింది",
-          "staff": "సిబ్బంది",
-          "system": "వ్యవస్థ",
-          "title": "కాలక్రమం",
-          "transitionedTo": "స్థితి {{status}} కి మార్చబడింది",
-          "unknown": "తెలియదు",
-          "user": "వినియోగదారు",
-          "trackingTitle": "ఆర్డర్ ట్రాకింగ్ పురోగతి",
-          "historyTitle": "ఆర్డర్ ఈవెంట్ లాగ్లు మరియు ఆడిట్",
-          "timestamp": "టైమ్స్టాంప్",
-          "event": "ఈవెంట్ కార్యాచరణ",
-          "actor": "బాధ్యతా వ్యక్తి",
-          "noNotes": "ఈ స్థితి మార్పు కోసం అదనపు మెటాడేటా ఏదీ అందించబడలేదు.",
-          "systemService": "ఆటోమేటెడ్ సర్వీస్"
-        },
         "taxAudit": {
           "title": "వివరణాత్మక పన్ను సారాంశం మరియు ఆడిట్",
           "active": "ఆడిట్ యాక్టివ్"
@@ -4031,7 +4028,25 @@
     "verifyingPermissions": "అనుమతులను ధృవీకరిస్తోంది...",
     "verifyLogin": "ధృవీకరించండి & లాగిన్ చేయండి",
     "welcomeBack": "తిరిగి స్వాగతం",
-    "welcomeBackUser": "తిరిగి స్వాగతం, {{name}}!"
+    "welcomeBackUser": "తిరిగి స్వాగతం, {{name}}!",
+    "errors": {
+      "INVALID_CREDENTIALS": "తప్పు ఇమెయిల్ లేదా పాస్‌వర్డ్. దయచేసి మీ సమాచారాన్ని తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.",
+      "EMAIL_ALREADY_EXISTS": "ఈ ఇమెయిల్ చిరునామాతో ఖాతా ఇప్పటికే ఉంది.",
+      "EMAIL_NOT_VERIFIED": "మీ ఇమెయిల్ చిరునామా ఇంకా ధృవీకరించబడలేదు.",
+      "OTP_EXPIRED": "ధృవీకరణ కోడ్ గడువు ముగిసింది. కొత్త కోడ్ కోసం అభ్యర్థించండి.",
+      "OTP_INVALID": "మీరు నమోదు చేసిన ధృవీకరణ కోడ్ తప్పు.",
+      "MAGIC_LINK_EXPIRED": "ఈ మేజిక్ లింక్ గడువు ముగిసింది.",
+      "MAGIC_LINK_INVALID": "ఈ మేజిక్ లింక్ చెల్లదు.",
+      "MAGIC_LINK_ALREADY_USED": "ఈ మేజిక్ లింక్ ఇప్పటికే ఉపయోగించబడింది.",
+      "TOKEN_EXPIRED": "మీ సెషన్ గడువు ముగిసింది. మళ్ళీ సైన్ ఇన్ చేయండి.",
+      "TOKEN_INVALID": "మీ సెషన్ చెల్లదు. మళ్ళీ సైన్ ఇన్ చేయండి.",
+      "REFRESH_TOKEN_REUSE": "మీ సెషన్‌లో భద్రతా సమస్య కనుగొనబడింది.",
+      "GOOGLE_AUTH_FAILED": "Google సైన్-ఇన్‌లో లోపం సంభవించింది.",
+      "ACCOUNT_LOCKED": "చాలా విఫల ప్రయత్నాల కారణంగా మీ ఖాతా తాత్కాలికంగా లాక్ అయింది.",
+      "ACCOUNT_DISABLED": "మీ ఖాతా నిలిపివేయబడింది. సహాయం కోసం సంప్రదించండి.",
+      "TOKEN_GENERATION_FAILED": "మీ సెషన్ సృష్టించడంలో సమస్య ఏర్పడింది.",
+      "DB_WRITE_FAILED": "డేటాబేస్ లోపం సంభవించింది. మళ్ళీ ప్రయత్నించండి."
+    }
   },
   "benefits": {
     "subtitle": "ఆవు ఉత్పత్తుల యొక్క సాంప్రదాయ మరియు ఆధునిక ప్రయోజనాలను కనుగొనండి",
@@ -4583,7 +4598,11 @@
       "gstLabel": "{{rate}} GST"
     },
     "logoAlt": "Meri Gau Mata Logo",
-    "previewAlt": "Preview"
+    "previewAlt": "Preview",
+    "errors": {
+      "unexpectedError": "అనూహ్య లోపం సంభవించింది. దయచేసి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+      "validationFailed": "ధృవీకరణ విఫలమైంది. మీ ఇన్‌పుట్ తనిఖీ చేయండి."
+    }
   },
   "contact": {
     "address": "చిరునామా",
@@ -6010,16 +6029,13 @@
   },
   "errors": {
     "upload": {
-      "fileTooLarge": "చిత్రం చాలా పెద్దదిగా ఉంది (గరిష్ట పరిమాణం: 5MB)",
-      "imagesOnly": "చిత్ర ఫైల్‌లు మాత్రమే అనుమతించబడతాయి",
-      "invalidFileType": "చెల్లని ఫైల్ రకం. దయచేసి JPEG, PNG లేదా WebP చిత్రాలను అప్‌లోడ్ చేయండి.",
-      "invalidPolicyFileType": "చెల్లని ఫైల్ రకం. PDF, DOC మరియు DOCX మాత్రమే అనుమతించబడతాయి.",
+      "imagesOnly": "ఇమేజ్ ఫైల్‌లు మాత్రమే అనుమతించబడతాయి",
+      "invalidPolicyFileType": "చెల్లని ఫైల్ రకం. ",
       "invalidUrl": "చెల్లని URL ఫార్మాట్",
-      "noFile": "ఫైల్ అప్‌లోడ్ చేయబడలేదు",
-      "onlyImages": "చిత్ర ఫైల్‌లు మాత్రమే అనుమతించబడతాయి",
-      "unexpectedFile": "అనుకోని ఫైల్ ఎదురైంది",
+      "noFile": "ఫైల్ ఏదీ అప్‌లోడ్ చేయబడలేదు",
+      "onlyImages": "ఇమేజ్ ఫైల్‌లు మాత్రమే అనుమతించబడతాయి",
       "urlRequired": "URL అవసరం",
-      "optimizationFailed": "చిత్రం ఆప్టిమైజేషన్ విఫలమైంది"
+      "optimizationFailed": "Image optimization failed"
     },
     "about": {
       "fetchFailed": "కంటెంట్ గురించి పొందడంలో విఫలమైంది"
@@ -6494,15 +6510,6 @@
       "oops": "అయ్యో!",
       "paymentUpdate": "చెల్లింపు నవీకరణ",
       "stockUpdate": "స్టాక్ నవీకరణ"
-    },
-    "upload": {
-      "imagesOnly": "ఇమేజ్ ఫైల్‌లు మాత్రమే అనుమతించబడతాయి",
-      "invalidPolicyFileType": "చెల్లని ఫైల్ రకం. ",
-      "invalidUrl": "చెల్లని URL ఫార్మాట్",
-      "noFile": "ఫైల్ ఏదీ అప్‌లోడ్ చేయబడలేదు",
-      "onlyImages": "ఇమేజ్ ఫైల్‌లు మాత్రమే అనుమతించబడతాయి",
-      "urlRequired": "URL అవసరం",
-      "optimizationFailed": "Image optimization failed"
     },
     "user": {
       "isBlockedBoolean": "isBlocked తప్పనిసరిగా బూలియన్ అయి ఉండాలి"

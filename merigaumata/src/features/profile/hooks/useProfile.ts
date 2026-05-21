@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Role, PersonalDetails, AccountDetails } from '../types/profile.types';
 import { profileService } from '../services/profile.service';
+import { useStrictAuth } from '../../auth/hooks/useStrictAuth';
 import { profileKeys } from './profileKeys';
 import { logError } from '@/shared/lib/errors';
 
@@ -20,15 +21,12 @@ export function useProfile() {
     };
   }, [profilePicture]);
 
-  // Queries
-  const { data: userRole = 'USER' } = useQuery<Role>({
-    queryKey: profileKeys.role(),
-    queryFn: async () => profileService.getUserRole(),
-    staleTime: Infinity,
-  });
+  const authState = useStrictAuth();
+  const userRole = authState.user?.role || 'CUSTOMER';
 
   const { data: personalDetails = {
-    fullName: '',
+    firstName: '',
+    lastName: '',
     dob: '',
     gender: '',
     nationality: '',

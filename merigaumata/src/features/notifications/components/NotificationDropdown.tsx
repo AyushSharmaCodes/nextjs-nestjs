@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, Trash2, CheckCheck, Loader2 } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import {
   useNotificationsQuery,
   useMarkNotificationsReadMutation,
@@ -68,7 +68,7 @@ export function NotificationDropdown() {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <Bell className="w-5 h-5 text-foreground/70 dark:text-foreground/60" />
+        <AppIcon name="bell" className="w-5 h-5 text-foreground/70 dark:text-foreground/60" />
         
         {/* Dynamic Badge Pulse Counter */}
         {unreadCount > 0 && (
@@ -106,9 +106,9 @@ export function NotificationDropdown() {
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-xs font-bold text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 active:scale-95 disabled:opacity-50 transition-all duration-150"
                 >
                   {markAllReadMutation.isPending ? (
-                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                     <AppIcon name="loading" className="w-3.5 h-3.5 animate-spin" />
                   ) : (
-                    <CheckCheck className="w-3.5 h-3.5" />
+                    <AppIcon name="checkDouble" className="w-3.5 h-3.5" />
                   )}
                   {t('markAsRead')}
                 </button>
@@ -187,10 +187,10 @@ export function NotificationDropdown() {
                         <button
                           onClick={() => deleteMutation.mutate([n.id])}
                           disabled={deleteMutation.isPending}
-                          className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-855 hover:bg-red-50 dark:hover:bg-red-950/30 text-foreground/45 hover:text-red-500 dark:hover:text-red-400 shadow-sm border border-earth-200/40 dark:border-earth-800 active:scale-90 disabled:opacity-50 transition-all duration-150"
+                          className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-855 hover:bg-red-50 dark:hover:bg-red-950/30 text-foreground/45 hover:text-red-500 dark:hover:text-red-400 shadow-sm border border-earth-200/40 dark:border-earth-800 active:scale-90 disabled:opacity-50 transition-all duration-150 flex items-center justify-center"
                           title="Dismiss notification"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <AppIcon name="trash" className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </motion.div>

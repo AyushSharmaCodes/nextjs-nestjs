@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Facebook, Twitter, Instagram, Linkedin, Copy } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 
 interface BlogShareModalProps {
@@ -40,10 +40,10 @@ export function BlogShareModal({
           <h4 className="text-xl font-bold text-stone-900 dark:text-white">Share this page</h4>
           <button 
             onClick={onClose}
-            className="text-stone-400 hover:text-stone-700 bg-stone-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 p-2 rounded-full transition-all cursor-pointer"
+            className="text-stone-400 hover:text-stone-700 bg-stone-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 p-2 rounded-full transition-all cursor-pointer flex items-center justify-center"
             aria-label="Close modal"
           >
-            <X className="w-4 h-4" />
+            <AppIcon name="close" size="xs" />
           </button>
         </div>
 
@@ -54,7 +54,7 @@ export function BlogShareModal({
             className="group flex flex-col items-center gap-1.5 cursor-pointer"
           >
             <div className="w-12 h-12 border border-stone-200 dark:border-neutral-700 group-hover:border-[#1877F2] text-stone-400 group-hover:text-[#1877F2] rounded-full flex items-center justify-center transition-all duration-300">
-              <Facebook className="w-5 h-5" />
+              <AppIcon name="facebook" size="sm" />
             </div>
             <span className="text-[10px] font-bold text-stone-400 group-hover:text-stone-700 dark:group-hover:text-neutral-200 transition-colors">Facebook</span>
           </button>
@@ -64,7 +64,7 @@ export function BlogShareModal({
             className="group flex flex-col items-center gap-1.5 cursor-pointer"
           >
             <div className="w-12 h-12 border border-stone-200 dark:border-neutral-700 group-hover:border-[#1DA1F2] text-stone-400 group-hover:text-[#1DA1F2] rounded-full flex items-center justify-center transition-all duration-300">
-              <Twitter className="w-5 h-5" />
+              <AppIcon name="twitter" size="sm" />
             </div>
             <span className="text-[10px] font-bold text-stone-400 group-hover:text-stone-700 dark:group-hover:text-neutral-200 transition-colors">Twitter</span>
           </button>
@@ -74,7 +74,7 @@ export function BlogShareModal({
             className="group flex flex-col items-center gap-1.5 cursor-pointer"
           >
             <div className="w-12 h-12 border border-stone-200 dark:border-neutral-700 group-hover:border-[#DE7A41] text-stone-400 group-hover:text-[#DE7A41] rounded-full flex items-center justify-center transition-all duration-300">
-              <Instagram className="w-5 h-5" />
+              <AppIcon name="instagram" size="sm" />
             </div>
             <span className="text-[10px] font-bold text-stone-400 group-hover:text-stone-700 dark:group-hover:text-neutral-200 transition-colors">Copy Link</span>
           </button>
@@ -84,7 +84,7 @@ export function BlogShareModal({
             className="group flex flex-col items-center gap-1.5 cursor-pointer"
           >
             <div className="w-12 h-12 border border-stone-200 dark:border-neutral-700 group-hover:border-[#0A66C2] text-stone-400 group-hover:text-[#0A66C2] rounded-full flex items-center justify-center transition-all duration-300">
-              <Linkedin className="w-5 h-5" />
+              <AppIcon name="linkedin" size="sm" />
             </div>
             <span className="text-[10px] font-bold text-stone-400 group-hover:text-stone-700 dark:group-hover:text-neutral-200 transition-colors">LinkedIn</span>
           </button>
@@ -109,7 +109,7 @@ export function BlogShareModal({
               onClick={onCopyLink}
               className={`flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer ${copied ? 'bg-emerald-600 text-white shadow-sm' : 'bg-[#DE7A41] hover:bg-[#c45a27] text-white shadow-sm'}`}
             >
-              <Copy className="w-3 h-3" />
+              <AppIcon name="copy" size="xs" className="w-3 h-3" />
               <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
           </div>

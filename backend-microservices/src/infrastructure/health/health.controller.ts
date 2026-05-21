@@ -7,11 +7,13 @@ import {
 } from '@nestjs/terminus';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { Public } from '@modules/auth/decorators/public.decorator';
 
 /**
  * Production health controller.
  * Exposes: GET /health, GET /health/live, GET /health/ready
  */
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(

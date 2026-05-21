@@ -10,7 +10,7 @@ export class Product {
   @Column({ length: 255 })
   title: string;
 
-  @Column({ name: 'title_i18n', type: 'jsonb', default: {} })
+  @Column({ name: 'titleI18n', type: 'jsonb', default: {} })
   titleI18n: Record<string, string>;
 
   @Column({ length: 300, unique: true })
@@ -19,10 +19,10 @@ export class Product {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ name: 'description_i18n', type: 'jsonb', default: {} })
+  @Column({ name: 'descriptionI18n', type: 'jsonb', default: {} })
   descriptionI18n: Record<string, string>;
 
-  @Column({ name: 'selling_price', type: 'numeric', precision: 12, scale: 2 })
+  @Column({ name: 'sellingPrice', type: 'numeric', precision: 12, scale: 2 })
   sellingPrice: number;
 
   @Column({ type: 'numeric', precision: 12, scale: 2, nullable: true })
@@ -31,67 +31,70 @@ export class Product {
   @Column({ type: 'jsonb', default: [] })
   images: string[];
 
-  @Column({ name: 'category_id', type: 'uuid', nullable: true })
+  @Column({ name: 'categoryId', type: 'uuid', nullable: true })
   categoryId: string | null;
 
   @ManyToOne(() => Category, { nullable: true })
-  @JoinColumn({ name: 'category_id' })
+  @JoinColumn({ name: 'categoryId' })
   category: Category;
 
-  @Column({ name: 'variant_mode', length: 10, default: 'UNIT' })
+  @Column({ name: 'variantMode', length: 10, default: 'UNIT' })
   variantMode: string;
 
   @Column({ type: 'jsonb', default: [] })
   tags: string[];
 
-  @Column({ name: 'tags_i18n', type: 'jsonb', default: {} })
+  @Column({ name: 'tagsI18n', type: 'jsonb', default: {} })
   tagsI18n: Record<string, string>;
 
   @Column({ type: 'jsonb', default: [] })
   benefits: string[];
 
-  @Column({ name: 'benefits_i18n', type: 'jsonb', default: {} })
+  @Column({ name: 'benefitsI18n', type: 'jsonb', default: {} })
   benefitsI18n: Record<string, string>;
 
-  @Column({ name: 'is_new', default: false })
+  @Column({ name: 'isNew', default: false })
   isNew: boolean;
 
-  @Column({ name: 'is_returnable', default: true })
+  @Column({ name: 'isReturnable', default: true })
   isReturnable: boolean;
 
-  @Column({ name: 'return_days', default: 7 })
+  @Column({ name: 'returnDays', default: 7 })
   returnDays: number;
 
   @Column({ type: 'numeric', precision: 3, scale: 2, default: 0 })
   rating: number;
 
-  @Column({ name: 'rating_count', default: 0 })
+  @Column({ name: 'ratingCount', default: 0 })
   ratingCount: number;
 
-  @Column({ name: 'review_count', default: 0 })
+  @Column({ name: 'reviewCount', default: 0 })
   reviewCount: number;
 
-  @Column({ name: 'default_hsn_code', type: 'varchar', length: 10, nullable: true })
+  @Column({ name: 'defaultHsnCode', type: 'varchar', length: 10, nullable: true })
   defaultHsnCode: string | null;
 
-  @Column({ name: 'default_gst_rate', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({ name: 'defaultGstRate', type: 'numeric', precision: 5, scale: 2, nullable: true })
   defaultGstRate: number | null;
 
-  @Column({ name: 'default_tax_applicable', default: true })
+  @Column({ name: 'defaultTaxApplicable', default: true })
   defaultTaxApplicable: boolean;
 
-  @Column({ name: 'default_price_includes_tax', default: false })
+  @Column({ name: 'defaultPriceIncludesTax', default: false })
   defaultPriceIncludesTax: boolean;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'isActive', default: true })
   isActive: boolean;
+
+  @Column({ name: 'isFeatured', default: false })
+  isFeatured: boolean;
 
   @OneToMany(() => ProductVariant, (variant) => variant.product)
   variants: ProductVariant[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

@@ -13,6 +13,12 @@ export class ProductController {
     return ApiResponse.success(result);
   }
 
+  @Get('featured')
+  async getFeaturedProducts() {
+    const result = await this.productService.getFeaturedProducts();
+    return ApiResponse.success(result);
+  }
+
   @Get(':id')
   async getProduct(@Param('id') id: string) {
     const product = await this.productService.getProductById(id);

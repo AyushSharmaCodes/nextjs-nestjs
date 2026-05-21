@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Search, 
-  Share2, 
-  Laptop, 
-  Smartphone, 
-  Globe, 
-  Sparkles, 
-  Eye 
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import clsx from 'clsx';
 
 interface SEOSectionProps {
@@ -53,7 +45,7 @@ export function SEOSection({
         {/* Input Fields */}
         <div className="bg-card border border-earth-200 rounded-3xl p-6 shadow-sm space-y-5">
           <h3 className="text-base font-serif font-semibold text-foreground mb-1 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary-500" />
+            <AppIcon name="sparkles" className="h-5 w-5 text-primary-500" />
             SEO & Indexing Metadata
           </h3>
           <p className="text-xs text-foreground/50">
@@ -116,7 +108,7 @@ export function SEOSection({
 
           <div className="bg-earth-50 rounded-2xl p-4 border border-earth-200">
             <h4 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <Globe className="h-4 w-4 text-primary-500" />
+              <AppIcon name="globe" className="h-4 w-4 text-primary-500" />
               Canonical & Social URL
             </h4>
             <div className="mt-2 text-xs font-mono text-foreground/50 truncate">
@@ -129,7 +121,7 @@ export function SEOSection({
         <div className="bg-card border border-earth-200 rounded-3xl p-6 shadow-sm flex flex-col">
           <div className="flex items-center justify-between border-b border-earth-100 pb-4 mb-5">
             <h3 className="text-base font-serif font-semibold text-foreground flex items-center gap-2">
-              <Eye className="h-5 w-5 text-primary-500" />
+              <AppIcon name="eye" className="h-5 w-5 text-primary-500" />
               Dynamic Snippet Compiler
             </h3>
             
@@ -185,16 +177,16 @@ export function SEOSection({
                     <button
                       type="button"
                       onClick={() => setGoogleDevice('desktop')}
-                      className={clsx("p-1.5 rounded-md", googleDevice === 'desktop' ? "bg-card text-primary-500 shadow-sm" : "text-foreground/40")}
+                      className={clsx("p-1.5 rounded-md flex items-center justify-center", googleDevice === 'desktop' ? "bg-card text-primary-500 shadow-sm" : "text-foreground/40")}
                     >
-                      <Laptop className="h-3.5 w-3.5" />
+                      <AppIcon name="laptop" className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setGoogleDevice('mobile')}
-                      className={clsx("p-1.5 rounded-md", googleDevice === 'mobile' ? "bg-card text-primary-500 shadow-sm" : "text-foreground/40")}
+                      className={clsx("p-1.5 rounded-md flex items-center justify-center", googleDevice === 'mobile' ? "bg-card text-primary-500 shadow-sm" : "text-foreground/40")}
                     >
-                      <Smartphone className="h-3.5 w-3.5" />
+                      <AppIcon name="smartphone" className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
@@ -232,7 +224,7 @@ export function SEOSection({
                   <div className="h-9 w-9 bg-primary-500 rounded-full flex items-center justify-center text-white font-serif font-bold text-sm">M</div>
                   <div>
                     <h5 className="text-[13px] font-semibold text-foreground leading-tight">MeriGauMata Organic Goshala</h5>
-                    <span className="text-[11px] text-foreground/40 leading-none flex items-center gap-1">Sponsored · <Globe className="h-3 w-3" /></span>
+                    <span className="text-[11px] text-foreground/40 leading-none flex items-center gap-1">Sponsored · <AppIcon name="globe" className="h-3 w-3" /></span>
                   </div>
                 </div>
 
@@ -275,7 +267,7 @@ export function SEOSection({
                 {/* Metadata */}
                 <div className="p-3 border-t border-earth-100 bg-card space-y-0.5">
                   <div className="text-[11px] text-foreground/40 flex items-center gap-1">
-                    <Globe className="h-3 w-3" /> merigaumata.org
+                    <AppIcon name="globe" className="h-3 w-3" /> merigaumata.org
                   </div>
                   <h4 className="text-xs font-semibold text-foreground leading-snug truncate">{displayTitle}</h4>
                   <p className="text-[11px] text-foreground/50 leading-relaxed line-clamp-2">{displayDesc}</p>
@@ -287,7 +279,7 @@ export function SEOSection({
 
           <div className="mt-6 pt-4 border-t border-earth-100 flex items-center justify-between text-[10px] text-foreground/40">
             <span className="flex items-center gap-1">
-              <Share2 className="h-3.5 w-3.5 text-primary-500" />
+              <AppIcon name="share" className="h-3.5 w-3.5 text-primary-500" />
               Previews update dynamically as you type values on the left.
             </span>
             <span className="font-mono">OG:image loaded</span>

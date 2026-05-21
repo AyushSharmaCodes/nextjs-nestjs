@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trash2, Pen, Loader2, CheckSquare, Square, CheckCircle, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Notification, PaginationMeta, NotificationStatus } from '../types';
 import { useNotificationStore } from '../store/useNotificationStore';
 import { NotificationAvatar, NotificationBadge } from './NotificationPrimitives';
@@ -87,12 +87,12 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
               <button
                 onClick={handleBulkMarkRead}
                 disabled={markReadMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 rounded-[12px] text-xs font-bold text-primary-700 dark:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 border border-primary-200/60 dark:border-primary-900/40 active:scale-95 disabled:opacity-50 transition-all duration-150"
+                className="flex items-center gap-2 px-4 py-2 rounded-[12px] text-xs font-bold text-primary-700 dark:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 border border-primary-200/60 dark:border-primary-900/40 active:scale-95 disabled:opacity-50 transition-all duration-150 flex items-center justify-center"
               >
                 {markReadMutation.isPending ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <AppIcon name="loading" className="w-3.5 h-3.5 animate-spin" />
                 ) : (
-                  <CheckCircle className="w-3.5 h-3.5" />
+                  <AppIcon name="checkCircle" className="w-3.5 h-3.5" />
                 )}
                 {t('markAsRead')}
               </button>
@@ -100,12 +100,12 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
               <button
                 onClick={handleBulkDelete}
                 disabled={deleteMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 rounded-[12px] text-xs font-bold text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 border border-red-200/40 dark:border-red-950/30 active:scale-95 disabled:opacity-50 transition-all duration-150"
+                className="flex items-center gap-2 px-4 py-2 rounded-[12px] text-xs font-bold text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 border border-red-200/40 dark:border-red-950/30 active:scale-95 disabled:opacity-50 transition-all duration-150 flex items-center justify-center"
               >
                 {deleteMutation.isPending ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <AppIcon name="loading" className="w-3.5 h-3.5 animate-spin" />
                 ) : (
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <AppIcon name="trash" className="w-3.5 h-3.5" />
                 )}
                 {t('deleteSelected')}
               </button>
@@ -128,9 +128,9 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                     aria-label="Select all notifications"
                   >
                     {isAllSelected ? (
-                      <CheckSquare className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
+                      <AppIcon name="checkSquare" className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
                     ) : (
-                      <Square className="w-4.5 h-4.5" />
+                      <AppIcon name="square" className="w-4.5 h-4.5" />
                     )}
                   </button>
                 </th>
@@ -162,12 +162,12 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                     <td className="py-4 px-5 text-center">
                       <button
                         onClick={() => toggleSelectId(n.id)}
-                        className="focus:outline-none focus:ring-2 focus:ring-primary-500/20 rounded-[6px] text-foreground/45 hover:text-primary-600 transition-colors"
+                        className="focus:outline-none focus:ring-2 focus:ring-primary-500/20 rounded-[6px] text-foreground/45 hover:text-primary-600 transition-colors flex items-center justify-center mx-auto"
                       >
                         {isSelected ? (
-                          <CheckSquare className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
+                          <AppIcon name="checkSquare" className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
                         ) : (
-                          <Square className="w-4.5 h-4.5" />
+                          <AppIcon name="square" className="w-4.5 h-4.5" />
                         )}
                       </button>
                     </td>
@@ -224,20 +224,20 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                           <button
                             onClick={() => markReadMutation.mutate([n.id])}
                             disabled={markReadMutation.isPending}
-                            className="p-2 rounded-[8px] bg-earth-50 hover:bg-primary-50 dark:bg-earth-800/40 dark:hover:bg-primary-950/20 text-foreground/45 hover:text-primary-600 dark:hover:text-primary-400 border border-earth-200/20 dark:border-transparent shadow-sm active:scale-90 transition-all"
+                            className="p-2 rounded-[8px] bg-earth-50 hover:bg-primary-50 dark:bg-earth-800/40 dark:hover:bg-primary-950/20 text-foreground/45 hover:text-primary-600 dark:hover:text-primary-400 border border-earth-200/20 dark:border-transparent shadow-sm active:scale-90 transition-all flex items-center justify-center"
                             title="Mark as read"
                           >
-                            <CheckCircle className="w-4.5 h-4.5" />
+                            <AppIcon name="checkCircle" className="w-4.5 h-4.5" />
                           </button>
                         )}
                         
                         <button
                           onClick={() => deleteMutation.mutate([n.id])}
                           disabled={deleteMutation.isPending}
-                          className="p-2 rounded-[8px] bg-earth-50 hover:bg-red-50 dark:bg-earth-800/40 dark:hover:bg-red-950/20 text-foreground/45 hover:text-red-500 dark:hover:text-red-400 border border-earth-200/20 dark:border-transparent shadow-sm active:scale-90 transition-all"
+                          className="p-2 rounded-[8px] bg-earth-50 hover:bg-red-50 dark:bg-earth-800/40 dark:hover:bg-red-950/20 text-foreground/45 hover:text-red-500 dark:hover:text-red-400 border border-earth-200/20 dark:border-transparent shadow-sm active:scale-90 transition-all flex items-center justify-center"
                           title="Delete notification"
                         >
-                          <Trash2 className="w-4.5 h-4.5" />
+                          <AppIcon name="trash" className="w-4.5 h-4.5" />
                         </button>
                       </div>
                     </td>
@@ -285,33 +285,33 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                 <button
                   onClick={() => setPage(1)}
                   disabled={meta.page <= 1}
-                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none"
+                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none flex items-center justify-center"
                 >
-                  <ChevronsLeft className="w-4.5 h-4.5" />
+                  <AppIcon name="chevronsLeft" className="w-4.5 h-4.5" />
                 </button>
                 {/* Chevron single left */}
                 <button
                   onClick={() => setPage(meta.page - 1)}
                   disabled={meta.page <= 1}
-                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none"
+                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none flex items-center justify-center"
                 >
-                  <ChevronLeft className="w-4.5 h-4.5" />
+                  <AppIcon name="chevronLeft" className="w-4.5 h-4.5" />
                 </button>
                 {/* Chevron single right */}
                 <button
                   onClick={() => setPage(meta.page + 1)}
                   disabled={meta.page >= meta.totalPages}
-                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none"
+                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none flex items-center justify-center"
                 >
-                  <ChevronRight className="w-4.5 h-4.5" />
+                  <AppIcon name="chevronRight" className="w-4.5 h-4.5" />
                 </button>
                 {/* Chevrons right */}
                 <button
                   onClick={() => setPage(meta.totalPages)}
                   disabled={meta.page >= meta.totalPages}
-                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none"
+                  className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent hover:bg-earth-100 dark:hover:bg-earth-900 hover:text-primary-600 disabled:opacity-40 disabled:hover:text-current active:scale-90 transition-all outline-none flex items-center justify-center"
                 >
-                  <ChevronsRight className="w-4.5 h-4.5" />
+                  <AppIcon name="chevronsRight" className="w-4.5 h-4.5" />
                 </button>
               </div>
             </div>

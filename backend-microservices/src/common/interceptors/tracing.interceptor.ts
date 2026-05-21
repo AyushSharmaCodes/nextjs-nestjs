@@ -36,11 +36,11 @@ export class TracingInterceptor implements NestInterceptor {
     req.parentSpanId = parentSpanId;
 
     // Set response headers
-    res.setHeader('X-Trace-Id', traceId);
-    res.setHeader('X-Correlation-Id', correlationId);
-    res.setHeader('X-Span-Id', spanId);
+    res.header('X-Trace-Id', traceId);
+    res.header('X-Correlation-Id', correlationId);
+    res.header('X-Span-Id', spanId);
     if (parentSpanId) {
-      res.setHeader('X-Parent-Span-Id', parentSpanId);
+      res.header('X-Parent-Span-Id', parentSpanId);
     }
 
     const startTime = Date.now();

@@ -6,22 +6,22 @@ export class AppliedCoupon {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'cart_id' })
+  @Column({ name: 'cartId' })
   cartId: string;
 
   @ManyToOne(() => Cart)
-  @JoinColumn({ name: 'cart_id' })
+  @JoinColumn({ name: 'cartId' })
   cart: Cart;
 
-  @Column({ name: 'coupon_id' })
+  @Column({ name: 'couponId' })
   couponId: string;
 
-  @Column({ name: 'coupon_code', length: 50 })
+  @Column({ name: 'couponCode', length: 50 })
   couponCode: string;
 
-  @Column({ name: 'discount_amount', type: 'numeric', precision: 10, scale: 2 })
+  @Column({ name: 'discountAmount', type: 'numeric', precision: 10, scale: 2 })
   discountAmount: number;
 
-  @CreateDateColumn({ name: 'applied_at' })
+  @CreateDateColumn({ name: 'appliedAt' })
   appliedAt: Date;
 }

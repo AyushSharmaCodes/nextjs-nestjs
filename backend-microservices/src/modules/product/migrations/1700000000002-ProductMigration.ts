@@ -12,12 +12,12 @@ export class ProductMigration1700000000002 implements MigrationInterface {
           { name: 'name', type: 'varchar' },
           { name: 'slug', type: 'varchar', isUnique: true },
           { name: 'description', type: 'text', isNullable: true },
-          { name: 'image_url', type: 'varchar', isNullable: true },
-          { name: 'parent_id', type: 'uuid', isNullable: true },
-          { name: 'display_order', type: 'int', default: 0 },
-          { name: 'is_active', type: 'boolean', default: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'imageUrl', type: 'varchar', isNullable: true },
+          { name: 'parentId', type: 'uuid', isNullable: true },
+          { name: 'displayOrder', type: 'int', default: 0 },
+          { name: 'isActive', type: 'boolean', default: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -31,24 +31,24 @@ export class ProductMigration1700000000002 implements MigrationInterface {
           { name: 'name', type: 'varchar' },
           { name: 'slug', type: 'varchar', isUnique: true },
           { name: 'description', type: 'text', isNullable: true },
-          { name: 'short_description', type: 'varchar', isNullable: true },
-          { name: 'category_id', type: 'uuid' },
+          { name: 'shortDescription', type: 'varchar', isNullable: true },
+          { name: 'categoryId', type: 'uuid' },
           { name: 'brand', type: 'varchar', isNullable: true },
-          { name: 'base_price', type: 'decimal', precision: 10, scale: 2 },
-          { name: 'selling_price', type: 'decimal', precision: 10, scale: 2 },
+          { name: 'basePrice', type: 'decimal', precision: 10, scale: 2 },
+          { name: 'sellingPrice', type: 'decimal', precision: 10, scale: 2 },
           { name: 'mrp', type: 'decimal', precision: 10, scale: 2, isNullable: true },
-          { name: 'stock_quantity', type: 'int', default: 0 },
-          { name: 'stock_status', type: 'varchar', default: 'OUT_OF_STOCK' },
+          { name: 'stockQuantity', type: 'int', default: 0 },
+          { name: 'stockStatus', type: 'varchar', default: 'OUT_OF_STOCK' },
           { name: 'sku', type: 'varchar', isNullable: true },
           { name: 'barcode', type: 'varchar', isNullable: true },
           { name: 'weight', type: 'decimal', precision: 10, scale: 2, isNullable: true },
           { name: 'dimensions', type: 'jsonb', isNullable: true },
-          { name: 'is_active', type: 'boolean', default: true },
-          { name: 'is_featured', type: 'boolean', default: false },
-          { name: 'meta_title', type: 'varchar', isNullable: true },
-          { name: 'meta_description', type: 'text', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'isActive', type: 'boolean', default: true },
+          { name: 'isFeatured', type: 'boolean', default: false },
+          { name: 'metaTitle', type: 'varchar', isNullable: true },
+          { name: 'metaDescription', type: 'text', isNullable: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -56,66 +56,66 @@ export class ProductMigration1700000000002 implements MigrationInterface {
 
     await queryRunner.createForeignKey(
       'products',
-      new TableForeignKey({ columnNames: ['category_id'], referencedTableName: 'categories', referencedColumnNames: ['id'], onDelete: 'SET NULL' }),
+      new TableForeignKey({ columnNames: ['categoryId'], referencedTableName: 'categories', referencedColumnNames: ['id'], onDelete: 'SET NULL' }),
     );
 
     await queryRunner.createTable(
       new Table({
-        name: 'product_images',
+        name: 'productImages',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'product_id', type: 'uuid' },
+          { name: 'productId', type: 'uuid' },
           { name: 'url', type: 'varchar' },
-          { name: 'alt_text', type: 'varchar', isNullable: true },
-          { name: 'display_order', type: 'int', default: 0 },
-          { name: 'is_primary', type: 'boolean', default: false },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
+          { name: 'altText', type: 'varchar', isNullable: true },
+          { name: 'displayOrder', type: 'int', default: 0 },
+          { name: 'isPrimary', type: 'boolean', default: false },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
     );
 
     await queryRunner.createForeignKey(
-      'product_images',
-      new TableForeignKey({ columnNames: ['product_id'], referencedTableName: 'products', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
+      'productImages',
+      new TableForeignKey({ columnNames: ['productId'], referencedTableName: 'products', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
     );
 
     await queryRunner.createTable(
       new Table({
-        name: 'product_variants',
+        name: 'productVariants',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'product_id', type: 'uuid' },
+          { name: 'productId', type: 'uuid' },
           { name: 'name', type: 'varchar' },
           { name: 'sku', type: 'varchar', isNullable: true },
           { name: 'price', type: 'decimal', precision: 10, scale: 2, isNullable: true },
-          { name: 'stock_quantity', type: 'int', default: 0 },
+          { name: 'stockQuantity', type: 'int', default: 0 },
           { name: 'attributes', type: 'jsonb', isNullable: true },
-          { name: 'is_active', type: 'boolean', default: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'isActive', type: 'boolean', default: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
     );
 
     await queryRunner.createForeignKey(
-      'product_variants',
-      new TableForeignKey({ columnNames: ['product_id'], referencedTableName: 'products', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
+      'productVariants',
+      new TableForeignKey({ columnNames: ['productId'], referencedTableName: 'products', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
     );
 
     await queryRunner.createTable(
       new Table({
-        name: 'inventory_logs',
+        name: 'inventoryLogs',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'product_id', type: 'uuid' },
-          { name: 'variant_id', type: 'uuid', isNullable: true },
-          { name: 'quantity_change', type: 'int' },
+          { name: 'productId', type: 'uuid' },
+          { name: 'variantId', type: 'uuid', isNullable: true },
+          { name: 'quantityChange', type: 'int' },
           { name: 'reason', type: 'varchar' },
-          { name: 'reference_id', type: 'varchar', isNullable: true },
-          { name: 'created_by', type: 'uuid', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
+          { name: 'referenceId', type: 'varchar', isNullable: true },
+          { name: 'createdBy', type: 'uuid', isNullable: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -126,16 +126,16 @@ export class ProductMigration1700000000002 implements MigrationInterface {
         name: 'reviews',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'product_id', type: 'uuid' },
-          { name: 'user_id', type: 'uuid' },
+          { name: 'productId', type: 'uuid' },
+          { name: 'userId', type: 'uuid' },
           { name: 'rating', type: 'int' },
           { name: 'title', type: 'varchar', isNullable: true },
           { name: 'comment', type: 'text', isNullable: true },
-          { name: 'is_verified', type: 'boolean', default: false },
-          { name: 'is_approved', type: 'boolean', default: true },
-          { name: 'helpful_count', type: 'int', default: 0 },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'isVerified', type: 'boolean', default: false },
+          { name: 'isApproved', type: 'boolean', default: true },
+          { name: 'helpfulCount', type: 'int', default: 0 },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -143,19 +143,19 @@ export class ProductMigration1700000000002 implements MigrationInterface {
 
     await queryRunner.createForeignKey(
       'reviews',
-      new TableForeignKey({ columnNames: ['product_id'], referencedTableName: 'products', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
+      new TableForeignKey({ columnNames: ['productId'], referencedTableName: 'products', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
     );
 
     await queryRunner.createTable(
       new Table({
-        name: 'delivery_zones',
+        name: 'deliveryZones',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
           { name: 'name', type: 'varchar' },
           { name: 'regions', type: 'jsonb', isNullable: true },
-          { name: 'is_active', type: 'boolean', default: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'isActive', type: 'boolean', default: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -163,35 +163,35 @@ export class ProductMigration1700000000002 implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: 'delivery_charges',
+        name: 'deliveryCharges',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'zone_id', type: 'uuid' },
-          { name: 'min_weight', type: 'decimal', precision: 10, scale: 2 },
-          { name: 'max_weight', type: 'decimal', precision: 10, scale: 2, isNullable: true },
+          { name: 'zoneId', type: 'uuid' },
+          { name: 'minWeight', type: 'decimal', precision: 10, scale: 2 },
+          { name: 'maxWeight', type: 'decimal', precision: 10, scale: 2, isNullable: true },
           { name: 'charge', type: 'decimal', precision: 10, scale: 2 },
-          { name: 'estimated_days', type: 'int', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
+          { name: 'estimatedDays', type: 'int', isNullable: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
     );
 
     await queryRunner.createForeignKey(
-      'delivery_charges',
-      new TableForeignKey({ columnNames: ['zone_id'], referencedTableName: 'delivery_zones', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
+      'deliveryCharges',
+      new TableForeignKey({ columnNames: ['zoneId'], referencedTableName: 'deliveryZones', referencedColumnNames: ['id'], onDelete: 'CASCADE' }),
     );
 
     await queryRunner.createTable(
       new Table({
-        name: 'delivery_partners',
+        name: 'deliveryPartners',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
           { name: 'name', type: 'varchar' },
-          { name: 'api_key', type: 'varchar', isNullable: true },
-          { name: 'is_active', type: 'boolean', default: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'apiKey', type: 'varchar', isNullable: true },
+          { name: 'isActive', type: 'boolean', default: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -199,13 +199,13 @@ export class ProductMigration1700000000002 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('delivery_partners');
-    await queryRunner.dropTable('delivery_charges');
-    await queryRunner.dropTable('delivery_zones');
+    await queryRunner.dropTable('deliveryPartners');
+    await queryRunner.dropTable('deliveryCharges');
+    await queryRunner.dropTable('deliveryZones');
     await queryRunner.dropTable('reviews');
-    await queryRunner.dropTable('inventory_logs');
-    await queryRunner.dropTable('product_variants');
-    await queryRunner.dropTable('product_images');
+    await queryRunner.dropTable('inventoryLogs');
+    await queryRunner.dropTable('productVariants');
+    await queryRunner.dropTable('productImages');
     await queryRunner.dropTable('products');
     await queryRunner.dropTable('categories');
   }

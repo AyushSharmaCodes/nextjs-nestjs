@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
@@ -28,7 +29,7 @@ export default function NewCategoryPage() {
         const data = await mockCategoriesApi.getCategories(categoryType);
         setAllCategories(data);
       } catch (err) {
-        console.error('Failed reference lists load:', err);
+        logger.error(`Failed reference lists load:: {error}`, { error: String(err) });
       } finally {
         setLoading(false);
       }
@@ -47,7 +48,7 @@ export default function NewCategoryPage() {
       alert(t('successCreate'));
       router.push('/admin/categories');
     } catch (err) {
-      console.error('Save failed:', err);
+      logger.error(`Save failed:: {error}`, { error: String(err) });
       alert('Failed saving category node. Please verify validations.');
     }
   };

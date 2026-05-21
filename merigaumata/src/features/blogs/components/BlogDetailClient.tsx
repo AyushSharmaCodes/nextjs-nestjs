@@ -10,7 +10,7 @@ import { BlogRelated } from './BlogRelated';
 import { BlogShareModal } from './BlogShareModal';
 import { useBlogDetailQuery } from '../hooks/use-blogs';
 import { useTranslations } from 'next-intl';
-import { Loader2 } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 
 interface BlogDetailClientProps {
   post: BlogPost;
@@ -63,7 +63,7 @@ export function BlogDetailClient({ post: initialPost, relatedPosts }: BlogDetail
   if (isPending && !activePost) {
     return (
       <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col items-center justify-center pt-32">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500 mb-2" />
+        <AppIcon name="loading" className="w-8 h-8 animate-spin text-primary-500 mb-2" />
         <span className="text-sm font-medium text-stone-400">{t('loading')}</span>
       </div>
     );

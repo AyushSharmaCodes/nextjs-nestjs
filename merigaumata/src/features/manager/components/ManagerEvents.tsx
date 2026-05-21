@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PlusCircle } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { SanctuaryEvent } from '../types/manager.types';
 
 interface ManagerEventsProps {
@@ -39,7 +39,7 @@ export function ManagerEvents({
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 pt-2">
         <form onSubmit={handleAddEvent} className="xl:col-span-5 space-y-4 p-5 rounded-xl border border-border bg-neutral-50/50 dark:bg-neutral-900/40 h-max">
           <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1 flex items-center gap-2">
-            <PlusCircle className="w-4 h-4 text-primary-500" /> Add New Event
+            <AppIcon name="plusCircle" className="w-4 h-4 text-primary-500" /> Add New Event
           </h3>
           
           <div className="space-y-1">

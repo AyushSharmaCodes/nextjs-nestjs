@@ -8,8 +8,8 @@ export class Translation {
   @Column() language: string;
   @Column({ type: 'text' }) value: string;
   @Column({ default: true }) isActive: boolean;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
+  @UpdateDateColumn({ name: 'updatedAt' }) updatedAt: Date;
 }
 
 @Entity('translation_metadata')
@@ -20,5 +20,5 @@ export class TranslationMetadata {
   @Column({ default: false }) isDefault: boolean;
   @Column({ default: true }) isActive: boolean;
   @Column({ default: 0 }) displayOrder: number;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }

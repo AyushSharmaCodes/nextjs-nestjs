@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 
 export default function HeroCarousel() {
@@ -144,17 +144,17 @@ export default function HeroCarousel() {
         <div className="flex gap-4 pointer-events-auto">
           <button 
             onClick={prevSlide}
-            className="p-3.5 rounded-full bg-neutral-900/40 backdrop-blur-md border border-neutral-700 hover:bg-neutral-800 text-white transition-all transform hover:scale-110 shadow-lg"
+            className="p-3.5 rounded-full bg-neutral-900/40 backdrop-blur-md border border-neutral-700 hover:bg-neutral-800 text-white transition-all transform hover:scale-110 shadow-lg flex items-center justify-center"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <AppIcon name="chevronLeft" className="h-6 w-6" />
           </button>
           <button 
             onClick={nextSlide}
-            className="p-3.5 rounded-full bg-neutral-900/40 backdrop-blur-md border border-neutral-700 hover:bg-neutral-800 text-white transition-all transform hover:scale-110 shadow-lg"
+            className="p-3.5 rounded-full bg-neutral-900/40 backdrop-blur-md border border-neutral-700 hover:bg-neutral-800 text-white transition-all transform hover:scale-110 shadow-lg flex items-center justify-center"
             aria-label="Next slide"
           >
-            <ChevronRight className="h-6 w-6" />
+            <AppIcon name="chevronRight" className="h-6 w-6" />
           </button>
         </div>
       </div>

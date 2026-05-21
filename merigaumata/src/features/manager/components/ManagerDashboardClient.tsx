@@ -1,9 +1,6 @@
 'use client';
 
-import { 
-  ShoppingBag, Calendar, Heart, ShieldAlert, Lock, 
-  CheckCircle, Sliders, DollarSign 
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import { useManager } from '../hooks/useManager';
@@ -45,7 +42,7 @@ export function ManagerDashboardClient() {
         {/* Dynamic Toast Alerts */}
         {toastMessage && (
           <div className="fixed top-24 right-6 z-50 bg-foreground text-background px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-border animate-in fade-in slide-in-from-top-4 duration-300 font-medium text-sm">
-            <CheckCircle className="w-4 h-4 text-emerald-500" />
+            <AppIcon name="checkCircle" className="w-4 h-4 text-emerald-500" />
             {toastMessage}
           </div>
         )}
@@ -84,7 +81,7 @@ export function ManagerDashboardClient() {
             <div>
               <h4 className="text-[11px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3 px-3 flex items-center justify-between">
                 Operations Panel 
-                <Sliders className="w-3 h-3 text-neutral-400" />
+                <AppIcon name="sliders" className="w-3 h-3 text-neutral-400" />
               </h4>
               <nav className="space-y-1">
                 
@@ -98,9 +95,9 @@ export function ManagerDashboardClient() {
                   }`}
                 >
                   <span className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4" /> {tManager('eventsTab')}
+                    <AppIcon name="calendar" className="w-4 h-4" /> {tManager('eventsTab')}
                   </span>
-                  {!hasAccess('events') && <Lock className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
+                  {!hasAccess('events') && <AppIcon name="lock" className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
                 </button>
 
                 {/* Products Tab */}
@@ -113,9 +110,9 @@ export function ManagerDashboardClient() {
                   }`}
                 >
                   <span className="flex items-center gap-3">
-                    <ShoppingBag className="w-4 h-4" /> {tManager('productsTab')}
+                    <AppIcon name="products" className="w-4 h-4" /> {tManager('productsTab')}
                   </span>
-                  {!hasAccess('products') && <Lock className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
+                  {!hasAccess('products') && <AppIcon name="lock" className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
                 </button>
 
                 {/* Welfare Tab */}
@@ -128,9 +125,9 @@ export function ManagerDashboardClient() {
                   }`}
                 >
                   <span className="flex items-center gap-3">
-                    <Heart className="w-4 h-4 text-emerald-500" /> {tManager('welfareTab')}
+                    <AppIcon name="heart" className="w-4 h-4 text-emerald-500" /> {tManager('welfareTab')}
                   </span>
-                  {!hasAccess('welfare') && <Lock className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
+                  {!hasAccess('welfare') && <AppIcon name="lock" className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
                 </button>
 
                 {/* Donations Tab */}
@@ -143,9 +140,9 @@ export function ManagerDashboardClient() {
                   }`}
                 >
                   <span className="flex items-center gap-3">
-                    <DollarSign className="w-4 h-4" /> {tManager('donationsTab')}
+                    <AppIcon name="dollar" className="w-4 h-4" /> {tManager('donationsTab')}
                   </span>
-                  {!hasAccess('donations') && <Lock className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
+                  {!hasAccess('donations') && <AppIcon name="lock" className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />}
                 </button>
 
               </nav>
@@ -185,14 +182,14 @@ export function ManagerDashboardClient() {
             {!hasAccess(activeTab) ? (
               <div className="flex flex-col items-center justify-center text-center py-20 animate-in fade-in zoom-in-95 duration-300">
                 <div className="w-16 h-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mb-6">
-                  <ShieldAlert className="w-8 h-8" />
+                  <AppIcon name="shieldAlert" className="w-8 h-8" />
                 </div>
                 <h2 className="text-2xl font-bold tracking-tight text-foreground font-serif mb-2">{tManager('noAccess')}</h2>
                 <p className="max-w-md text-neutral-500 dark:text-neutral-400 text-sm leading-relaxed mb-8">
                   {tManager('noAccessDesc')}
                 </p>
                 <div className="p-4 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-border flex items-center gap-3 text-left">
-                  <Lock className="w-4 h-4 text-amber-500 shrink-0" />
+                  <AppIcon name="lock" className="w-4 h-4 text-amber-500 shrink-0" />
                   <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
                     Administrator grants access dynamically through Local Storage controls.
                   </span>

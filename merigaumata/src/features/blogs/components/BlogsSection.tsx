@@ -10,13 +10,16 @@ interface BlogsSectionProps {
 export default async function BlogsSection({ posts = [] }: BlogsSectionProps) {
   const t = await getTranslations('home.blogs');
 
-  if (posts.length === 0) {
+  // Defensive check to ensure posts is an array before slicing
+  const safePosts = Array.isArray(posts) ? posts : [];
+
+  if (safePosts.length === 0) {
     return null;
   }
 
   // Segment posts: first one large featured, next 4 small
-  const largePost = posts[0];
-  const smallPosts = posts.slice(1, 5);
+  const largePost = safePosts[0];
+  const smallPosts = safePosts.slice(1, 5);
 
   return (
     <section className="py-24 bg-earth-50/70 dark:bg-neutral-950/50 transition-colors overflow-hidden select-none">

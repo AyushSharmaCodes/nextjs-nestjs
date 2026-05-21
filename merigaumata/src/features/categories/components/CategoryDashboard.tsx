@@ -1,28 +1,8 @@
 "use client";
 
+import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Filter, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  Plus, 
-  Download, 
-  Upload, 
-  RefreshCw, 
-  FileJson, 
-  Bookmark, 
-  Sliders, 
-  HelpCircle, 
-  Grid, 
-  BookOpen, 
-  ShoppingBag, 
-  Calendar,
-  Layers,
-  Sparkles,
-  Info
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Category, CategoryType } from '../types';
 import { mockCategoriesApi } from '../services/mockApi';
 import { CategoryTreeView } from './CategoryTreeView';
@@ -61,7 +41,7 @@ export function CategoryDashboard({
       const data = await mockCategoriesApi.getCategories(categoryType);
       setCategories(data);
     } catch (err) {
-      console.error('Failed to load categories:', err);
+      logger.error(`Failed to load categories:: {error}`, { error: String(err) });
     } finally {
       setLoading(false);
     }
@@ -90,7 +70,7 @@ export function CategoryDashboard({
       const fresh = await mockCategoriesApi.getCategories(categoryType);
       setCategories(fresh);
     } catch (err) {
-      console.error('Reorder update failed, falling back:', err);
+      logger.error(`Reorder update failed, falling back:: {error}`, { error: String(err) });
       fetchCategories();
     }
   };
@@ -102,7 +82,7 @@ export function CategoryDashboard({
     try {
       await mockCategoriesApi.updateCategory(id, { isActive: active });
     } catch (err) {
-      console.error('Failed to toggle active:', err);
+      logger.error(`Failed to toggle active:: {error}`, { error: String(err) });
       fetchCategories();
     }
   };
@@ -114,7 +94,7 @@ export function CategoryDashboard({
       await mockCategoriesApi.deleteCategory(id, false);
       fetchCategories();
     } catch (err) {
-      console.error('Delete failed:', err);
+      logger.error(`Delete failed:: {error}`, { error: String(err) });
     }
   };
 
@@ -136,7 +116,7 @@ export function CategoryDashboard({
       setSelectedIds(new Set());
       fetchCategories();
     } catch (err) {
-      console.error('Bulk deletion failed:', err);
+      logger.error(`Bulk deletion failed:: {error}`, { error: String(err) });
     } finally {
       setIsBulkOperating(false);
     }
@@ -225,12 +205,11 @@ export function CategoryDashboard({
         {/* Domain Navigation Tabs */}
         <div className="flex bg-card border border-earth-200 rounded-2xl p-1 shadow-sm max-w-full overflow-x-auto gap-0.5">
           {[
-            { id: 'product', label: 'Products', icon: ShoppingBag, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/20' },
-            { id: 'event', label: 'Events', icon: Calendar, color: 'text-green-600 bg-green-50 dark:bg-green-950/20' },
-            { id: 'blog', label: 'Wisdom Blogs', icon: BookOpen, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' },
-            { id: 'faq', label: 'FAQs / Help', icon: HelpCircle, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/20' }
+            { id: 'product', label: 'Products', icon: 'products', color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/20' },
+            { id: 'event', label: 'Events', icon: 'events', color: 'text-green-600 bg-green-50 dark:bg-green-950/20' },
+            { id: 'blog', label: 'Wisdom Blogs', icon: 'bookOpen', color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/20' },
+            { id: 'faq', label: 'FAQs / Help', icon: 'help', color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/20' }
           ].map(tab => {
-            const TabIcon = tab.icon;
             const isSelected = categoryType === tab.id;
             return (
               <button
@@ -248,7 +227,7 @@ export function CategoryDashboard({
                   "p-1 rounded-lg transition-colors flex items-center justify-center", 
                   isSelected ? "bg-background/20 text-background" : tab.color
                 )}>
-                  <TabIcon className="h-4 w-4" />
+                  <AppIcon name={tab.icon as any} className="h-4 w-4" />
                 </div>
                 {tab.label}
               </button>
@@ -261,20 +240,20 @@ export function CategoryDashboard({
           <button
             type="button"
             onClick={handleExportJSON}
-            className="p-2 border border-earth-200 text-foreground/70 hover:bg-earth-50 rounded-xl hover:text-foreground transition-colors flex items-center gap-1.5 text-xs font-semibold"
+            className="p-2 border border-earth-200 text-foreground/70 hover:bg-earth-50 rounded-xl hover:text-foreground transition-colors flex items-center justify-center gap-1.5 text-xs font-semibold"
             title="Export Categories Database Schema"
           >
-            <Download className="h-4 w-4" />
+            <AppIcon name="download" className="h-4 w-4" />
             <span>Export</span>
           </button>
           
           <button
             type="button"
             onClick={handleImportJSON}
-            className="p-2 border border-earth-200 text-foreground/70 hover:bg-earth-50 rounded-xl hover:text-foreground transition-colors flex items-center gap-1.5 text-xs font-semibold"
+            className="p-2 border border-earth-200 text-foreground/70 hover:bg-earth-50 rounded-xl hover:text-foreground transition-colors flex items-center justify-center gap-1.5 text-xs font-semibold"
             title="Import Categories Database Schema"
           >
-            <Upload className="h-4 w-4" />
+            <AppIcon name="upload" className="h-4 w-4" />
             <span>Import</span>
           </button>
 
@@ -283,9 +262,9 @@ export function CategoryDashboard({
           <button
             type="button"
             onClick={() => router.push(`/admin/categories/${categoryType}/new`)}
-            className="px-4 py-2 bg-foreground text-background hover:bg-foreground/90 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm"
+            className="px-4 py-2 bg-foreground text-background hover:bg-foreground/90 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
           >
-            <Plus className="h-4 w-4" /> Add Category
+            <AppIcon name="plus" className="h-4 w-4" /> Add Category
           </button>
         </div>
       </div>
@@ -296,7 +275,7 @@ export function CategoryDashboard({
           
           {/* Search bar */}
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-foreground/35" />
+            <AppIcon name="search" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-foreground/35" />
             <input
               type="text"
               placeholder={`Search in ${categoryType} categories catalog by name, slug or metadata...`}
@@ -311,13 +290,13 @@ export function CategoryDashboard({
             type="button"
             onClick={() => setShowFilters(!showFilters)}
             className={clsx(
-              "px-4 py-2.5 border rounded-xl text-xs font-semibold flex items-center gap-2 w-full md:w-auto justify-center transition-all",
+              "px-4 py-2.5 border rounded-xl text-xs font-semibold flex items-center justify-center gap-2 w-full md:w-auto transition-all",
               showFilters 
                 ? "bg-earth-100 border-primary-500 text-primary-600 font-bold" 
                 : "border-earth-200 text-foreground/70 hover:bg-earth-50"
             )}
           >
-            <Filter className="h-4 w-4" />
+            <AppIcon name="filter" className="h-4 w-4" />
             Advanced Filters
           </button>
         </div>
@@ -374,7 +353,7 @@ export function CategoryDashboard({
             <div className="flex flex-col justify-end">
               <div className="flex items-center justify-between text-xs text-foreground/50 bg-earth-50 rounded-xl p-3 border border-earth-200">
                 <span className="flex items-center gap-1">
-                  <Layers className="h-4 w-4 text-primary-500" />
+                  <AppIcon name="layers" className="h-4 w-4 text-primary-500" />
                   Hierarchy depth limits:
                 </span>
                 <span className="font-bold text-foreground">

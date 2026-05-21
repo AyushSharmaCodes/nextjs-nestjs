@@ -1,10 +1,14 @@
 import { Module, Global } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { validateEnvironment } from '../../common/utils/env-validation';
+import { AppConfigService } from './app-config.service';
 
 /**
  * Centralized configuration module.
- * Single source of truth for all environment variables.
+ *
+ * - Validates all env vars at startup via Zod (crashes on failure).
+ * - Exports AppConfigService as the single typed config accessor.
+ * - Global: no need to import this module in every domain module.
  */
 @Global()
 @Module({
@@ -16,6 +20,7 @@ import { validateEnvironment } from '../../common/utils/env-validation';
       expandVariables: true,
     }),
   ],
-  exports: [NestConfigModule],
+  providers: [AppConfigService],
+  exports: [AppConfigService],
 })
 export class AppConfigModule {}

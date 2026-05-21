@@ -1,10 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  Users, ShoppingBag, Calendar, Heart, UserPlus, 
-  Trash2, DollarSign 
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { ManagerAccount } from '../types/admin.types';
 
 interface ManagerProvisionerProps {
@@ -125,7 +122,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <Calendar className="w-3.5 h-3.5" /> Manage Events Tab
+                  <AppIcon name="calendar" className="w-3.5 h-3.5" /> Manage Events Tab
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -140,7 +137,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <ShoppingBag className="w-3.5 h-3.5" /> Manage Products Tab
+                  <AppIcon name="products" className="w-3.5 h-3.5" /> Manage Products Tab
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -155,7 +152,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <Heart className="w-3.5 h-3.5" /> Cow Welfare Support
+                  <AppIcon name="heart" className="w-3.5 h-3.5" /> Cow Welfare Support
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -170,7 +167,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <DollarSign className="w-3.5 h-3.5" /> Financials & Donations
+                  <AppIcon name="dollar" className="w-3.5 h-3.5" /> Financials & Donations
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -181,7 +178,7 @@ export function ManagerProvisioner({
             type="submit" 
             className="w-full py-2.5 rounded-xl bg-foreground text-background font-bold text-[13px] tracking-wide flex items-center justify-center gap-2 shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all focus:outline-none"
           >
-            <UserPlus className="w-4 h-4" /> Provision Account
+            <AppIcon name="userPlus" className="w-4 h-4" /> Provision Account
           </button>
         </form>
 
@@ -238,7 +235,7 @@ export function ManagerProvisioner({
                         className="p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors mt-1 focus:outline-none"
                         title="Delete Manager"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <AppIcon name="trash" className="w-4 h-4" />
                       </button>
                     )}
                   </div>

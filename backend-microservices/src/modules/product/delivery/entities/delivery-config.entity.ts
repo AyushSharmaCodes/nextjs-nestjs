@@ -10,47 +10,47 @@ export class DeliveryConfig {
   @Column({ length: 10 })
   scope: string;
 
-  @Column({ name: 'product_id', nullable: true })
+  @Column({ name: 'productId', nullable: true })
   productId: string | null;
 
   @ManyToOne(() => Product, { nullable: true })
-  @JoinColumn({ name: 'product_id' })
+  @JoinColumn({ name: 'productId' })
   product: Product;
 
-  @Column({ name: 'variant_id', nullable: true })
+  @Column({ name: 'variantId', nullable: true })
   variantId: string | null;
 
   @ManyToOne(() => ProductVariant, { nullable: true })
-  @JoinColumn({ name: 'variant_id' })
+  @JoinColumn({ name: 'variantId' })
   variant: ProductVariant;
 
-  @Column({ name: 'calculation_type', length: 20 })
+  @Column({ name: 'calculationType', length: 20 })
   calculationType: string;
 
-  @Column({ name: 'base_delivery_charge', type: 'numeric', precision: 10, scale: 2 })
+  @Column({ name: 'baseDeliveryCharge', type: 'numeric', precision: 10, scale: 2 })
   baseDeliveryCharge: number;
 
-  @Column({ name: 'max_items_per_package', default: 10 })
+  @Column({ name: 'maxItemsPerPackage', default: 10 })
   maxItemsPerPackage: number;
 
-  @Column({ name: 'unit_weight', type: 'numeric', precision: 10, scale: 3, nullable: true })
+  @Column({ name: 'unitWeight', type: 'numeric', precision: 10, scale: 3, nullable: true })
   unitWeight: number | null;
 
-  @Column({ name: 'gst_percentage', type: 'numeric', precision: 5, scale: 2, default: 0 })
+  @Column({ name: 'gstPercentage', type: 'numeric', precision: 5, scale: 2, default: 0 })
   gstPercentage: number;
 
-  @Column({ name: 'is_taxable', default: true })
+  @Column({ name: 'isTaxable', default: true })
   isTaxable: boolean;
 
-  @Column({ name: 'delivery_refund_policy', type: 'text', nullable: true })
+  @Column({ name: 'deliveryRefundPolicy', type: 'text', nullable: true })
   deliveryRefundPolicy: string | null;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'isActive', default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

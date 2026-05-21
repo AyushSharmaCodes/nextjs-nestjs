@@ -6,17 +6,17 @@ export class OrderItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'order_id' })
+  @Column({ name: 'orderId' })
   orderId: string;
 
   @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'order_id' })
+  @JoinColumn({ name: 'orderId' })
   order: Order;
 
-  @Column({ name: 'product_id' })
+  @Column({ name: 'productId' })
   productId: string;
 
-  @Column({ name: 'variant_id', type: 'uuid', nullable: true })
+  @Column({ name: 'variantId', type: 'uuid', nullable: true })
   variantId: string | null;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
@@ -28,16 +28,16 @@ export class OrderItem {
   @Column()
   quantity: number;
 
-  @Column({ name: 'price_per_unit', type: 'numeric', precision: 12, scale: 2 })
+  @Column({ name: 'pricePerUnit', type: 'numeric', precision: 12, scale: 2 })
   pricePerUnit: number;
 
-  @Column({ name: 'hsn_code', type: 'varchar', length: 10, nullable: true })
+  @Column({ name: 'hsnCode', type: 'varchar', length: 10, nullable: true })
   hsnCode: string | null;
 
-  @Column({ name: 'gst_rate', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({ name: 'gstRate', type: 'numeric', precision: 5, scale: 2, nullable: true })
   gstRate: number | null;
 
-  @Column({ name: 'taxable_amount', type: 'numeric', precision: 12, scale: 2, default: 0 })
+  @Column({ name: 'taxableAmount', type: 'numeric', precision: 12, scale: 2, default: 0 })
   taxableAmount: number;
 
   @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
@@ -49,24 +49,24 @@ export class OrderItem {
   @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
   igst: number;
 
-  @Column({ name: 'delivery_charge', type: 'numeric', precision: 10, scale: 2, default: 0 })
+  @Column({ name: 'deliveryCharge', type: 'numeric', precision: 10, scale: 2, default: 0 })
   deliveryCharge: number;
 
-  @Column({ name: 'delivery_gst', type: 'numeric', precision: 10, scale: 2, default: 0 })
+  @Column({ name: 'deliveryGst', type: 'numeric', precision: 10, scale: 2, default: 0 })
   deliveryGst: number;
 
-  @Column({ name: 'returned_quantity', default: 0 })
+  @Column({ name: 'returnedQuantity', default: 0 })
   returnedQuantity: number;
 
-  @Column({ name: 'is_returnable', default: true })
+  @Column({ name: 'isReturnable', default: true })
   isReturnable: boolean;
 
-  @Column({ name: 'variant_snapshot', type: 'jsonb', nullable: true })
+  @Column({ name: 'variantSnapshot', type: 'jsonb', nullable: true })
   variantSnapshot: Record<string, unknown> | null;
 
-  @Column({ name: 'delivery_calculation_snapshot', type: 'jsonb', nullable: true })
+  @Column({ name: 'deliveryCalculationSnapshot', type: 'jsonb', nullable: true })
   deliveryCalculationSnapshot: Record<string, unknown> | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 }

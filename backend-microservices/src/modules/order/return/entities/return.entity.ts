@@ -5,10 +5,10 @@ export class Return {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'order_id' })
+  @Column({ name: 'orderId' })
   orderId: string;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'userId' })
   userId: string;
 
   @Column({ length: 30, default: 'REQUESTED' })
@@ -17,18 +17,18 @@ export class Return {
   @Column({ type: 'text', nullable: true })
   reason: string | null;
 
-  @Column({ name: 'refund_amount', type: 'numeric', precision: 12, scale: 2, nullable: true })
+  @Column({ name: 'refundAmount', type: 'numeric', precision: 12, scale: 2, nullable: true })
   refundAmount: number | null;
 
-  @Column({ name: 'qc_result', type: 'jsonb', nullable: true })
+  @Column({ name: 'qcResult', type: 'jsonb', nullable: true })
   qcResult: Record<string, unknown> | null;
 
   @OneToMany('ReturnItem', 'return')
   items: any[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

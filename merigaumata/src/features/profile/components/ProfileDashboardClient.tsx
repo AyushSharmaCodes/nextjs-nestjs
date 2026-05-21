@@ -2,21 +2,25 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { 
-  User, ShoppingBag, Calendar, Heart, LayoutDashboard, 
-  LogOut, Camera, Trash2, MapPin
-} from 'lucide-react';
+import { AppIcon, StatusIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useProfile } from '../hooks/useProfile';
 import { PersonalDetailsSection } from './PersonalDetailsSection';
 import { AccountDetailsSection } from './AccountDetailsSection';
 import { SecuritySection } from './SecuritySection';
 import { PreferencesSection } from './PreferencesSection';
 import { DeleteAccountModal } from './DeleteAccountModal';
+import { authClient } from '@/lib/auth-client';
+import { toast } from '@/shared/lib/toast';
 
 export function ProfileDashboardClient() {
   const t = useTranslations('profile');
+  const router = useRouter();
+  const params = useParams();
+  const currentLocale = (params.locale as string) || 'en';
+  const [isSigningOut, setIsSigningOut] = useState(false);
   
   const {
     userRole,
@@ -38,11 +42,10 @@ export function ProfileDashboardClient() {
     hasAccountChanges
   } = useProfile();
 
+  const computedFullName = `${personalDetails.firstName || ''} ${personalDetails.lastName || ''}`.trim() || 'User';
+
   // Danger Zone State
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  const params = useParams();
-  const currentLocale = (params.locale as string) || 'en';
 
   const translateIfKey = (text: string) => {
     if (text && text.startsWith('MockData.')) {
@@ -50,6 +53,20 @@ export function ProfileDashboardClient() {
       return t(key as Parameters<typeof t>[0]);
     }
     return text;
+  };
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await authClient.signOut();
+      toast.success('Signed out successfully', { description: 'See you next time!' });
+      sessionStorage.removeItem('mgm_modal_shown');
+      router.replace(`/${currentLocale}/auth/login`);
+    } catch {
+      toast.error('Sign out failed', { description: 'Please try again.' });
+    } finally {
+      setIsSigningOut(false);
+    }
   };
 
   return (
@@ -66,16 +83,16 @@ export function ProfileDashboardClient() {
                  <h4 className="text-[11px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-2 px-3">My Account</h4>
                  <nav className="space-y-0.5 text-[14px] font-medium">
                    <a href="#profile" className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-500/10 dark:bg-primary-500/15 text-primary-600 dark:text-primary-400 transition-colors">
-                     <User className="w-4 h-4 text-primary-500" /> Profile Details
+                     <AppIcon name="user" size="sm" className="text-primary-500" /> Profile Details
                    </a>
                    <a href="#orders" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50 transition-colors">
-                     <ShoppingBag className="w-4 h-4 text-neutral-500" /> My Orders
+                     <AppIcon name="products" size="sm" className="text-neutral-500" /> My Orders
                    </a>
                    <a href="#events" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50 transition-colors">
-                     <Calendar className="w-4 h-4 text-neutral-500" /> Event Bookings
+                     <AppIcon name="events" size="sm" className="text-neutral-500" /> Event Bookings
                    </a>
                    <a href="#welfare" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50 transition-colors">
-                     <Heart className="w-4 h-4 text-red-500" /> Cow Support
+                     <AppIcon name="heart" size="sm" className="text-red-500" /> Cow Support
                    </a>
                  </nav>
                </div>
@@ -91,7 +108,7 @@ export function ProfileDashboardClient() {
                      >
                        <span className="flex items-center justify-between text-[13.5px] font-bold text-primary-700 dark:text-primary-400">
                          <span className="flex items-center gap-2">
-                           <LayoutDashboard className="w-4 h-4 text-primary-500" />
+                           <AppIcon name="dashboard" size="sm" className="text-primary-500" />
                            {userRole === 'ADMIN' ? 'Admin Workspace' : 'Manager Workspace'}
                          </span>
                          <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-primary-200/70 text-primary-800 dark:bg-primary-950 dark:text-primary-300 border border-primary-300/30 dark:border-primary-800/40 uppercase tracking-wider">
@@ -113,14 +130,13 @@ export function ProfileDashboardClient() {
             <div className="mt-auto pt-6">
               {/* Separator & Sign Out */}
               <div className="border-t border-neutral-200 dark:border-neutral-800/60 mb-4"></div>
-              <button 
-                onClick={() => {
-                  alert("Successfully signed out of Gau Mata storefront.");
-                  window.location.href = "/";
-                }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500/90 dark:text-red-400/90 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all font-medium text-[14px]"
+              <button
+                onClick={handleSignOut}
+                disabled={isSigningOut}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500/90 dark:text-red-400/90 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all font-medium text-[14px] disabled:opacity-60"
               >
-                <LogOut className="w-4 h-4" /> Sign Out
+                <AppIcon name="logout" size="sm" />
+                {isSigningOut ? 'Signing out…' : 'Sign Out'}
               </button>
             </div>
           </div>
@@ -133,7 +149,7 @@ export function ProfileDashboardClient() {
                 <span className="text-neutral-500 dark:text-neutral-400">My Account</span>
                 <span className="text-neutral-300 dark:text-neutral-600">/</span>
                 <span className="flex items-center gap-2 font-medium text-foreground">
-                  <User className="w-4 h-4" /> Profile
+                  <AppIcon name="user" size="sm" /> Profile
                 </span>
              </div>
 
@@ -151,7 +167,7 @@ export function ProfileDashboardClient() {
                           {profilePicture ? (
                             <Image src={profilePicture} alt="Profile" fill className="object-cover" />
                           ) : (
-                            <span className="z-10">{translateIfKey(personalDetails.fullName).charAt(0).toUpperCase()}</span>
+                            <span className="z-10">{translateIfKey(computedFullName).charAt(0).toUpperCase()}</span>
                           )}
                           
                           {/* Image Upload Overlay */}
@@ -161,7 +177,7 @@ export function ProfileDashboardClient() {
                                 handleProfilePictureUpload(e.target.files[0]);
                               }
                             }} />
-                            <Camera className="w-8 h-8 text-white" />
+                            <AppIcon name="camera" size="xl" className="text-white" />
                           </label>
                         </div>
                       </div>
@@ -169,11 +185,9 @@ export function ProfileDashboardClient() {
                     
                     {/* Name & Badge */}
                     <div className="flex items-center justify-center gap-1.5 mb-1">
-                      <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">{translateIfKey(personalDetails.fullName)}</h2>
+                      <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">{translateIfKey(computedFullName)}</h2>
                       {/* Verified blue checkmark */}
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-blue-500">
-                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM9.29 16.29L5.71 12.71C5.32 12.32 5.32 11.68 5.71 11.29C6.1 10.9 6.73 10.9 7.12 11.29L10 14.17L16.88 7.29C17.27 6.9 17.9 6.9 18.29 7.29C18.68 7.68 18.68 8.31 18.29 8.71L10.71 16.29C10.32 16.68 9.68 16.68 9.29 16.29Z" fill="currentColor"/>
-                      </svg>
+                      <StatusIcon status="verified" size="md" showBackground={false} className="text-blue-500" />
                     </div>
                     
                     <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">fuse.vegeto@gmail.com</p>
@@ -224,10 +238,7 @@ export function ProfileDashboardClient() {
                   
                   <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl p-6 mb-8">
                     <div className="flex items-center gap-2 text-red-500 text-[13px] font-bold tracking-wider uppercase mb-4">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L1 21H23L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M12 16V16.01M12 10V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <AppIcon name="alert" size="md" />
                       WARNING: THIS ACTION IS PERMANENT
                     </div>
                     <ul className="space-y-3 text-[14px] text-neutral-700 dark:text-neutral-300 font-medium list-none ml-1">

@@ -13,7 +13,6 @@ const playfair = Playfair_Display({
 });
 
 import { ThemeProvider } from '@/shared/components/theme-provider';
-import { SmoothScrollProvider } from '@/shared/components/SmoothScrollProvider';
 import {NextIntlClientProvider} from 'next-intl';
 import { QueryProvider } from '@/shared/lib/react-query';
 import {getMessages, setRequestLocale, getTranslations} from 'next-intl/server';
@@ -22,6 +21,8 @@ import {routing} from '@/i18n/routing';
 import GlobalNavigationLoadingProvider from '@/shared/ui/loading/global-provider';
 import { initLogTape } from '@/shared/lib/logger';
 import ObservabilityProvider from '@/shared/ui/observability/observability-provider';
+import AppToaster from '@/shared/components/AppToaster';
+
 
 // Initialize structured logging on the server side
 initLogTape();
@@ -65,7 +66,6 @@ export default async function RootLayout({
       <body className="font-sans antialiased bg-background text-foreground transition-colors duration-300">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <QueryProvider>
-            <SmoothScrollProvider>
               <ThemeProvider
                 attribute="class"
                 defaultTheme="system"
@@ -75,10 +75,10 @@ export default async function RootLayout({
                 <GlobalNavigationLoadingProvider>
                   <ObservabilityProvider>
                     {children}
+                    <AppToaster />
                   </ObservabilityProvider>
                 </GlobalNavigationLoadingProvider>
               </ThemeProvider>
-            </SmoothScrollProvider>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>

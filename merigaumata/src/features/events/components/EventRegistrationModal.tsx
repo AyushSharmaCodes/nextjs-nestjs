@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Event } from '../types/events.types';
 import { eventRegistrationSchema, EventRegistrationSchema } from '../schemas/events.schema';
 import { useRegisterEventMutation } from '../hooks/use-events';
-import { X, Calendar, MapPin, Clock, Tag, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { AppIcon, StatusIcon } from '@/shared/icons';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
@@ -71,14 +71,14 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
             onClick={onClose}
             className="absolute top-4 right-4 md:hidden z-10 w-8 h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white"
           >
-            <X className="w-4 h-4" />
+            <AppIcon name="close" size="sm" />
           </button>
 
           {/* Left Side: Form or Success State (White background) */}
           <div className="w-full md:w-1/2 p-8 sm:p-12 flex flex-col relative justify-center">
             {registerMutation.isSuccess ? (
               <div className="flex flex-col items-center justify-center text-center py-12 animate-in zoom-in duration-300">
-                <CheckCircle2 className="w-16 h-16 text-emerald-500 mb-6 animate-bounce" />
+                <StatusIcon status="success" size="xl" className="text-emerald-500 mb-6 animate-bounce" showBackground={false} />
                 <h2 className="text-3xl font-serif font-bold text-stone-900 dark:text-white mb-3">Booking Confirmed!</h2>
                 <p className="text-stone-500 dark:text-stone-400 text-sm mb-2">Thank you for registering for this gathering.</p>
                 <div className="bg-stone-50 dark:bg-neutral-800 px-6 py-3 rounded-2xl border border-stone-100 dark:border-stone-700 mt-4 text-xs font-mono font-bold tracking-wider text-stone-600 dark:text-stone-300">
@@ -172,13 +172,13 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                     >
                       {registerMutation.isPending ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <AppIcon name="loading" size="sm" className="animate-spin" />
                           <span>Processing...</span>
                         </>
                       ) : (
                         <>
                           <span>{t('confirmBooking')}</span>
-                          <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-1.5" />
+                          <AppIcon name="arrowRight" size="sm" className="transition-transform duration-300 ease-out group-hover:translate-x-1.5" />
                         </>
                       )}
                     </button>
@@ -211,7 +211,7 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                 onClick={onClose}
                 className="absolute top-4 right-4 hidden md:flex w-8 h-8 bg-black/40 backdrop-blur-md border border-white/30 rounded-full items-center justify-center text-white hover:bg-black/60 transition-colors"
               >
-                <X className="w-4 h-4" />
+                <AppIcon name="close" size="sm" />
               </button>
             </div>
             
@@ -227,21 +227,21 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
 
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-3 text-sm text-stone-700 dark:text-stone-300">
-                  <Calendar className="w-4 h-4 text-orange-750" />
+                  <AppIcon name="events" size="sm" className="text-orange-750" />
                   <span>{dateStr}</span>
                 </div>
                 {timeStr && (
                   <div className="flex items-center gap-3 text-sm text-stone-700 dark:text-stone-300">
-                    <Clock className="w-4 h-4 text-orange-750" />
+                    <AppIcon name="clock" size="sm" className="text-orange-750" />
                     <span>{timeStr} {event.endTime ? `- ${event.endTime}` : ''}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-3 text-sm text-stone-700 dark:text-stone-300">
-                  <MapPin className="w-4 h-4 text-orange-750 flex-shrink-0" />
+                  <AppIcon name="mapPin" size="sm" className="text-orange-750 flex-shrink-0" />
                   <span className="truncate">{event.location}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-stone-700 dark:text-stone-300">
-                  <Tag className="w-4 h-4 text-orange-750 flex-shrink-0" />
+                  <AppIcon name="tag" size="sm" className="text-orange-750 flex-shrink-0" />
                   <span>{event.price ? `₹${event.price.toFixed(2)}` : t('complimentary')}</span>
                 </div>
               </div>

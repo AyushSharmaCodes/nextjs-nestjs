@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles, Award } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 
 export function ManagerWelfare() {
   return (
@@ -15,7 +15,7 @@ export function ManagerWelfare() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-black uppercase text-emerald-600 tracking-wider">Health Status</span>
-              <Sparkles className="w-4 h-4 text-emerald-500" />
+              <AppIcon name="sparkles" className="w-4 h-4 text-emerald-500" />
             </div>
             <h4 className="text-lg font-bold text-foreground mt-3 font-serif">100% Fit Resident Cows</h4>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Daily vet visits, vaccinations, and natural herbs provided successfully.</p>
@@ -27,7 +27,7 @@ export function ManagerWelfare() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-black uppercase text-amber-600 tracking-wider">Feed & Fodder</span>
-              <Award className="w-4 h-4 text-amber-500" />
+              <AppIcon name="award" className="w-4 h-4 text-amber-500" />
             </div>
             <h4 className="text-lg font-bold text-foreground mt-3 font-serif">1.2 Tons Organic Fodder</h4>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Guar churi, fresh grass, and essential minerals balanced successfully.</p>

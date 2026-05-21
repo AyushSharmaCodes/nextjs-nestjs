@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Event } from '../types/events.types';
 import Image from 'next/image';
-import { Info, Sparkles, Gift } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
@@ -26,7 +26,7 @@ export function EventTabs({ event }: EventTabsProps) {
           onClick={() => setActiveTab('details')}
           className={`pb-3 flex items-center gap-1.5 text-sm font-medium transition-colors relative cursor-pointer ${activeTab === 'details' ? 'text-primary-600 dark:text-primary-400' : 'text-stone-400 hover:text-stone-600'}`}
         >
-          <Info className="w-4 h-4" />
+          <AppIcon name="info" size="sm" />
           <span>Details</span>
           {activeTab === 'details' && (
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 dark:bg-primary-400 rounded-t-full" />
@@ -36,7 +36,7 @@ export function EventTabs({ event }: EventTabsProps) {
           onClick={() => setActiveTab('highlights')}
           className={`pb-3 flex items-center gap-1.5 text-sm font-medium transition-colors relative cursor-pointer ${activeTab === 'highlights' ? 'text-primary-600 dark:text-primary-400' : 'text-stone-400 hover:text-stone-600'}`}
         >
-          <Sparkles className="w-4 h-4" />
+          <AppIcon name="sparkles" size="sm" />
           <span>Highlights</span>
           {activeTab === 'highlights' && (
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 dark:bg-primary-400 rounded-t-full" />
@@ -46,7 +46,7 @@ export function EventTabs({ event }: EventTabsProps) {
           onClick={() => setActiveTab('privileges')}
           className={`pb-3 flex items-center gap-1.5 text-sm font-medium transition-colors relative cursor-pointer ${activeTab === 'privileges' ? 'text-primary-600 dark:text-primary-400' : 'text-stone-400 hover:text-stone-600'}`}
         >
-          <Gift className="w-4 h-4" />
+          <AppIcon name="gift" size="sm" />
           <span>Special Privileges</span>
           {activeTab === 'privileges' && (
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 dark:bg-primary-400 rounded-t-full" />

@@ -5,7 +5,7 @@ export class Manager {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'identity_id', unique: true })
+  @Column({ name: 'identityId', unique: true })
   identityId: string;
 
   @Column({ length: 255 })
@@ -17,16 +17,16 @@ export class Manager {
   @Column({ length: 20, default: 'manager' })
   role: string;
 
-  @Column({ name: 'creator_id', type: 'uuid', nullable: true })
+  @Column({ name: 'creatorId', type: 'uuid', nullable: true })
   creatorId: string | null;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'isActive', default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }
 
@@ -35,65 +35,65 @@ export class ManagerPermissions {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'manager_id' })
+  @Column({ name: 'managerId' })
   managerId: string;
 
   @OneToOne(() => Manager, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'manager_id' })
+  @JoinColumn({ name: 'managerId' })
   manager: Manager;
 
-  @Column({ name: 'can_manage_products', default: false })
+  @Column({ name: 'canManageProducts', default: false })
   canManageProducts: boolean;
-  @Column({ name: 'can_manage_orders', default: false })
+  @Column({ name: 'canManageOrders', default: false })
   canManageOrders: boolean;
-  @Column({ name: 'can_manage_coupons', default: false })
+  @Column({ name: 'canManageCoupons', default: false })
   canManageCoupons: boolean;
-  @Column({ name: 'can_manage_blogs', default: false })
+  @Column({ name: 'canManageBlogs', default: false })
   canManageBlogs: boolean;
-  @Column({ name: 'can_manage_faqs', default: false })
+  @Column({ name: 'canManageFaqs', default: false })
   canManageFaqs: boolean;
-  @Column({ name: 'can_manage_gallery', default: false })
+  @Column({ name: 'canManageGallery', default: false })
   canManageGallery: boolean;
-  @Column({ name: 'can_manage_events', default: false })
+  @Column({ name: 'canManageEvents', default: false })
   canManageEvents: boolean;
-  @Column({ name: 'can_manage_donations', default: false })
+  @Column({ name: 'canManageDonations', default: false })
   canManageDonations: boolean;
-  @Column({ name: 'can_manage_testimonials', default: false })
+  @Column({ name: 'canManageTestimonials', default: false })
   canManageTestimonials: boolean;
-  @Column({ name: 'can_manage_policies', default: false })
+  @Column({ name: 'canManagePolicies', default: false })
   canManagePolicies: boolean;
-  @Column({ name: 'can_manage_about_us', default: false })
+  @Column({ name: 'canManageAboutUs', default: false })
   canManageAboutUs: boolean;
-  @Column({ name: 'can_manage_managers', default: false })
+  @Column({ name: 'canManageManagers', default: false })
   canManageManagers: boolean;
-  @Column({ name: 'can_manage_settings', default: false })
+  @Column({ name: 'canManageSettings', default: false })
   canManageSettings: boolean;
-  @Column({ name: 'can_manage_emails', default: false })
+  @Column({ name: 'canManageEmails', default: false })
   canManageEmails: boolean;
-  @Column({ name: 'can_manage_translations', default: false })
+  @Column({ name: 'canManageTranslations', default: false })
   canManageTranslations: boolean;
-  @Column({ name: 'can_manage_webhooks', default: false })
+  @Column({ name: 'canManageWebhooks', default: false })
   canManageWebhooks: boolean;
-  @Column({ name: 'can_manage_social', default: false })
+  @Column({ name: 'canManageSocial', default: false })
   canManageSocial: boolean;
-  @Column({ name: 'can_manage_jobs', default: false })
+  @Column({ name: 'canManageJobs', default: false })
   canManageJobs: boolean;
-  @Column({ name: 'can_manage_returns', default: false })
+  @Column({ name: 'canManageReturns', default: false })
   canManageReturns: boolean;
-  @Column({ name: 'can_manage_refunds', default: false })
+  @Column({ name: 'canManageRefunds', default: false })
   canManageRefunds: boolean;
-  @Column({ name: 'can_manage_admin', default: false })
+  @Column({ name: 'canManageAdmin', default: false })
   canManageAdmin: boolean;
-  @Column({ name: 'can_manage_system', default: false })
+  @Column({ name: 'canManageSystem', default: false })
   canManageSystem: boolean;
-  @Column({ name: 'can_view_analytics', default: false })
+  @Column({ name: 'canViewAnalytics', default: false })
   canViewAnalytics: boolean;
-  @Column({ name: 'can_view_logs', default: false })
+  @Column({ name: 'canViewLogs', default: false })
   canViewLogs: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

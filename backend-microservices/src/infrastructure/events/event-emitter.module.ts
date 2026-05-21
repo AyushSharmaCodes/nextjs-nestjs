@@ -1,5 +1,6 @@
-import { Module, Global } from '@nestjs/common';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { Module, Global, OnModuleInit } from '@nestjs/common';
+import { EventEmitterModule, EventEmitter2 } from '@nestjs/event-emitter';
+import { GlobalEventDispatcher } from './global-event-dispatcher';
 
 /**
  * Internal event-driven communication module.
@@ -26,4 +27,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     }),
   ],
 })
-export class AppEventEmitterModule {}
+export class AppEventEmitterModule implements OnModuleInit {
+  constructor(private readonly eventEmitter: EventEmitter2) {}
+
+  onModuleInit() {
+    GlobalEventDispatcher.setEmitter(this.eventEmitter);
+  }
+}

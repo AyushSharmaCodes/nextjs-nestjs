@@ -1,33 +1,3 @@
-import { 
-  LayoutDashboard, 
-  ShoppingBag, 
-  ShoppingCart, 
-  RefreshCcw, 
-  DollarSign, 
-  Users, 
-  FileText, 
-  Settings, 
-  HelpCircle,
-  Building2,
-  Layers,
-  Sparkles,
-  Percent,
-  Compass,
-  Truck,
-  ShieldCheck,
-  Globe,
-  Coins,
-  Store,
-  Eye,
-  Sliders,
-  Palette,
-  Box,
-  PlusCircle,
-  ClipboardList,
-  MapPin,
-  Languages,
-  Paintbrush
-} from 'lucide-react';
 import { SidebarRoute } from '../types';
 
 export interface SidebarSectionConfig {
@@ -44,7 +14,7 @@ export const SIDEBAR_SECTIONS: SidebarSectionConfig[] = [
       {
         id: 'dashboard',
         labelKey: 'dashboard',
-        icon: LayoutDashboard,
+        icon: 'dashboard',
         href: '/admin',
       }
     ]
@@ -56,40 +26,40 @@ export const SIDEBAR_SECTIONS: SidebarSectionConfig[] = [
       {
         id: 'products',
         labelKey: 'products',
-        icon: ShoppingBag,
+        icon: 'products',
         children: [
-          { id: 'allProducts', labelKey: 'allProducts', href: '/admin/products', icon: Box },
-          { id: 'addProducts', labelKey: 'addProducts', href: '/admin/products/new', icon: PlusCircle },
+          { id: 'allProducts', labelKey: 'allProducts', href: '/admin/products', icon: 'box' },
+          { id: 'addProducts', labelKey: 'addProducts', href: '/admin/products/new', icon: 'plusCircle' },
         ]
       },
       {
         id: 'categories',
         labelKey: 'categories',
-        icon: Layers,
+        icon: 'layers',
         href: '/admin/categories',
       },
       {
         id: 'attributes',
         labelKey: 'attributes',
-        icon: Sliders,
+        icon: 'sliders',
         href: '/admin/attributes',
       },
       {
         id: 'coupons',
         labelKey: 'coupons',
-        icon: Percent,
+        icon: 'percent',
         href: '/admin/coupons',
       },
       {
         id: 'campaigns',
         labelKey: 'campaigns',
-        icon: Compass,
+        icon: 'compass',
         href: '/admin/campaigns',
       },
       {
         id: 'productSliders',
         labelKey: 'productSliders',
-        icon: Sparkles,
+        icon: 'sparkles',
         href: '/admin/sliders',
       }
     ]
@@ -101,23 +71,23 @@ export const SIDEBAR_SECTIONS: SidebarSectionConfig[] = [
       {
         id: 'orders',
         labelKey: 'orders',
-        icon: ShoppingCart,
+        icon: 'cart',
         children: [
-          { id: 'allOrders', labelKey: 'allOrders', href: '/admin/orders', icon: ClipboardList },
-          { id: 'returns', labelKey: 'returns', href: '/admin/orders/returns', icon: RefreshCcw },
-          { id: 'orderTracking', labelKey: 'orderTracking', href: '/admin/orders/tracking', icon: MapPin },
+          { id: 'allOrders', labelKey: 'allOrders', href: '/admin/orders', icon: 'clipboardList' },
+          { id: 'returns', labelKey: 'returns', href: '/admin/orders/returns', icon: 'refreshCcw' },
+          { id: 'orderTracking', labelKey: 'orderTracking', href: '/admin/orders/tracking', icon: 'mapPin' },
         ]
       },
       {
         id: 'deliveryBoys',
         labelKey: 'deliveryBoys',
-        icon: Truck,
+        icon: 'truck',
         href: '/admin/delivery',
       },
       {
         id: 'customers',
         labelKey: 'customers',
-        icon: Users,
+        icon: 'users',
         href: '/admin/customers',
       }
     ]
@@ -129,7 +99,7 @@ export const SIDEBAR_SECTIONS: SidebarSectionConfig[] = [
       {
         id: 'ourStaff',
         labelKey: 'ourStaff',
-        icon: ShieldCheck,
+        icon: 'shieldCheck',
         href: '/admin/staff',
       }
     ]
@@ -141,11 +111,11 @@ export const SIDEBAR_SECTIONS: SidebarSectionConfig[] = [
       {
         id: 'settings',
         labelKey: 'settings',
-        icon: Settings,
+        icon: 'settings',
         children: [
-          { id: 'generalSettings', labelKey: 'general', href: '/admin/settings', icon: Sliders },
-          { id: 'usersSettings', labelKey: 'users', href: '/admin/settings/users', icon: Users },
-          { id: 'themesSettings', labelKey: 'themes', href: '/admin/settings/themes', icon: Palette },
+          { id: 'generalSettings', labelKey: 'general', href: '/admin/settings', icon: 'sliders' },
+          { id: 'usersSettings', labelKey: 'users', href: '/admin/settings/users', icon: 'users' },
+          { id: 'themesSettings', labelKey: 'themes', href: '/admin/settings/themes', icon: 'palette' },
         ]
       }
     ]
@@ -157,10 +127,10 @@ export const SIDEBAR_SECTIONS: SidebarSectionConfig[] = [
       {
         id: 'localization',
         labelKey: 'localization',
-        icon: Globe,
+        icon: 'globe',
         children: [
-          { id: 'languages', labelKey: 'languages', href: '/admin/settings/languages', icon: Languages },
-          { id: 'currencies', labelKey: 'currencies', href: '/admin/settings/currencies', icon: Coins },
+          { id: 'languages', labelKey: 'languages', href: '/admin/settings/languages', icon: 'languages' },
+          { id: 'currencies', labelKey: 'currencies', href: '/admin/settings/currencies', icon: 'coins' },
         ]
       }
     ]
@@ -172,11 +142,11 @@ export const SIDEBAR_SECTIONS: SidebarSectionConfig[] = [
       {
         id: 'onlineStoreMenu',
         labelKey: 'onlineStore',
-        icon: Store,
+        icon: 'store',
         children: [
-          { id: 'viewStore', labelKey: 'viewStore', href: '/admin/store/view', icon: Eye },
-          { id: 'storeCustomization', labelKey: 'storeCustomization', href: '/admin/store/customize', icon: Paintbrush },
-          { id: 'storeSettings', labelKey: 'storeSettings', href: '/admin/store/settings', icon: Settings },
+          { id: 'viewStore', labelKey: 'viewStore', href: '/admin/store/view', icon: 'eye' },
+          { id: 'storeCustomization', labelKey: 'storeCustomization', href: '/admin/store/customize', icon: 'paintbrush' },
+          { id: 'storeSettings', labelKey: 'storeSettings', href: '/admin/store/settings', icon: 'settings' },
         ]
       }
     ]

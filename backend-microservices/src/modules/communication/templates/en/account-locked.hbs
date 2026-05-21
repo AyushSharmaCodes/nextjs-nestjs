@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><title>Account Locked</title></head>
+<body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f9fafb;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 0;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);">
+        <tr><td style="background:linear-gradient(135deg,#ef4444,#dc2626);padding:32px 40px;text-align:center;">
+          <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:700;">⚠️ Account Locked</h1>
+        </td></tr>
+        <tr><td style="padding:40px;">
+          <p style="color:#374151;line-height:1.7;margin:0 0 16px;">Your MeriGauMata account has been temporarily locked due to <strong>{{lockReason}}</strong>.</p>
+          <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:16px;margin:0 0 24px;">
+            <p style="margin:0;color:#7f1d1d;font-size:13px;line-height:1.6;">
+              Failed attempts: <strong>{{failedAttempts}}</strong><br/>
+              Locked until: <strong>{{lockedUntil}}</strong>
+            </p>
+          </div>
+          <p style="color:#6b7280;font-size:13px;line-height:1.6;">If this was not you, please contact our support team immediately at <a href="mailto:support@merigaumata.com" style="color:#ef4444;">support@merigaumata.com</a>.</p>
+        </td></tr>
+        <tr><td style="background:#f9fafb;padding:20px 40px;text-align:center;border-top:1px solid #e5e7eb;">
+          <p style="margin:0;color:#9ca3af;font-size:12px;">© {{year}} MeriGauMata. All rights reserved.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

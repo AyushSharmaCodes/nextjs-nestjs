@@ -1,5 +1,5 @@
 import { Link } from '@/i18n/navigation';
-import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin, ShieldCheck, Truck, HeadphonesIcon, Star } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 
 export default function Footer() {
@@ -26,16 +26,16 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <a href="#" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-earth-200 dark:border-earth-100/20 text-foreground/70 dark:text-earth-100/70 flex items-center justify-center hover:bg-primary-500 hover:text-white dark:hover:text-tertiary-900 hover:border-primary-500 transition-all duration-300">
-                <Facebook size={14} />
+                <AppIcon name="facebook" size="xs" />
               </a>
               <a href="#" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-earth-200 dark:border-earth-100/20 text-foreground/70 dark:text-earth-100/70 flex items-center justify-center hover:bg-primary-500 hover:text-white dark:hover:text-tertiary-900 hover:border-primary-500 transition-all duration-300">
-                <Instagram size={14} />
+                <AppIcon name="instagram" size="xs" />
               </a>
               <a href="#" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-earth-200 dark:border-earth-100/20 text-foreground/70 dark:text-earth-100/70 flex items-center justify-center hover:bg-primary-500 hover:text-white dark:hover:text-tertiary-900 hover:border-primary-500 transition-all duration-300">
-                <Twitter size={14} />
+                <AppIcon name="twitter" size="xs" />
               </a>
               <a href="#" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-earth-200 dark:border-earth-100/20 text-foreground/70 dark:text-earth-100/70 flex items-center justify-center hover:bg-primary-500 hover:text-white dark:hover:text-tertiary-900 hover:border-primary-500 transition-all duration-300">
-                <Linkedin size={14} />
+                <AppIcon name="linkedin" size="xs" />
               </a>
             </div>
           </div>
@@ -67,16 +67,16 @@ export default function Footer() {
               <h4 className="font-sans text-[11px] font-bold tracking-[0.1em] text-tertiary-900 dark:text-white uppercase mb-6">Ancient Roots</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-foreground/70 dark:text-earth-100/70">
                 <div className="flex items-start gap-3">
-                  <MapPin size={16} className="text-primary-600 dark:text-primary-500 shrink-0 mt-0.5" />
+                  <AppIcon name="mapPin" size="sm" className="text-primary-600 dark:text-primary-500 shrink-0 mt-0.5" />
                   <span className="leading-relaxed">14/14, New Shahganj Rd, Opp. Kothi<br/>Meena Bazar, Agra<br />Uttar Pradesh - 282010</span>
                 </div>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-3">
-                    <Phone size={16} className="text-primary-600 dark:text-primary-500 shrink-0" />
+                    <AppIcon name="phone" size="sm" className="text-primary-600 dark:text-primary-500 shrink-0" />
                     <span>+91 9079756061</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Mail size={16} className="text-primary-600 dark:text-primary-500 shrink-0" />
+                    <AppIcon name="mail" size="sm" className="text-primary-600 dark:text-primary-500 shrink-0" />
                     <span className="break-all">gaumayproductvrn@gmail.com</span>
                   </div>
                 </div>
@@ -89,28 +89,28 @@ export default function Footer() {
         <div className="py-8 border-y border-earth-200 dark:border-white/10 mb-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x-0 md:divide-x divide-earth-200 dark:divide-white/10">
             <div className="flex flex-col items-center justify-center gap-2 px-4">
-              <Truck size={24} className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
+              <AppIcon name="truck" size="lg" className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-tertiary-900 dark:text-white">Pan India Shipping</p>
                 <p className="text-[10px] text-foreground/50 dark:text-earth-100/50 mt-0.5">Free over ₹999</p>
               </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 px-4">
-              <ShieldCheck size={24} className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
+              <AppIcon name="shieldCheck" size="lg" className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-tertiary-900 dark:text-white">100% Secure Checkout</p>
                 <p className="text-[10px] text-foreground/50 dark:text-earth-100/50 mt-0.5">Trusted partners</p>
               </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 px-4">
-              <HeadphonesIcon size={24} className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
+              <AppIcon name="headphones" size="lg" className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-tertiary-900 dark:text-white">Dedicated Support</p>
                 <p className="text-[10px] text-foreground/50 dark:text-earth-100/50 mt-0.5">Mon - Sat, 9am - 6pm</p>
               </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 px-4">
-              <Star size={24} className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
+              <AppIcon name="star" size="lg" className="text-primary-600 dark:text-primary-500" strokeWidth={1.5} />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-tertiary-900 dark:text-white">Authentic Products</p>
                 <p className="text-[10px] text-foreground/50 dark:text-earth-100/50 mt-0.5">Vedic quality guaranteed</p>
@@ -209,11 +209,11 @@ export default function Footer() {
           {/* Trust Highlights Badge Strip */}
           <div className="grid grid-cols-2 gap-3 py-4 border-t border-b border-earth-200/50 dark:border-white/5 mb-6 text-[10px] text-center">
             <div className="flex items-center justify-center gap-2">
-              <Truck size={14} className="text-primary-600" />
+              <AppIcon name="truck" size="xs" className="text-primary-600" />
               <span className="font-semibold tracking-wider text-stone-700 dark:text-stone-200">Pan India Shipping</span>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <Star size={14} className="text-primary-600" />
+              <AppIcon name="star" size="xs" className="text-primary-600" />
               <span className="font-semibold tracking-wider text-stone-700 dark:text-stone-200">100% Vedic Pure</span>
             </div>
           </div>
@@ -230,13 +230,13 @@ export default function Footer() {
           {/* Social Links Row */}
           <div className="flex justify-center gap-4 mb-6">
             <a href="#" className="w-7 h-7 rounded-full border border-earth-200 dark:border-earth-100/10 flex items-center justify-center text-stone-500 hover:text-primary-600">
-              <Facebook size={12} />
+              <AppIcon name="facebook" size="xs" />
             </a>
             <a href="#" className="w-7 h-7 rounded-full border border-earth-200 dark:border-earth-100/10 flex items-center justify-center text-stone-500 hover:text-primary-600">
-              <Instagram size={12} />
+              <AppIcon name="instagram" size="xs" />
             </a>
             <a href="#" className="w-7 h-7 rounded-full border border-earth-200 dark:border-earth-100/10 flex items-center justify-center text-stone-500 hover:text-primary-600">
-              <Twitter size={12} />
+              <AppIcon name="twitter" size="xs" />
             </a>
           </div>
 

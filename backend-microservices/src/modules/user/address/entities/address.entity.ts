@@ -5,7 +5,7 @@ export class Address {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'userId' })
   userId: string;
 
   @Column({ length: 100 })
@@ -35,15 +35,15 @@ export class Address {
   @Column({ length: 50, nullable: true })
   country: string;
 
-  @Column({ name: 'is_primary', default: false })
+  @Column({ name: 'isPrimary', default: false })
   isPrimary: boolean;
 
-  @Column({ name: 'address_type', length: 20, default: 'SHIPPING' })
+  @Column({ name: 'addressType', length: 20, default: 'SHIPPING' })
   addressType: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

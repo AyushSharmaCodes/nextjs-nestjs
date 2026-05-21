@@ -1,15 +1,36 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { ChevronsUpDown, User, LayoutDashboard, LogOut } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useSidebarStore } from '../stores/useSidebarStore';
+import { authClient } from '@/lib/auth-client';
+import { toast } from '@/shared/lib/toast';
+import { useRouter } from '@/i18n/navigation';
+import { useParams } from 'next/navigation';
 
 export function SidebarProfile() {
   const t = useTranslations('admin.AdminSidebar');
   const isCollapsed = useSidebarStore((state) => state.isCollapsed);
+  const router = useRouter();
+  const params = useParams();
+  const locale = (params.locale as string) || 'en';
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await authClient.signOut();
+      toast.success('Signed out', { description: 'See you next time!' });
+      router.replace(`/${locale}/auth/login`);
+    } catch {
+      toast.error('Sign out failed', { description: 'Please try again.' });
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   return (
     <DropdownMenu.Root>
@@ -37,7 +58,7 @@ export function SidebarProfile() {
             )}
           </div>
           {!isCollapsed && (
-            <ChevronsUpDown className="h-4 w-4 text-foreground/45 flex-shrink-0" />
+            <AppIcon name="chevronsUpDown" size="sm" className="text-foreground/45 flex-shrink-0" />
           )}
         </button>
       </DropdownMenu.Trigger>
@@ -55,21 +76,23 @@ export function SidebarProfile() {
           <DropdownMenu.Item
             className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg hover:bg-earth-50 dark:hover:bg-earth-900/40 cursor-pointer outline-none text-foreground/80 hover:text-foreground transition-colors"
           >
-            <LayoutDashboard className="h-4 w-4 text-foreground/45" />
+            <AppIcon name="dashboard" size="sm" className="text-foreground/45" />
             {t('dashboard')}
           </DropdownMenu.Item>
           <DropdownMenu.Item
             className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg hover:bg-earth-50 dark:hover:bg-earth-900/40 cursor-pointer outline-none text-foreground/80 hover:text-foreground transition-colors"
           >
-            <User className="h-4 w-4 text-foreground/45" />
+            <AppIcon name="user" size="sm" className="text-foreground/45" />
             {t('editProfile')}
           </DropdownMenu.Item>
           <DropdownMenu.Separator className="h-px bg-earth-100/60 dark:bg-earth-900/30 my-1" />
           <DropdownMenu.Item
-            className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 cursor-pointer outline-none text-foreground/80 font-medium transition-colors"
+            onSelect={handleSignOut}
+            disabled={isSigningOut}
+            className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 cursor-pointer outline-none text-foreground/80 font-medium transition-colors data-[disabled]:opacity-50"
           >
-            <LogOut className="h-4 w-4" />
-            {t('logout')}
+            <AppIcon name="logout" size="sm" />
+            {isSigningOut ? 'Signing out…' : t('logout')}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

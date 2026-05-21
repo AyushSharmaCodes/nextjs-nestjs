@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Search, ChevronDown, Calendar, MapPin, Tag } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { useTranslations } from 'next-intl';
 
 interface EventFiltersBarProps {
@@ -101,7 +101,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
       >
         {/* Search input field */}
         <div className="flex items-center gap-3 flex-1 w-full px-3">
-          <Search className="w-5 h-5 text-stone-400 shrink-0" />
+          <AppIcon name="search" size="md" className="text-stone-400 shrink-0" />
           <input 
             key={searchVal}
             type="text" 
@@ -116,7 +116,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
               onClick={() => { updateFilters({ search: '' }); }}
               className="p-1 rounded-full hover:bg-stone-150 dark:hover:bg-stone-800 text-stone-400"
             >
-              <X className="w-3.5 h-3.5" />
+              <AppIcon name="close" size="xs" />
             </button>
           )}
         </div>
@@ -132,12 +132,12 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
               className={`flex flex-col px-5 py-2.5 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-850 w-full text-left transition-colors ${activeDropdown === 'date' ? 'bg-stone-50 dark:bg-stone-850' : ''}`}
             >
               <span className="text-[10.5px] font-black uppercase tracking-widest text-[#1B8057] flex items-center gap-1.5 animate-pulse">
-                <Calendar className="w-3 h-3" />
+                <AppIcon name="events" size="xs" />
                 Date
               </span>
               <span className="text-sm font-semibold text-stone-500 dark:text-stone-300 mt-0.5 flex items-center gap-1">
                 {currentDateLabel}
-                <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                <AppIcon name="chevronDown" size="xs" className="opacity-60" />
               </span>
             </button>
             
@@ -170,12 +170,12 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
               className={`flex flex-col px-5 py-2.5 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-850 w-full text-left transition-colors ${activeDropdown === 'location' ? 'bg-stone-50 dark:bg-stone-850' : ''}`}
             >
               <span className="text-[10.5px] font-black uppercase tracking-widest text-[#1B8057] flex items-center gap-1.5">
-                <MapPin className="w-3 h-3" />
+                <AppIcon name="mapPin" size="xs" />
                 Location
               </span>
               <span className="text-sm font-semibold text-stone-500 dark:text-stone-300 mt-0.5 flex items-center gap-1">
                 {currentLocationLabel}
-                <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                <AppIcon name="chevronDown" size="xs" className="opacity-60" />
               </span>
             </button>
             
@@ -218,12 +218,12 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
               className={`flex flex-col px-5 py-2.5 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-850 w-full text-left transition-colors ${activeDropdown === 'type' ? 'bg-stone-50 dark:bg-stone-850' : ''}`}
             >
               <span className="text-[10.5px] font-black uppercase tracking-widest text-[#1B8057] flex items-center gap-1.5">
-                <Tag className="w-3 h-3" />
+                <AppIcon name="tag" size="xs" />
                 Type
               </span>
               <span className="text-sm font-semibold text-stone-500 dark:text-stone-300 mt-0.5 flex items-center gap-1">
                 {currentTypeLabel}
-                <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                <AppIcon name="chevronDown" size="xs" className="opacity-60" />
               </span>
             </button>
             
@@ -265,22 +265,10 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
           type="submit" 
           className="bg-emerald-50 dark:bg-stone-800 p-3.5 rounded-2xl border border-emerald-100 dark:border-stone-750 text-[#1B8057] dark:text-emerald-450 hover:bg-[#1B8057] hover:text-white dark:hover:bg-[#1B8057] dark:hover:text-white transition-all w-full lg:w-auto flex items-center justify-center gap-2 active:scale-95 shadow-sm shrink-0 cursor-pointer"
         >
-          <Search className="w-5 h-5" />
+          <AppIcon name="search" size="md" />
           <span className="lg:hidden font-bold uppercase tracking-wider text-xs">Search</span>
         </button>
       </form>
     </div>
-  );
-}
-
-interface XProps {
-  className?: string;
-}
-
-function X({ className }: XProps) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 6L6 18M6 6l12 12" />
-    </svg>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Trash2, X } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 
 interface DeleteAccountModalProps {
   showDeleteModal: boolean;
@@ -25,13 +25,13 @@ export function DeleteAccountModal({
       <div className="relative w-full max-w-md bg-card rounded-[1.5rem] shadow-2xl flex flex-col p-8 animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-xl font-bold text-foreground tracking-tight flex items-center gap-2">
-             <Trash2 className="w-5 h-5 text-red-500" /> Confirm Deletion
+             <AppIcon name="trash" size="md" className="text-red-500" /> Confirm Deletion
           </h3>
           <button 
             onClick={() => setShowDeleteModal(false)}
             className="p-2 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-foreground transition-colors"
            >
-            <X className="w-4 h-4" />
+            <AppIcon name="close" size="sm" />
            </button>
         </div>
         

@@ -10,6 +10,6 @@ export class ContactInfo {
   @Column({ default: true }) isPublic: boolean;
   @Column({ default: true }) isActive: boolean;
   @Column({ default: 0 }) displayOrder: number;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
+  @UpdateDateColumn({ name: 'updatedAt' }) updatedAt: Date;
 }

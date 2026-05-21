@@ -5,10 +5,10 @@ import { Product } from '../../product/entities/product.entity';
 export class ProductVariant {
   @PrimaryGeneratedColumn('uuid') id: string;
 
-  @Column({ name: 'product_id' }) productId: string;
+  @Column({ name: 'productId' }) productId: string;
 
   @ManyToOne(() => Product, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'product_id' })
+  @JoinColumn({ name: 'productId' })
   product: Product;
 
   @Column() sku: string;
@@ -21,9 +21,9 @@ export class ProductVariant {
 
   @Column({ default: 0 }) stock: number;
 
-  @Column({ name: 'low_stock_threshold', default: 10 }) lowStockThreshold: number;
+  @Column({ name: 'lowStockThreshold', default: 10 }) lowStockThreshold: number;
 
-  @Column({ name: 'image_url', type: 'varchar', nullable: true }) imageUrl: string | null;
+  @Column({ name: 'imageUrl', type: 'varchar', nullable: true }) imageUrl: string | null;
 
   @Column({ nullable: true }) weight: number;
 
@@ -31,16 +31,16 @@ export class ProductVariant {
 
   @Column({ default: false }) isDefault: boolean;
 
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' }) updatedAt: Date;
+  @UpdateDateColumn({ name: 'updatedAt' }) updatedAt: Date;
 }
 
 @Entity('variant_options')
 export class VariantOption {
   @PrimaryGeneratedColumn('uuid') id: string;
 
-  @Column({ name: 'product_id' }) productId: string;
+  @Column({ name: 'productId' }) productId: string;
 
   @Column() name: string;
 
@@ -48,5 +48,5 @@ export class VariantOption {
 
   @Column({ default: true }) isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }

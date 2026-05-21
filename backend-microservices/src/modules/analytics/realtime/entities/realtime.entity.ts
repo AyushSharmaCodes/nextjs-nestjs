@@ -21,11 +21,11 @@ export class RealtimeEvent {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'enum', enum: RealtimeEventType }) event: RealtimeEventType;
   @Column({ type: 'enum', enum: RealtimeChannel }) channel: RealtimeChannel;
-  @Column({ name: 'user_id', type: 'uuid', nullable: true }) userId: string | null;
+  @Column({ name: 'userId', type: 'uuid', nullable: true }) userId: string | null;
   @Column({ type: 'jsonb' }) payload: Record<string, any>;
   @Column({ default: false }) isBroadcast: boolean;
-  @Column({ name: 'expires_at', type: 'timestamptz', nullable: true }) expiresAt: Date | null;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @Column({ name: 'expiresAt', type: 'timestamptz', nullable: true }) expiresAt: Date | null;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }
 
 @Entity('realtime_subscriptions')
@@ -33,7 +33,7 @@ export class RealtimeSubscription {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column() userId: string;
   @Column({ type: 'enum', enum: RealtimeChannel }) channel: RealtimeChannel;
-  @Column({ name: 'socket_id' }) socketId: string;
-  @Column({ name: 'is_active', default: true }) isActive: boolean;
-  @CreateDateColumn({ name: 'created_at' }) createdAt: Date;
+  @Column({ name: 'socketId' }) socketId: string;
+  @Column({ name: 'isActive', default: true }) isActive: boolean;
+  @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;
 }

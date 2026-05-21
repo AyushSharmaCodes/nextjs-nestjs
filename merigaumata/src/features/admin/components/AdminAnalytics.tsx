@@ -2,17 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import { 
-  ShoppingBag, 
-  Package, 
-  Calendar, 
-  Clock, 
-  TrendingUp,
-  Layers,
-  Loader,
-  Box,
-  CheckCircle2
-} from 'lucide-react';
-import { 
   GradientKpiCard,
   SmallKpiCard,
   SalesRevenueChart, 
@@ -36,7 +25,7 @@ export function AdminAnalytics() {
         <GradientKpiCard
           title="Today Orders"
           value="$0.00"
-          icon={ShoppingBag}
+          icon="products"
           gradientFrom="from-[#B9D0FF]"
           gradientTo="to-[#E5EDFF]"
           cash="$0.00"
@@ -46,7 +35,7 @@ export function AdminAnalytics() {
         <GradientKpiCard
           title="Yesterday Orders"
           value="$0.00"
-          icon={Package}
+          icon="package"
           gradientFrom="from-[#BDF5D1]"
           gradientTo="to-[#D4F4FD]"
           cash="$0.00"
@@ -56,21 +45,21 @@ export function AdminAnalytics() {
         <GradientKpiCard
           title="This Month"
           value="$6,155.56"
-          icon={Calendar}
+          icon="calendar"
           gradientFrom="from-[#FBCFE8]"
           gradientTo="to-[#E9D5FF]"
         />
         <GradientKpiCard
           title="Last Month"
           value="$23,422.25"
-          icon={Clock}
+          icon="clock"
           gradientFrom="from-[#A9F5E8]"
           gradientTo="to-[#D6F8E8]"
         />
         <GradientKpiCard
           title="All-Time Sales"
           value="$1,328,698.95"
-          icon={TrendingUp}
+          icon="trendingUp"
           gradientFrom="from-[#E8DBFD]"
           gradientTo="to-[#FAD4E4]"
         />
@@ -81,13 +70,13 @@ export function AdminAnalytics() {
         <SmallKpiCard
           title="Total Order"
           value="1404"
-          icon={Layers}
+          icon="layers"
           iconColor="text-orange-500"
         />
         <SmallKpiCard
           title="Orders Pending"
           value="107"
-          icon={Loader}
+          icon="loader"
           iconColor="text-blue-500"
           badgeText="$56,204.76"
           badgeColor="bg-red-50 text-red-500"
@@ -95,13 +84,13 @@ export function AdminAnalytics() {
         <SmallKpiCard
           title="Orders Processing"
           value="42"
-          icon={Box}
+          icon="box"
           iconColor="text-purple-500"
         />
         <SmallKpiCard
           title="Orders Delivered"
           value="136"
-          icon={CheckCircle2}
+          icon="checkCircle2"
           iconColor="text-green-500"
         />
       </div>

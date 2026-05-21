@@ -8,5 +8,6 @@ export class Blog {
   @Column({ type: 'text' }) content: string;
   @Column({ nullable: true }) imageUrl: string;
   @Column({ default: true }) isActive: boolean;
+  @Column({ default: false }) isFeatured: boolean;
   @CreateDateColumn() createdAt: Date;
 }

@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import { EmailTemplate, EmailQueue } from './entities/email.entity';
 import { isSupportedLanguage } from '../../../common/types';
+import { MailService } from '../../../infrastructure/mail/mail.service';
 
 @Injectable()
 export class EmailService {
@@ -13,19 +14,30 @@ export class EmailService {
     @InjectRepository(EmailQueue) private queueRepo: Repository<EmailQueue>,
     private config: ConfigService,
     private i18n: I18nService,
+    private mailService: MailService,
   ) {}
 
   /** Queue a raw email (subject + html already resolved by caller). */
   async sendEmail(to: string, subject: string, html: string, text?: string) {
+    let status = 'PENDING';
+    
+    try {
+      await this.mailService.sendMail({ to, subject, html, text });
+      status = 'SENT';
+    } catch (e) {
+      status = 'FAILED';
+    }
+
     const email = this.queueRepo.create({
       toEmail: to,
       subject,
       htmlBody: html,
       textBody: text,
-      status: 'PENDING',
+      status,
+      sentAt: status === 'SENT' ? new Date() : undefined,
     });
     await this.queueRepo.save(email);
-    return { queued: true, id: email.id };
+    return { queued: true, id: email.id, status };
   }
 
   /**
@@ -40,7 +52,7 @@ export class EmailService {
   async sendTemplatedEmail(
     to: string,
     templateKey: string,
-    data: Record<string, unknown> = {},
+    data: Record<string, string | number | boolean | null> = {},
     lang = 'en',
   ) {
     const template = await this.templateRepo.findOne({
@@ -52,9 +64,9 @@ export class EmailService {
     const resolvedLang = isSupportedLanguage(lang) ? lang : 'en';
     let subject = template.subject ?? templateKey;
 
-    if ((template as any).subjectI18nKey) {
+    if (template.subjectI18nKey) {
       try {
-        subject = await this.i18n.translate((template as any).subjectI18nKey, {
+        subject = await this.i18n.translate(template.subjectI18nKey, {
           lang: resolvedLang,
           args: data,
         });
@@ -63,20 +75,33 @@ export class EmailService {
       }
     }
 
+    let status = 'PENDING';
+    try {
+      await this.mailService.sendMail({ 
+        to, 
+        subject, 
+        html: '', // For proper template support, this would render HTML from DB or files. 
+        text: ''
+      });
+      status = 'SENT';
+    } catch (e) {
+      status = 'FAILED';
+    }
+
     const email = this.queueRepo.create({
       toEmail: to,
       templateKey,
       templateData: data,
       subject,
-      status: 'SENT',
-      sentAt: new Date(),
+      status,
+      sentAt: status === 'SENT' ? new Date() : undefined,
     });
     await this.queueRepo.save(email);
-    return { sent: true };
+    return { sent: status === 'SENT', status };
   }
 
   /** Translate a single key — useful for notification bodies in other services. */
-  async translate(key: string, lang = 'en', args?: Record<string, unknown>): Promise<string> {
+  async translate(key: string, lang = 'en', args?: Record<string, string | number | boolean | null>): Promise<string> {
     const resolvedLang = isSupportedLanguage(lang) ? lang : 'en';
     return this.i18n.translate(key, { lang: resolvedLang, args });
   }

@@ -9,21 +9,21 @@ export class PaymentMigration1700000000006 implements MigrationInterface {
         name: 'payments',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'order_id', type: 'uuid', isNullable: true },
-          { name: 'user_id', type: 'uuid' },
+          { name: 'orderId', type: 'uuid', isNullable: true },
+          { name: 'userId', type: 'uuid' },
           { name: 'amount', type: 'decimal', precision: 10, scale: 2 },
           { name: 'currency', type: 'varchar', default: 'INR' },
           { name: 'status', type: 'varchar', default: 'PENDING' },
           { name: 'method', type: 'varchar', isNullable: true },
           { name: 'provider', type: 'varchar', default: 'RAZORPAY' },
-          { name: 'provider_payment_id', type: 'varchar', isNullable: true },
-          { name: 'provider_order_id', type: 'varchar', isNullable: true },
-          { name: 'provider_refund_id', type: 'varchar', isNullable: true },
+          { name: 'providerPaymentId', type: 'varchar', isNullable: true },
+          { name: 'providerOrderId', type: 'varchar', isNullable: true },
+          { name: 'providerRefundId', type: 'varchar', isNullable: true },
           { name: 'receipt', type: 'varchar', isNullable: true },
           { name: 'notes', type: 'jsonb', isNullable: true },
           { name: 'metadata', type: 'jsonb', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -34,16 +34,16 @@ export class PaymentMigration1700000000006 implements MigrationInterface {
         name: 'refunds',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
-          { name: 'payment_id', type: 'uuid' },
-          { name: 'order_id', type: 'uuid', isNullable: true },
+          { name: 'paymentId', type: 'uuid' },
+          { name: 'orderId', type: 'uuid', isNullable: true },
           { name: 'amount', type: 'decimal', precision: 10, scale: 2 },
           { name: 'currency', type: 'varchar', default: 'INR' },
           { name: 'status', type: 'varchar', default: 'PENDING' },
           { name: 'reason', type: 'varchar', isNullable: true },
-          { name: 'provider_refund_id', type: 'varchar', isNullable: true },
-          { name: 'processed_at', type: 'timestamp', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'providerRefundId', type: 'varchar', isNullable: true },
+          { name: 'processedAt', type: 'timestamp', isNullable: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -51,24 +51,24 @@ export class PaymentMigration1700000000006 implements MigrationInterface {
 
     await queryRunner.createForeignKey(
       'refunds',
-      new TableForeignKey({ columnNames: ['payment_id'], referencedTableName: 'payments', referencedColumnNames: ['id'], onDelete: 'SET NULL' }),
+      new TableForeignKey({ columnNames: ['paymentId'], referencedTableName: 'payments', referencedColumnNames: ['id'], onDelete: 'SET NULL' }),
     );
 
     await queryRunner.createTable(
       new Table({
-        name: 'webhook_logs',
+        name: 'webhookLogs',
         columns: [
           { name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' },
           { name: 'provider', type: 'varchar' },
-          { name: 'event_type', type: 'varchar' },
+          { name: 'eventType', type: 'varchar' },
           { name: 'payload', type: 'jsonb' },
           { name: 'signature', type: 'varchar', isNullable: true },
           { name: 'status', type: 'varchar', default: 'PENDING' },
-          { name: 'processed_at', type: 'timestamp', isNullable: true },
-          { name: 'retry_count', type: 'int', default: 0 },
-          { name: 'error_message', type: 'text', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'now()' },
-          { name: 'updated_at', type: 'timestamp', default: 'now()' },
+          { name: 'processedAt', type: 'timestamp', isNullable: true },
+          { name: 'retryCount', type: 'int', default: 0 },
+          { name: 'errorMessage', type: 'text', isNullable: true },
+          { name: 'createdAt', type: 'timestamp', default: 'now()' },
+          { name: 'updatedAt', type: 'timestamp', default: 'now()' },
         ],
       }),
       true,
@@ -76,7 +76,7 @@ export class PaymentMigration1700000000006 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('webhook_logs');
+    await queryRunner.dropTable('webhookLogs');
     await queryRunner.dropTable('refunds');
     await queryRunner.dropTable('payments');
   }

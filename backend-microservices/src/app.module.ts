@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppConfigService } from './infrastructure/config/app-config.service';
 
 // Infrastructure modules
 import { AppConfigModule } from './infrastructure/config/config.module';
@@ -31,6 +31,7 @@ import { CronDomainModule } from './modules/cron/cron-domain.module';
 // Shared providers
 import { TracingInterceptor } from './common/interceptors/tracing.interceptor';
 import { CsrfGuard } from './common/guards/csrf.guard';
+import { BetterAuthGuard } from './modules/auth/guards/better-auth.guard';
 
 @Module({
   imports: [
@@ -47,21 +48,20 @@ import { CsrfGuard } from './common/guards/csrf.guard';
     PrismaModule,
     MailModule,
 
-    // Rate limiting
+    // Rate limiting — configured via AppConfigService (typed, validated at startup)
     ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
+      inject: [AppConfigService],
+      useFactory: (cfg: AppConfigService) => ({
         throttlers: [
           {
             name: 'global',
-            ttl: config.get<number>('THROTTLE_TTL_MS', 15 * 60 * 1000),
-            limit: config.get<number>('THROTTLE_LIMIT', 1000),
+            ttl: cfg.throttleTtlMs,
+            limit: cfg.throttleLimit,
           },
           {
             name: 'auth',
-            ttl: config.get<number>('THROTTLE_AUTH_TTL_MS', 15 * 60 * 1000),
-            limit: config.get<number>('THROTTLE_AUTH_LIMIT', 20),
+            ttl: cfg.throttleAuthTtlMs,
+            limit: cfg.throttleAuthLimit,
           },
         ],
       }),
@@ -88,8 +88,11 @@ import { CsrfGuard } from './common/guards/csrf.guard';
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     // Global CSRF protection
     { provide: APP_GUARD, useClass: CsrfGuard },
+    // Global Better Auth validation
+    { provide: APP_GUARD, useClass: BetterAuthGuard },
     // Global request tracing
     { provide: APP_INTERCEPTOR, useClass: TracingInterceptor },
   ],
 })
 export class AppModule {}
+

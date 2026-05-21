@@ -1,17 +1,36 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { AlertService } from './alert.service';
 import { ApiResponse } from '../../../common/utils/api-response';
+import { AlertStatus, AlertType, AlertPriority } from './entities/alert.entity';
+
+interface GetAlertsQuery {
+  status?: AlertStatus;
+  type?: AlertType;
+  priority?: AlertPriority;
+}
+
+interface CreateAlertBody {
+  title: string;
+  message: string;
+  type: AlertType;
+  priority: AlertPriority;
+  userId?: string;
+}
 
 @Controller('admin/alerts')
 export class AlertController {
   constructor(private readonly service: AlertService) {}
 
   @Get() async getAll(
-    @Query('status') status?: string,
-    @Query('type') type?: string,
-    @Query('priority') priority?: string,
+    @Query('status') status?: AlertStatus,
+    @Query('type') type?: AlertType,
+    @Query('priority') priority?: AlertPriority,
   ) {
-    return ApiResponse.success(await this.service.getAll({ status: status as any, type, priority }));
+    const query: GetAlertsQuery = {};
+    if (status) query.status = status;
+    if (type) query.type = type;
+    if (priority) query.priority = priority;
+    return ApiResponse.success(await this.service.getAll(query));
   }
 
   @Get('stats') async getStats() {
@@ -22,7 +41,7 @@ export class AlertController {
     return ApiResponse.success({ count: await this.service.getUnreadCount() });
   }
 
-  @Post() async create(@Body() body: any) {
+  @Post() async create(@Body() body: CreateAlertBody) {
     return ApiResponse.success(await this.service.create(body), 'Alert created');
   }
 

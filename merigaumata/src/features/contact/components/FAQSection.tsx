@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ArrowUpRight } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Link } from '@/i18n/navigation';
 import { FAQ } from '../types/contact.types';
 
@@ -38,7 +38,7 @@ export function FAQSection({ faqs, title, description, buttonText }: FAQSectionP
                 {faq.question}
               </span>
               <div className={`shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full ${openFaq === index ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'bg-neutral-100 dark:bg-tertiary-800 text-neutral-500'}`}>
-                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`} />
+                <AppIcon name="chevronDown" className={`w-5 h-5 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`} />
               </div>
             </button>
             <div 
@@ -55,7 +55,7 @@ export function FAQSection({ faqs, title, description, buttonText }: FAQSectionP
       <div className="text-center">
         <Link href="/faq" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-tertiary-900 dark:border-white text-tertiary-900 dark:text-white rounded-full font-bold hover:bg-tertiary-900 hover:text-white dark:hover:bg-white dark:hover:text-tertiary-900 transition-all hover:scale-105 group">
           {buttonText}
-          <ArrowUpRight className="w-5 h-5 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
+          <AppIcon name="arrowUpRight" className="w-5 h-5 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     </section>

@@ -6,23 +6,23 @@ export class Inventory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'variant_id', unique: true })
+  @Column({ name: 'variantId', unique: true })
   variantId: string;
 
   @ManyToOne(() => ProductVariant, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'variant_id' })
+  @JoinColumn({ name: 'variantId' })
   variant: ProductVariant;
 
-  @Column({ name: 'available_quantity', default: 0 })
+  @Column({ name: 'availableQuantity', default: 0 })
   availableQuantity: number;
 
-  @Column({ name: 'reserved_quantity', default: 0 })
+  @Column({ name: 'reservedQuantity', default: 0 })
   reservedQuantity: number;
 
   @Column({ default: 1 })
   version: number;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }
 
@@ -31,14 +31,14 @@ export class InventoryReservation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'variant_id' })
+  @Column({ name: 'variantId' })
   variantId: string;
 
   @ManyToOne(() => ProductVariant, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'variant_id' })
+  @JoinColumn({ name: 'variantId' })
   variant: ProductVariant;
 
-  @Column({ name: 'session_id', length: 255 })
+  @Column({ name: 'sessionId', length: 255 })
   sessionId: string;
 
   @Column()
@@ -47,6 +47,6 @@ export class InventoryReservation {
   @Column({ type: 'timestamptz' })
   expiresAt: Date;
 
-  @Column({ name: 'created_at', type: 'timestamptz', default: () => 'now()' })
+  @Column({ name: 'createdAt', type: 'timestamptz', default: () => 'now()' })
   createdAt: Date;
 }

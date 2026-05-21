@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { LayoutGrid, List as ListIcon, ChevronDown, Search, Folder, Play } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Pagination } from '@/shared/components/Pagination';
 import { Gallery } from '../types/gallery.types';
 import { useTranslations } from 'next-intl';
@@ -107,13 +107,13 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
             className="flex items-center gap-2 text-primary-700 font-medium hover:text-primary-800 transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm"
           >
             <span className="truncate max-w-[150px] sm:max-w-xs text-sm">{t('findFolders')}</span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            <AppIcon name="chevronDown" className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
           
           {isDropdownOpen && (
             <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
               <div className="p-2 border-b border-gray-100 flex items-center gap-2">
-                <Search className="w-4 h-4 text-gray-400" />
+                <AppIcon name="search" className="w-4 h-4 text-gray-400" />
                 <input 
                   type="text" 
                   placeholder={t('searchPlaceholder')} 
@@ -143,15 +143,15 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
         <div className="flex bg-gray-100 rounded-full p-1 border border-gray-200">
           <button 
             onClick={() => { setViewMode('grid'); setExpandedFolderId(null); }}
-            className={`p-2 rounded-full transition-colors ${viewMode === 'grid' ? 'bg-white shadow-sm text-primary-600' : 'text-tertiary-500 hover:text-tertiary-700'}`}
+            className={`p-2 rounded-full transition-colors flex items-center justify-center ${viewMode === 'grid' ? 'bg-white shadow-sm text-primary-600' : 'text-tertiary-500 hover:text-tertiary-700'}`}
           >
-            <LayoutGrid className="w-5 h-5" />
+            <AppIcon name="grid" className="w-5 h-5" />
           </button>
           <button 
             onClick={() => { setViewMode('list'); setExpandedFolderId(null); }}
-            className={`p-2 rounded-full transition-colors ${viewMode === 'list' ? 'bg-white shadow-sm text-primary-600' : 'text-tertiary-500 hover:text-tertiary-700'}`}
+            className={`p-2 rounded-full transition-colors flex items-center justify-center ${viewMode === 'list' ? 'bg-white shadow-sm text-primary-600' : 'text-tertiary-500 hover:text-tertiary-700'}`}
           >
-            <ListIcon className="w-5 h-5" />
+            <AppIcon name="list" className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -186,7 +186,7 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
                           referrerPolicy="no-referrer"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/15 group-hover:bg-black/35 transition-colors">
-                          <Play className="w-5 h-5 fill-white text-white opacity-85 group-hover:scale-110 transition-transform" />
+                          <AppIcon name="play" className="w-5 h-5 fill-white text-white opacity-85 group-hover:scale-110 transition-transform" />
                         </div>
                       </div>
                     ) : (
@@ -211,7 +211,7 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
                             referrerPolicy="no-referrer"
                           />
                           <div className="absolute inset-0 flex items-center justify-center bg-black/15 group-hover:bg-black/35 transition-colors">
-                            <Play className="w-4 h-4 fill-white text-white opacity-85 group-hover:scale-110 transition-transform" />
+                            <AppIcon name="play" className="w-4 h-4 fill-white text-white opacity-85 group-hover:scale-110 transition-transform" />
                           </div>
                         </div>
                       ) : (
@@ -235,7 +235,7 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
                             referrerPolicy="no-referrer"
                           />
                           <div className="absolute inset-0 flex items-center justify-center bg-black/15 group-hover:bg-black/35 transition-colors">
-                            <Play className="w-4 h-4 fill-white text-white opacity-85 group-hover:scale-110 transition-transform" />
+                            <AppIcon name="play" className="w-4 h-4 fill-white text-white opacity-85 group-hover:scale-110 transition-transform" />
                           </div>
                         </div>
                       ) : (
@@ -261,7 +261,7 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
                   </p>
                   {(!isExpanded && viewMode === 'list') && (
                     <p className="text-sm text-tertiary-400 mt-2 flex items-center gap-1 group-hover:text-primary-500 transition-colors">
-                      <Folder className="w-4 h-4" /> {t('clickToOpen')}
+                      <AppIcon name="folder" className="w-4 h-4" /> {t('clickToOpen')}
                     </p>
                   )}
                 </div>
@@ -272,7 +272,7 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
                   className={`absolute ${isExpanded || viewMode === 'list' ? 'top-1/2 -translate-y-1/2 right-0' : 'bottom-0 right-0 top-auto translate-y-0'} w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:text-primary-600 hover:border-primary-200 transition-colors shadow-sm`}
                   aria-label={isExpanded ? 'Close folder' : 'Open folder'}
                 >
-                  <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                  <AppIcon name="chevronDown" className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                 </button>
               </div>
 
@@ -297,7 +297,7 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
                             <div className="absolute inset-0 bg-black/20 group-hover/item:bg-black/40 transition-colors" />
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="w-12 h-12 bg-white/20 backdrop-blur-md text-white rounded-full flex items-center justify-center border border-white/30 group-hover/item:scale-110 group-hover/item:bg-white/40 transition-all duration-300 shadow-lg shadow-black/20">
-                                <Play className="w-5 h-5 fill-white ml-0.5" />
+                                <AppIcon name="play" className="w-5 h-5 fill-white ml-0.5" />
                               </div>
                             </div>
                           </div>

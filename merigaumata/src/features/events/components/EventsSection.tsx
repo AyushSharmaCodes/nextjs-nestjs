@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import EventCard from './EventCard';
-import { ArrowRight, MapPin, Calendar, Clock } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Event } from '../types/events.types';
@@ -13,7 +13,8 @@ export default async function EventsSection({ events = [] }: EventsSectionProps)
   const t = await getTranslations('home.events');
   const tEvents = await getTranslations('events');
 
-  const displayEvents = events.filter(e => e.featured);
+  // Defensive check to ensure events is an array before filtering
+  const displayEvents = Array.isArray(events) ? events.filter(e => e.featured) : [];
 
   if (displayEvents.length < 2) {
     return null; // Don't show if not enough events
@@ -27,7 +28,7 @@ export default async function EventsSection({ events = [] }: EventsSectionProps)
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary-200 bg-primary-50 text-xs font-bold text-primary-700 uppercase tracking-widest mb-6 font-sans">
-              <Calendar className="w-3.5 h-3.5" />
+              <AppIcon name="events" size="xs" />
               {t('badge')}
             </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-tertiary-900 dark:text-neutral-100 uppercase tracking-tight mb-4">
@@ -39,7 +40,7 @@ export default async function EventsSection({ events = [] }: EventsSectionProps)
           </div>
           <Link href="/events" className="group flex items-center gap-2 text-primary-600 dark:text-primary-500 font-bold tracking-widest uppercase text-sm hover:text-primary-700 dark:hover:text-primary-400 transition-colors">
             {t('viewAll')}
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+            <AppIcon name="arrowRight" size="md" className="group-hover:translate-x-1.5 transition-transform" />
           </Link>
         </div>
 
@@ -79,19 +80,19 @@ export default async function EventsSection({ events = [] }: EventsSectionProps)
                  <div className="space-y-3 mb-6 font-sans">
                    <div className="flex items-center gap-3 text-white/90 text-sm">
                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md shrink-0">
-                       <Calendar size={14} className="text-primary-300" />
+                       <AppIcon name="events" size="xs" className="text-primary-300" />
                      </div>
                      <span className="font-medium">{tEvents('sevaCamp.schedule')}</span>
                    </div>
                    <div className="flex items-center gap-3 text-white/90 text-sm">
                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md shrink-0">
-                       <Clock size={14} className="text-primary-300" />
+                       <AppIcon name="clock" size="xs" className="text-primary-300" />
                      </div>
                      <span className="font-medium">{tEvents('sevaCamp.hours')}</span>
                    </div>
                    <div className="flex items-center gap-3 text-white/90 text-sm">
                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md shrink-0">
-                       <MapPin size={14} className="text-primary-300" />
+                       <AppIcon name="mapPin" size="xs" className="text-primary-300" />
                      </div>
                      <span className="font-medium">{tEvents('sevaCamp.location')}</span>
                    </div>
@@ -138,19 +139,19 @@ export default async function EventsSection({ events = [] }: EventsSectionProps)
                  <div className="space-y-3 mb-6 font-sans">
                    <div className="flex items-center gap-3 text-white/90 text-sm">
                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md shrink-0">
-                       <Calendar size={14} className="text-green-300" />
+                       <AppIcon name="events" size="xs" className="text-green-300" />
                      </div>
                      <span className="font-medium">{tEvents('farmingWorkshop.date')}</span>
                    </div>
                    <div className="flex items-center gap-3 text-white/90 text-sm">
                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md shrink-0">
-                       <Clock size={14} className="text-green-300" />
+                       <AppIcon name="clock" size="xs" className="text-green-300" />
                      </div>
                      <span className="font-medium">{tEvents('farmingWorkshop.hours')}</span>
                    </div>
                    <div className="flex items-center gap-3 text-white/90 text-sm">
                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md shrink-0">
-                       <MapPin size={14} className="text-green-300" />
+                       <AppIcon name="mapPin" size="xs" className="text-green-300" />
                      </div>
                      <span className="font-medium">{tEvents('farmingWorkshop.location')}</span>
                    </div>

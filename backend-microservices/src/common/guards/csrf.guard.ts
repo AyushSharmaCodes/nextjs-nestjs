@@ -6,7 +6,9 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
+import { AppConfigService } from '../../infrastructure/config/app-config.service';
+import { IS_PUBLIC_KEY } from '../../modules/auth/decorators/public.decorator';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
@@ -28,17 +30,29 @@ function normalizeOrigin(origin: string | null | undefined): string | null {
 export class CsrfGuard implements CanActivate {
   private readonly logger = new Logger(CsrfGuard.name);
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly appConfig: AppConfigService,
+    private readonly reflector: Reflector,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
 
+    // Skip for routes marked @Public() (e.g. AuthController)
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) return true;
+
+    // Also skip if the path starts with /api/auth (Better Auth owns these)
+    if (typeof req.url === 'string' && req.url.startsWith('/api/auth')) return true;
+
     // Safe methods don't mutate state
     if (SAFE_METHODS.has(req.method)) return true;
 
-    // Only enforce on cookie-authenticated requests
-    const hasCookieAuth =
-      Boolean(req.cookies?.access_token) || Boolean(req.cookies?.refresh_token);
+    // Only enforce on cookie-authenticated requests (Better Auth uses __Host-session)
+    const hasCookieAuth = Boolean(req.cookies?.['__Host-session']);
     if (!hasCookieAuth) return true;
 
     const allowedOrigins = this.getAllowedOrigins();
@@ -48,8 +62,8 @@ export class CsrfGuard implements CanActivate {
       throw new InternalServerErrorException('Server configuration error');
     }
 
-    const requestOrigin = normalizeOrigin(req.get('origin'));
-    const refererOrigin = normalizeOrigin(req.get('referer'));
+    const requestOrigin = normalizeOrigin(req.headers.origin as string);
+    const refererOrigin = normalizeOrigin(req.headers.referer as string);
     const sourceOrigin = requestOrigin || refererOrigin;
 
     if (!sourceOrigin || !allowedOrigins.includes(sourceOrigin)) {
@@ -66,19 +80,9 @@ export class CsrfGuard implements CanActivate {
   }
 
   private getAllowedOrigins(): string[] {
-    const rawOrigins = this.configService.get<string>('ALLOWED_ORIGINS', '');
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL', '');
-
-    const origins = rawOrigins
-      .split(',')
-      .map((o) => normalizeOrigin(o.trim()))
+    // AppConfigService.allowedOrigins already merges ALLOWED_ORIGINS + FRONTEND_URL and normalizes
+    return this.appConfig.allowedOrigins
+      .map((o) => normalizeOrigin(o))
       .filter((o): o is string => Boolean(o));
-
-    const frontend = normalizeOrigin(frontendUrl);
-    if (frontend && !origins.includes(frontend)) {
-      origins.push(frontend);
-    }
-
-    return origins;
   }
 }

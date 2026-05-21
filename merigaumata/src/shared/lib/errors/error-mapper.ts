@@ -1,5 +1,5 @@
 import { ZodError } from 'zod';
-import { AppError } from './app-error';
+import { AppError, type AppErrorDetails } from './app-error';
 import { ApiError, normalizeError } from './api-error';
 
 /**
@@ -18,7 +18,7 @@ export function mapToAppError(error: unknown): AppError {
       'Invalid data provided. Please verify all fields.',
       'VALIDATION_ERROR',
       400,
-      error.flatten()
+      error.flatten() as unknown as AppErrorDetails
     );
   }
 
@@ -33,7 +33,7 @@ export function mapToAppError(error: unknown): AppError {
       error.message,
       'RUNTIME_ERROR',
       500,
-      { stack: error.stack }
+      { stack: error.stack ?? null }
     );
   }
 
@@ -47,6 +47,6 @@ export function mapToAppError(error: unknown): AppError {
     'An unexpected system anomaly has occurred.',
     'UNKNOWN_SYSTEM_ERROR',
     500,
-    error
+    typeof error === 'object' && error !== null ? error as unknown as AppErrorDetails : { raw: String(error) }
   );
 }

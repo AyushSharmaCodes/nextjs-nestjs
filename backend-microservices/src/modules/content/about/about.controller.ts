@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '../../../common/interceptors/fastify-file.interceptor';
 import { AboutService } from './about.service';
 import { ApiResponse } from '../../../common/utils/api-response';
 
@@ -62,15 +62,15 @@ export class AboutController {
 
   @Post('team')
   @UseInterceptors(FileInterceptor('image'))
-  async createTeamMember(@Body() body: Partial<any>, @UploadedFile() image?: Express.Multer.File) {
-    const data = image ? { ...body, imageUrl: (image as Express.Multer.File).path } : body;
+  async createTeamMember(@Body() body: Partial<any>, @UploadedFile() image?: { path: string }) {
+    const data = image ? { ...body, imageUrl: image.path } : body;
     return ApiResponse.success(await this.service.createTeamMember(data), 'Team member created');
   }
 
   @Put('team/:id')
   @UseInterceptors(FileInterceptor('image'))
-  async updateTeamMember(@Param('id') id: string, @Body() body: Partial<any>, @UploadedFile() image?: Express.Multer.File) {
-    const data = image ? { ...body, imageUrl: (image as Express.Multer.File).path } : body;
+  async updateTeamMember(@Param('id') id: string, @Body() body: Partial<any>, @UploadedFile() image?: { path: string }) {
+    const data = image ? { ...body, imageUrl: image.path } : body;
     return ApiResponse.success(await this.service.updateTeamMember(id, data));
   }
 

@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  X, 
-  Building2 
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import Image from 'next/image';
 import { Link, usePathname } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
@@ -141,7 +136,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   {item.children!.map((child) => {
                     const childActive = isActive(child.href);
                     const childLabel = t.has(child.labelKey) ? t(child.labelKey) : child.labelKey;
-                    const ChildIcon = child.icon;
+                    const childIcon = child.icon;
                     return (
                       <Link
                         key={child.id}
@@ -153,8 +148,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             : "text-foreground/60 hover:text-foreground/90 hover:bg-earth-50/50 dark:hover:bg-earth-900/10"
                         }`}
                       >
-                        {ChildIcon && (
-                          <ChildIcon 
+                        {childIcon && (
+                          <AppIcon 
+                            name={childIcon}
                             className={`h-[15px] w-[15px] flex-shrink-0 transition-colors ${
                               childActive 
                                 ? "text-primary-500 dark:text-primary-400" 
@@ -231,7 +227,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           className="md:hidden p-1.5 -mr-1 rounded-lg text-foreground/50 hover:bg-earth-100 hover:text-foreground border border-earth-200 dark:border-transparent shadow-sm transition-colors cursor-pointer"
           aria-label={t('closeSidebar')}
         >
-          <X className="h-4 w-4" />
+          <AppIcon name="close" size="sm" />
         </button>
       </SidebarHeader>
 

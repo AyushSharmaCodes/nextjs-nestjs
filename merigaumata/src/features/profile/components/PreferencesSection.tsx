@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppIcon } from '@/shared/icons';
 
 const DetailRow = ({ label, value }: { label: string, value: string | React.ReactNode }) => (
   <div className="flex flex-col sm:flex-row sm:items-center py-4 border-b border-neutral-100 dark:border-neutral-800/60 gap-1 sm:gap-4 group last:border-0 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors px-6">
@@ -43,7 +44,7 @@ export function PreferencesSection() {
               <option value="GBP">GBP (£)</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
-              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+              <AppIcon name="chevronDown" size="sm" />
             </div>
           </div>
         } />

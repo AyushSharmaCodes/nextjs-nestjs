@@ -1,4 +1,5 @@
 import { Sink } from '@logtape/logtape';
+import { serverEnv } from '@/core/env/server';
 
 /**
  * Creates a safe, runtime-aware File Sink.
@@ -13,7 +14,7 @@ import { Sink } from '@logtape/logtape';
 export function createFileSink(): Sink | null {
   if (typeof window !== 'undefined') return null; // Browser safety
 
-  const logPath = process.env.LOG_FILE_PATH;
+  const logPath = serverEnv.LOG_FILE_PATH;
   if (!logPath) return null;
 
   try {

@@ -12,5 +12,31 @@ export default defineConfig([
   },
   {
     extends: [...next],
+  },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/shared/icons/registry/index.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "warn",
+        {
+          paths: [
+            {
+              name: "lucide-react",
+              message: "Please import icons from '@/shared/icons' instead of importing directly from 'lucide-react' to adhere to our centralized Icon System."
+            }
+          ]
+        }
+      ],
+      "@typescript-eslint/no-explicit-any": ["error"],
+      "@typescript-eslint/no-unused-vars": ["error", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_"
+      }],
+      "no-restricted-syntax": ["error", {
+        selector: "TSAsExpression > TSAnyKeyword",
+        message: "Do not use 'as any'. Use proper typing instead."
+      }]
+    }
   }
 ]);

@@ -1,22 +1,8 @@
 "use client";
 
+import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Save, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  Sparkles, 
-  Languages, 
-  FileText, 
-  Image as ImageIcon, 
-  Sliders, 
-  Search, 
-  Info,
-  CheckCircle,
-  AlertTriangle,
-  RotateCcw
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { Category, CategoryType, BaseCategory, LocalizedContent } from '../types';
 import { MediaSection, ICON_POOL } from './MediaSection';
 import { SEOSection } from './SEOSection';
@@ -285,7 +271,7 @@ export function CategoryForm({
       await onSave(finalData);
       setIsDirty(false);
     } catch (err) {
-      console.error(err);
+      logger.error('{error}', { error: String(err) });
     } finally {
       setIsSaving(false);
     }
@@ -311,7 +297,7 @@ export function CategoryForm({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card border border-earth-200 rounded-3xl p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 bg-primary-100 text-primary-700 rounded-2xl flex items-center justify-center">
-            <Sliders className="h-5 w-5" />
+            <AppIcon name="sliders" className="h-5 w-5" />
           </div>
           <div>
             <h3 className="text-base font-serif font-bold text-foreground">
@@ -321,7 +307,7 @@ export function CategoryForm({
               <span className="font-mono">Locale: {activeLocale.toUpperCase()}</span>
               {autosaveTime && (
                 <span className="flex items-center gap-1 text-green-600 font-medium">
-                  • <CheckCircle className="h-3 w-3" /> Auto-saved draft: {autosaveTime}
+                  • <AppIcon name="checkCircle" className="h-3 w-3" /> Auto-saved draft: {autosaveTime}
                 </span>
               )}
             </div>
@@ -342,7 +328,7 @@ export function CategoryForm({
             disabled={isSaving}
             className="px-5 py-2 bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 shadow-sm"
           >
-            <Save className="h-4 w-4" />
+            <AppIcon name="save" className="h-4 w-4" />
             {isSaving ? 'Filing Node...' : 'Save Category'}
           </button>
         </div>
@@ -351,7 +337,7 @@ export function CategoryForm({
       {/* Warning dirty notification */}
       {isDirty && !autosaveTime && (
         <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-2xl text-amber-800 text-xs animate-pulse">
-          <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+          <AppIcon name="alert" className="h-4 w-4 flex-shrink-0" />
           You have unsaved form states. Standard client validations are active.
         </div>
       )}
@@ -365,12 +351,11 @@ export function CategoryForm({
           {/* Section Navigation Tabs */}
           <div className="flex border-b border-earth-200 gap-1 bg-card rounded-2xl p-1 border">
             {[
-              { id: 'general', label: '1. General Info', icon: FileText },
-              { id: 'media', label: '2. Media Assets', icon: ImageIcon },
-              { id: 'advanced', label: '3. Specialized Fields', icon: Sliders },
-              { id: 'seo', label: '4. SEO Socials', icon: Sparkles }
+              { id: 'general', label: '1. General Info', icon: 'fileText' as const },
+              { id: 'media', label: '2. Media Assets', icon: 'image' as const },
+              { id: 'advanced', label: '3. Specialized Fields', icon: 'sliders' as const },
+              { id: 'seo', label: '4. SEO Socials', icon: 'sparkles' as const }
             ].map(tab => {
-              const TabIcon = tab.icon;
               return (
                 <button
                   key={tab.id}
@@ -383,7 +368,7 @@ export function CategoryForm({
                       : "text-foreground/50 hover:text-foreground hover:bg-earth-50"
                   )}
                 >
-                  <TabIcon className="h-4 w-4" />
+                  <AppIcon name={tab.icon} className="h-4 w-4" />
                   {tab.label}
                 </button>
               );
@@ -397,7 +382,7 @@ export function CategoryForm({
               {/* Locale Translations Tabs switcher */}
               <div className="bg-earth-50 rounded-2xl p-4 border border-earth-200">
                 <label className="block text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                  <Languages className="h-4 w-4 text-primary-500" />
+                  <AppIcon name="languages" className="h-4 w-4 text-primary-500" />
                   Translation namespaces catalog (Intl)
                 </label>
                 
@@ -444,7 +429,7 @@ export function CategoryForm({
                 />
                 {errors.nameEn && activeLocale === 'en' && (
                   <p className="text-red-500 text-[10px] font-semibold mt-1 flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3" /> {errors.nameEn}
+                    <AppIcon name="alert" className="h-3 w-3" /> {errors.nameEn}
                   </p>
                 )}
               </div>
@@ -481,7 +466,7 @@ export function CategoryForm({
                   />
                   {errors.slug && (
                     <p className="text-red-500 text-[10px] font-semibold mt-1 flex items-center gap-1">
-                      <AlertTriangle className="h-3 w-3" /> {errors.slug}
+                      <AppIcon name="alert" className="h-3 w-3" /> {errors.slug}
                     </p>
                   )}
                 </div>
@@ -510,9 +495,9 @@ export function CategoryForm({
               <div className="flex items-center justify-between p-4 bg-earth-50 rounded-2xl border border-earth-200 mt-6">
                 <div className="flex items-center gap-2">
                   {isActive ? (
-                    <Eye className="h-5 w-5 text-secondary-600 animate-pulse" />
+                    <AppIcon name="eye" className="h-5 w-5 text-secondary-600 animate-pulse" />
                   ) : (
-                    <EyeOff className="h-5 w-5 text-foreground/45" />
+                    <AppIcon name="eyeOff" className="h-5 w-5 text-foreground/45" />
                   )}
                   <div>
                     <h5 className="text-xs font-semibold text-foreground">Operational Visibility Status</h5>
@@ -558,7 +543,7 @@ export function CategoryForm({
             <div className="bg-card border border-earth-200 rounded-3xl p-6 shadow-sm space-y-6 animate-fade-in text-left">
               
               <h4 className="text-sm font-serif font-semibold text-foreground border-b border-earth-100 pb-3 flex items-center gap-2">
-                <Sliders className="h-5 w-5 text-primary-500" />
+                <AppIcon name="sliders" className="h-5 w-5 text-primary-500" />
                 Specialized Node Schema for <span className="capitalize text-primary-600"> {categoryType} Categories</span>
               </h4>
 
@@ -954,7 +939,7 @@ export function CategoryForm({
         <div className="space-y-6">
           <div className="sticky top-6 bg-card border border-earth-200 rounded-3xl p-6 shadow-sm space-y-6">
             <h4 className="text-sm font-serif font-bold text-foreground border-b border-earth-100 pb-3 flex items-center gap-1.5">
-              <Eye className="h-4.5 w-4.5 text-primary-500" />
+              <AppIcon name="eye" className="h-4.5 w-4.5 text-primary-500" />
               Live Visual Catalog Card
             </h4>
 
@@ -979,7 +964,7 @@ export function CategoryForm({
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-foreground/20 font-mono text-[10px]">
-                    <ImageIcon className="h-8 w-8 mb-1 opacity-40 animate-pulse" />
+                    <AppIcon name="image" className="h-8 w-8 mb-1 opacity-40 animate-pulse" />
                     Pending image upload
                   </div>
                 )}
@@ -994,10 +979,10 @@ export function CategoryForm({
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 bg-card rounded-lg border border-earth-200/80 flex items-center justify-center text-primary-600 shadow-sm">
-                    {React.createElement(
-                      (ICON_POOL.find((i: any) => i.name === icon)?.icon) || Sliders, 
-                      { className: "h-4.5 w-4.5" }
-                    )}
+                    <AppIcon 
+                      name={(ICON_POOL.find((i: any) => i.name === icon)?.icon) || 'sliders'} 
+                      className="h-4.5 w-4.5" 
+                    />
                   </div>
                   <h4 className="font-serif font-semibold text-foreground text-sm truncate flex-1">
                     {translations[activeLocale]?.name || 'Untitled Category'}
@@ -1056,7 +1041,7 @@ export function CategoryForm({
             {/* Quick summary check list */}
             <div className="space-y-2.5 text-xs text-foreground/60 border-t border-earth-100 pt-4">
               <div className="font-semibold text-foreground mb-1 flex items-center gap-1">
-                <Info className="h-4 w-4 text-primary-500" />
+                <AppIcon name="info" className="h-4 w-4 text-primary-500" />
                 Category Compilation Checklist
               </div>
               <div className="flex items-center justify-between">

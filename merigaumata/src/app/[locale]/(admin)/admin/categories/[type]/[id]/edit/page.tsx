@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/shared/lib/logger';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
@@ -38,7 +39,7 @@ export default function EditCategoryPage() {
         setCategory(targetNode);
         setAllCategories(references);
       } catch (err) {
-        console.error('Failed loading categories details:', err);
+        logger.error(`Failed loading categories details:: {error}`, { error: String(err) });
       } finally {
         setLoading(false);
       }
@@ -55,7 +56,7 @@ export default function EditCategoryPage() {
       alert(t('successUpdate'));
       router.push('/admin/categories');
     } catch (err) {
-      console.error('Update failed:', err);
+      logger.error(`Update failed:: {error}`, { error: String(err) });
       alert('Failed updating category node. Please verify validations.');
     }
   };

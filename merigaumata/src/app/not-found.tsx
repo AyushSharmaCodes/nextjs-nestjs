@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import './[locale]/globals.css';
 
 export default function NotFound() {
@@ -37,7 +37,7 @@ export default function NotFound() {
               className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-white transition-opacity hover:opacity-90 shadow-sm"
               style={{ backgroundColor: '#B85E31' }}
             >
-              <Home className="w-5 h-5" />
+              <AppIcon name="home" className="w-5 h-5" />
               <span>Back to Home</span>
             </Link>
           </div>

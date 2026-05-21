@@ -6,23 +6,23 @@ export class OrderStatusHistory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'order_id' })
+  @Column({ name: 'orderId' })
   orderId: string;
 
   @ManyToOne(() => Order, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'order_id' })
+  @JoinColumn({ name: 'orderId' })
   order: Order;
 
   @Column({ length: 30 })
   status: string;
 
-  @Column({ name: 'event_type', length: 50 })
+  @Column({ name: 'eventType', length: 50 })
   eventType: string;
 
   @Column({ length: 20, default: 'SYSTEM' })
   actor: string;
 
-  @Column({ name: 'updated_by', type: 'uuid', nullable: true })
+  @Column({ name: 'updatedBy', type: 'uuid', nullable: true })
   updatedBy: string | null;
 
   @Column({ type: 'text', nullable: true })
@@ -31,6 +31,6 @@ export class OrderStatusHistory {
   @Column({ type: 'jsonb', nullable: true })
   metadata: Record<string, unknown> | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 }

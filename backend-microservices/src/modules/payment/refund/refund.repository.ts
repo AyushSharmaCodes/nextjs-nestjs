@@ -5,6 +5,11 @@ import { Repository } from 'typeorm';
 import { Refund } from '../payment/entities/payment.entity';
 import Razorpay from 'razorpay';
 
+interface RazorpayConfig {
+  key_id: string;
+  key_secret: string;
+}
+
 @Injectable()
 export class RefundRepository {
   private razorpay: Razorpay;
@@ -13,7 +18,11 @@ export class RefundRepository {
     @InjectRepository(Refund) private refundRepo: Repository<Refund>,
     private config: ConfigService,
   ) {
-    this.razorpay = new Razorpay({ key_id: this.config.get('RAZORPAY_KEY_ID', ''), key_secret: this.config.get('RAZORPAY_KEY_SECRET', '') } as any);
+    const razorpayConfig: RazorpayConfig = {
+      key_id: this.config.get('RAZORPAY_KEY_ID', ''),
+      key_secret: this.config.get('RAZORPAY_KEY_SECRET', ''),
+    };
+    this.razorpay = new Razorpay(razorpayConfig);
   }
 
   async create(paymentIntentId: string, amount: number, reason?: string, type = 'FULL', returnId?: string) {

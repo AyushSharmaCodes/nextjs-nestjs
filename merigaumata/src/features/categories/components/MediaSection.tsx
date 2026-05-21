@@ -1,43 +1,22 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  UploadCloud, 
-  Crop, 
-  Trash2, 
-  Sparkles, 
-  Grid, 
-  Check, 
-  Milk, 
-  Flame, 
-  Leaf, 
-  Compass, 
-  Heart, 
-  BookOpen, 
-  Sprout, 
-  HeartHandshake, 
-  Truck, 
-  HelpCircle,
-  Maximize,
-  Minimize,
-  RefreshCw,
-  Tag
-} from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import clsx from 'clsx';
 
 // Pre-curated list of beautiful category icons
 export const ICON_POOL = [
-  { name: 'Milk', icon: Milk },
-  { name: 'Flame', icon: Flame },
-  { name: 'Leaf', icon: Leaf },
-  { name: 'Compass', icon: Compass },
-  { name: 'Heart', icon: Heart },
-  { name: 'BookOpen', icon: BookOpen },
-  { name: 'Sprout', icon: Sprout },
-  { name: 'HeartHandshake', icon: HeartHandshake },
-  { name: 'Truck', icon: Truck },
-  { name: 'HelpCircle', icon: HelpCircle },
-  { name: 'Tag', icon: Tag }
+  { name: 'Milk', icon: 'milk' as const },
+  { name: 'Flame', icon: 'flame' as const },
+  { name: 'Leaf', icon: 'leaf' as const },
+  { name: 'Compass', icon: 'compass' as const },
+  { name: 'Heart', icon: 'heart' as const },
+  { name: 'BookOpen', icon: 'bookOpen' as const },
+  { name: 'Sprout', icon: 'sprout' as const },
+  { name: 'HeartHandshake', icon: 'heartHandshake' as const },
+  { name: 'Truck', icon: 'truck' as const },
+  { name: 'HelpCircle', icon: 'help' as const },
+  { name: 'Tag', icon: 'tag' as const }
 ];
 
 interface MediaSectionProps {
@@ -116,7 +95,7 @@ export function MediaSection({
       {/* Icon Library Selector */}
       <div className="bg-card border border-earth-200 rounded-3xl p-6 shadow-sm">
         <h3 className="text-base font-serif font-semibold text-foreground mb-1 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary-500" />
+          <AppIcon name="sparkles" className="h-5 w-5 text-primary-500" />
           Category Icon Identifier
         </h3>
         <p className="text-xs text-foreground/50 mb-4">
@@ -125,7 +104,6 @@ export function MediaSection({
 
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-3">
           {ICON_POOL.map(item => {
-            const IconComp = item.icon;
             const isSelected = icon === item.name;
             return (
               <button
@@ -139,7 +117,7 @@ export function MediaSection({
                     : "bg-earth-50 border-earth-200 text-foreground/60 hover:bg-earth-100/50 hover:text-foreground"
                 )}
               >
-                <IconComp className={clsx("h-5 w-5", isSelected && "animate-bounce")} />
+                <AppIcon name={item.icon} className={clsx("h-5 w-5", isSelected && "animate-bounce")} />
                 <span className="text-[10px] mt-1 text-foreground/40 font-medium truncate max-w-full px-1">{item.name}</span>
               </button>
             );
@@ -159,18 +137,18 @@ export function MediaSection({
                   <button
                     type="button"
                     onClick={() => startCropModal('image')}
-                    className="p-1 text-foreground/40 hover:text-primary-600 rounded-lg hover:bg-earth-100 transition-colors"
+                    className="p-1 text-foreground/40 hover:text-primary-600 rounded-lg hover:bg-earth-100 transition-colors flex items-center justify-center"
                     title="Crop Image"
                   >
-                    <Crop className="h-4 w-4" />
+                    <AppIcon name="crop" className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
                     onClick={() => onChangeImage('')}
-                    className="p-1 text-foreground/40 hover:text-red-500 rounded-lg hover:bg-earth-100 transition-colors"
+                    className="p-1 text-foreground/40 hover:text-red-500 rounded-lg hover:bg-earth-100 transition-colors flex items-center justify-center"
                     title="Remove Image"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <AppIcon name="trash" className="h-4 w-4" />
                   </button>
                 </span>
               )}
@@ -191,7 +169,7 @@ export function MediaSection({
                   onClick={() => startCropModal('image')}
                   className="px-3.5 py-1.5 bg-white text-foreground rounded-xl text-xs font-semibold hover:bg-primary-500 hover:text-white transition-all shadow-md flex items-center gap-1.5"
                 >
-                  <Crop className="h-3.5 w-3.5" /> Adjust Crop
+                  <AppIcon name="crop" className="h-3.5 w-3.5" /> Adjust Crop
                 </button>
               </div>
             </div>
@@ -201,7 +179,7 @@ export function MediaSection({
               className="flex-1 flex flex-col items-center justify-center py-10 px-4 bg-earth-50 border-2 border-dashed border-earth-200 hover:border-primary-400 rounded-2xl cursor-pointer hover:bg-earth-100/50 transition-all duration-300 group aspect-square max-h-64 justify-self-center w-full"
             >
               <div className="h-12 w-12 bg-card rounded-2xl flex items-center justify-center border border-earth-200 shadow-sm mb-3 group-hover:scale-110 group-hover:bg-primary-50 transition-transform">
-                <UploadCloud className="h-6 w-6 text-foreground/40 group-hover:text-primary-500" />
+                <AppIcon name="uploadCloud" className="h-6 w-6 text-foreground/40 group-hover:text-primary-500" />
               </div>
               <p className="text-sm font-semibold text-foreground">Click to upload image</p>
               <p className="text-xs text-foreground/40 mt-1">PNG, JPG, WEBP up to 5MB</p>
@@ -221,18 +199,18 @@ export function MediaSection({
                     <button
                       type="button"
                       onClick={() => startCropModal('banner')}
-                      className="p-1 text-foreground/40 hover:text-primary-600 rounded-lg hover:bg-earth-100 transition-colors"
+                      className="p-1 text-foreground/40 hover:text-primary-600 rounded-lg hover:bg-earth-100 transition-colors flex items-center justify-center"
                       title="Crop Banner"
                     >
-                      <Crop className="h-4 w-4" />
+                      <AppIcon name="crop" className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
                       onClick={() => onChangeBannerImage('')}
-                      className="p-1 text-foreground/40 hover:text-red-500 rounded-lg hover:bg-earth-100 transition-colors"
+                      className="p-1 text-foreground/40 hover:text-red-500 rounded-lg hover:bg-earth-100 transition-colors flex items-center justify-center"
                       title="Remove Banner"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <AppIcon name="trash" className="h-4 w-4" />
                     </button>
                   </span>
                 )}
@@ -253,7 +231,7 @@ export function MediaSection({
                     onClick={() => startCropModal('banner')}
                     className="px-3.5 py-1.5 bg-white text-foreground rounded-xl text-xs font-semibold hover:bg-primary-500 hover:text-white transition-all shadow-md flex items-center gap-1.5"
                   >
-                    <Crop className="h-3.5 w-3.5" /> Adjust Crop
+                    <AppIcon name="crop" className="h-3.5 w-3.5" /> Adjust Crop
                   </button>
                 </div>
               </div>
@@ -263,7 +241,7 @@ export function MediaSection({
                 className="flex-1 flex flex-col items-center justify-center py-10 px-4 bg-earth-50 border-2 border-dashed border-earth-200 hover:border-primary-400 rounded-2xl cursor-pointer hover:bg-earth-100/50 transition-all duration-300 group aspect-video max-h-64 justify-self-center w-full"
               >
                 <div className="h-12 w-12 bg-card rounded-2xl flex items-center justify-center border border-earth-200 shadow-sm mb-3 group-hover:scale-110 group-hover:bg-primary-50 transition-transform">
-                  <UploadCloud className="h-6 w-6 text-foreground/40 group-hover:text-primary-500" />
+                  <AppIcon name="uploadCloud" className="h-6 w-6 text-foreground/40 group-hover:text-primary-500" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Click to upload banner</p>
                 <p className="text-xs text-foreground/40 mt-1">Recommended width: 1200px</p>
@@ -282,7 +260,7 @@ export function MediaSection({
             {/* Modal Header */}
             <div className="h-16 px-6 border-b border-earth-100/55 flex items-center justify-between">
               <h3 className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
-                <Crop className="h-5 w-5 text-primary-500" />
+                <AppIcon name="crop" className="h-5 w-5 text-primary-500" />
                 Edit Category Asset Framing
               </h3>
               <span className="text-xs font-semibold px-2 py-1 bg-primary-100 text-primary-700 rounded-lg">
@@ -365,7 +343,7 @@ export function MediaSection({
                 
                 {/* Zoom control */}
                 <div className="flex items-center gap-2 w-full sm:w-1/2">
-                  <Minimize className="h-4 w-4 text-foreground/40" />
+                  <AppIcon name="minimize" className="h-4 w-4 text-foreground/40" />
                   <input
                     type="range"
                     min="1"
@@ -375,13 +353,13 @@ export function MediaSection({
                     onChange={(e) => setZoom(parseFloat(e.target.value))}
                     className="flex-1 accent-primary-500 h-1 bg-earth-200 rounded-lg appearance-none cursor-pointer"
                   />
-                  <Maximize className="h-4 w-4 text-foreground/40" />
+                  <AppIcon name="maximize" className="h-4 w-4 text-foreground/40" />
                   <span className="text-xs font-mono font-semibold text-foreground/60 w-10 text-right">{Math.round(zoom * 100)}%</span>
                 </div>
 
                 {/* Rotation control */}
                 <div className="flex items-center gap-2 w-full sm:w-1/3">
-                  <RefreshCw className="h-4 w-4 text-foreground/40" />
+                  <AppIcon name="refresh" className="h-4 w-4 text-foreground/40" />
                   <input
                     type="range"
                     min="-180"
@@ -413,9 +391,9 @@ export function MediaSection({
                   <button
                     type="button"
                     onClick={saveSimulatedCrop}
-                    className="px-5 py-2 bg-foreground text-background hover:bg-foreground/90 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
+                    className="px-5 py-2 bg-foreground text-background hover:bg-foreground/90 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                   >
-                    <Check className="h-4 w-4" /> Save Selection
+                    <AppIcon name="check" className="h-4 w-4" /> Save Selection
                   </button>
                 </div>
               </div>

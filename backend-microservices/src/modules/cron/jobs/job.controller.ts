@@ -1,11 +1,35 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { JobService } from './job.service';
+import { JobStatus, JobType, JobPriority } from './entities/job.entity';
 
-interface ApiResponse<T = unknown> {
+interface ApiResponse<T = Record<string, string | number | boolean | null>> {
   success: boolean;
   data?: T;
   message?: string;
   error?: string;
+}
+
+interface GetJobsQuery {
+  status?: JobStatus;
+  type?: JobType;
+  isActive?: boolean;
+}
+
+interface CreateJobBody {
+  type: JobType;
+  name: string;
+  description?: string;
+  payload?: Record<string, string | number | boolean | null>;
+  scheduledAt?: string;
+  priority?: JobPriority;
+  timeoutSeconds?: number;
+  cronExpression?: string;
+  isRecurring?: boolean;
+  createdBy?: string;
+}
+
+interface CompleteBody {
+  result: Record<string, string | number | boolean | null>;
 }
 
 const ApiResponse = {
@@ -23,11 +47,12 @@ export class JobController {
     @Query('type') type?: string,
     @Query('isActive') isActive?: string,
   ) {
-    return ApiResponse.success(await this.service.getJobs({ 
-      status: status as any, 
-      type: type as any,
-      isActive: isActive === 'true' ? true : isActive === 'false' ? false : undefined,
-    }));
+    const query: GetJobsQuery = {};
+    if (status) query.status = status as JobStatus;
+    if (type) query.type = type as JobType;
+    if (isActive === 'true') query.isActive = true;
+    else if (isActive === 'false') query.isActive = false;
+    return ApiResponse.success(await this.service.getJobs(query));
   }
 
   @Get('stats')
@@ -62,23 +87,10 @@ export class JobController {
   }
 
   @Post()
-  async create(@Body() body: {
-    type: string;
-    name: string;
-    description?: string;
-    payload?: any;
-    scheduledAt?: string;
-    priority?: string;
-    timeoutSeconds?: number;
-    cronExpression?: string;
-    isRecurring?: boolean;
-    createdBy?: string;
-  }) {
+  async create(@Body() body: CreateJobBody) {
     return ApiResponse.success(
       await this.service.createJob({
         ...body,
-        type: body.type as any,
-        priority: body.priority as any,
         scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : undefined,
       }),
       'Job created'
@@ -91,7 +103,7 @@ export class JobController {
   }
 
   @Put(':id/complete')
-  async complete(@Param('id') id: string, @Body() body: { result: any }) {
+  async complete(@Param('id') id: string, @Body() body: CompleteBody) {
     return ApiResponse.success(await this.service.completeJob(id, body.result), 'Job completed');
   }
 

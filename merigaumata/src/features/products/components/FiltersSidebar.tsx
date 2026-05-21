@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { ChevronDown, X, SlidersHorizontal } from 'lucide-react';
+import { AppIcon } from '@/shared/icons';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
 
@@ -100,7 +100,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
           <h3 className="font-bold text-[15px] text-tertiary-800 dark:text-tertiary-100 group-hover:text-[#1B8057] transition-colors">
             {t('categories')}
           </h3>
-          <ChevronDown className={`w-4 h-4 text-tertiary-500 dark:text-tertiary-400 transition-transform duration-300 ${isCategoryOpen ? '' : '-rotate-90'}`} />
+          <AppIcon name="chevronDown" className={`w-4 h-4 text-tertiary-500 dark:text-tertiary-400 transition-transform duration-300 ${isCategoryOpen ? '' : '-rotate-90'}`} />
         </button>
         
         <AnimatePresence initial={false}>
@@ -158,7 +158,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
           <h3 className="font-bold text-[15px] text-tertiary-800 dark:text-tertiary-100 group-hover:text-[#1B8057] transition-colors">
             {t('priceRange')}
           </h3>
-          <ChevronDown className={`w-4 h-4 text-tertiary-500 dark:text-tertiary-400 transition-transform duration-300 ${isPriceOpen ? '' : '-rotate-90'}`} />
+          <AppIcon name="chevronDown" className={`w-4 h-4 text-tertiary-500 dark:text-tertiary-400 transition-transform duration-300 ${isPriceOpen ? '' : '-rotate-90'}`} />
         </button>
 
         <AnimatePresence initial={false}>
@@ -233,7 +233,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
           onClick={clearAllFilters}
           className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-rose-500/20 dark:border-rose-500/10 hover:border-rose-500/30 text-rose-500 dark:text-rose-450 text-[11.5px] font-bold uppercase tracking-wider rounded-full hover:bg-rose-50/30 dark:hover:bg-rose-950/20 transition-all select-none"
         >
-          <X className="w-3.5 h-3.5" />
+          <AppIcon name="close" className="w-3.5 h-3.5" />
           {t('clearFilters')}
         </button>
       )}
@@ -280,14 +280,14 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
               {/* Header */}
               <div className="flex items-center justify-between mb-8 pb-4 border-b border-stone-200/50 dark:border-stone-850/50">
                 <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-[#1B8057]" />
+                  <AppIcon name="filter" className="w-4 h-4 text-[#1B8057]" />
                   <h2 className="text-xl font-bold font-serif text-tertiary-900 dark:text-tertiary-50">{t('filters')}</h2>
                 </div>
                 <button 
                   onClick={closeMobileDrawer}
                   className="p-1 rounded-full bg-stone-100 dark:bg-stone-900 text-stone-500 hover:text-stone-900 dark:hover:text-white transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <AppIcon name="close" className="w-4 h-4" />
                 </button>
               </div>
 
@@ -320,7 +320,7 @@ export function MobileFilterButton() {
       onClick={handleOpen}
       className="lg:hidden flex items-center gap-2 px-4 py-2 border border-tertiary-200 dark:border-tertiary-750 rounded-full text-xs font-bold uppercase tracking-wider text-tertiary-900 dark:text-tertiary-50 hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors active:scale-95 animate-fade-in"
     >
-      <SlidersHorizontal className="w-3.5 h-3.5" />
+      <AppIcon name="filter" className="w-3.5 h-3.5" />
       {t('filters')}
     </button>
   );
