@@ -21,7 +21,6 @@ import { EmailService } from '../../services/email.service';
 import { TemplateService } from '../../services/template.service';
 import { EmailAuditRepository } from '../../repositories/email-audit.repository';
 import { COMM_ERROR_CODES } from '../../constants/comm-error-codes.constant';
-import type { SessionId } from '../../../../shared/types/index';
 
 // Human-readable reason descriptions for email body
 const REASON_LABELS: Record<string, string> = {
@@ -69,6 +68,7 @@ export class SuspiciousSessionListener {
 
     // ── Build template context ───────────────────────────────────────────────
     const frontendUrl = this.config.get<string>('FRONTEND_URL', 'https://merigaumata.com');
+    const locale = this.normalizeLocale(payload.locale);
 
     const context: TemplateContext = {
       displayName:      payload.email.split('@')[0],
@@ -88,9 +88,9 @@ export class SuspiciousSessionListener {
       riskLevel:        payload.riskLevel,
       suspicionReasons: payload.suspicionReasons.map(r => REASON_LABELS[r] ?? r),
       // CTAs (only relevant for SUSPICIOUS — high-risk template uses single secureUrl)
-      confirmUrl:       `${frontendUrl}/auth/session/confirm/${payload.sessionId}`,
-      revokeUrl:        `${frontendUrl}/auth/session/revoke/${payload.sessionId}`,
-      secureUrl:        `${frontendUrl}/auth/security`,
+      confirmUrl:       `${frontendUrl}/${locale}/auth/session/confirm/${payload.sessionId}`,
+      revokeUrl:        `${frontendUrl}/${locale}/auth/session/revoke/${payload.sessionId}`,
+      secureUrl:        `${frontendUrl}/${locale}/auth/security`,
     };
 
     // ── Render template ──────────────────────────────────────────────────────
@@ -171,8 +171,11 @@ export class SuspiciousSessionListener {
     }
   }
 
-  private buildActionUrl(action: 'confirm' | 'revoke', sessionId: SessionId): string {
-    const base = this.config.get<string>('FRONTEND_URL', 'https://merigaumata.com');
-    return `${base}/auth/session/${action}/${sessionId}`;
+  private normalizeLocale(locale: string | undefined): string {
+    const normalized = (locale ?? 'en').toLowerCase();
+    if (normalized === 'en' || normalized === 'hi' || normalized === 'ta' || normalized === 'te') {
+      return normalized;
+    }
+    return 'en';
   }
 }

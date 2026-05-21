@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useStrictAuth } from '@/features/auth/hooks/useStrictAuth';
 import { authClient } from '@/lib/auth-client';
 import { useRouter, Link } from '@/i18n/navigation';
+import { routing } from '@/i18n/routing';
 import { toast } from '@/shared/lib/toast';
 
 const DetailRow = ({ label, value }: { label: string, value: string | React.ReactNode }) => (
@@ -101,7 +102,13 @@ export function SecuritySection() {
     if (!user?.email) return;
     setIsSendingVerification(true);
     try {
-      const res = await authClient.sendVerificationEmail({ email: user.email, callbackURL: window.location.href });
+      const [, maybeLocale] = window.location.pathname.split('/');
+      const locale = (routing.locales as readonly string[]).includes(maybeLocale)
+        ? maybeLocale
+        : routing.defaultLocale;
+      const callbackURL = `${window.location.origin}/${locale}/auth/verify`;
+
+      const res = await authClient.sendVerificationEmail({ email: user.email, callbackURL });
       if (res?.error) {
         toast.error('Failed to send verification email', { description: res.error.message });
       } else {

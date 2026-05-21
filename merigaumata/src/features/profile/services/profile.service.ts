@@ -1,4 +1,3 @@
-import { apiInstance } from '@/shared/lib/api/axios';
 import { profileApi } from '../api/profile.api';
 import { PersonalDetails, AccountDetails } from '../types/profile.types';
 

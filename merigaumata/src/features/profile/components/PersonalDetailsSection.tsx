@@ -12,6 +12,7 @@ interface PersonalDetailsSectionProps {
   setIsEditingPersonal: (val: boolean) => void;
   savePersonalDetails: () => void;
   hasPersonalChanges: boolean;
+  userEmail: string;
   translateIfKey: (text: string) => string;
 }
 
@@ -30,6 +31,7 @@ export function PersonalDetailsSection({
   setIsEditingPersonal,
   savePersonalDetails,
   hasPersonalChanges,
+  userEmail,
   translateIfKey,
 }: PersonalDetailsSectionProps) {
   const t = useTranslations('profile');
@@ -143,7 +145,7 @@ export function PersonalDetailsSection({
             <DetailRow label="Nationality:" value={translateIfKey(personalDetails.nationality)} />
             <DetailRow label="Address:" value={<span className="flex items-center gap-2"><AppIcon name="mapPin" size="xs" className="text-neutral-400" /> {translateIfKey(personalDetails.address)}</span>} />
             <DetailRow label="Phone Number:" value={personalDetails.phone} />
-            <DetailRow label="Email:" value="fuse.vegeto@gmail.com" />
+            <DetailRow label="Email:" value={userEmail} />
           </>
         )}
       </div>

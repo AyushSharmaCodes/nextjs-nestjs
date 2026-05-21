@@ -1,7 +1,12 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { ManagerService } from './manager.service';
 import { ApiResponse } from '../../../common/utils/api-response';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Permissions } from '../../auth/decorators/permissions.decorator';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 
+@Roles('ADMIN', 'MANAGER')
+@Permissions('managers')
 @Controller('managers')
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
@@ -15,8 +20,8 @@ export class ManagerController {
     return ApiResponse.success(await this.managerService.getManagers({ page, limit, role, search }));
   }
 
-  @Get('me') async getCurrentManager(@Body() body: { identityId: string }) {
-    return ApiResponse.success(await this.managerService.getManagerByIdentityId(body.identityId));
+  @Get('me') async getCurrentManager(@CurrentUser() user: { id: string }) {
+    return ApiResponse.success(await this.managerService.getManagerByIdentityId(user.id));
   }
 
   @Get(':id') async getManager(@Param('id') id: string) { 
@@ -52,8 +57,8 @@ export class ManagerController {
     return ApiResponse.success(await this.managerService.updatePermissions(id, body), 'Permissions updated'); 
   }
 
-  @Post('check-permission') async checkPermission(@Body() body: { identityId: string; permission: string }) {
-    const hasPermission = await this.managerService.hasPermission(body.identityId, body.permission);
+  @Post('check-permission') async checkPermission(@CurrentUser() user: { id: string }, @Body() body: { permission: string }) {
+    const hasPermission = await this.managerService.hasPermission(user.id, body.permission);
     return ApiResponse.success({ hasPermission });
   }
 }

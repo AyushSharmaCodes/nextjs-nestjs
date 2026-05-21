@@ -1,7 +1,9 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { GeoService } from './geo.service';
 import { ApiResponse } from '../../../common/utils/api-response';
+import { Public } from '../../auth/decorators/public.decorator';
 
+@Public()
 @Controller('geo')
 export class GeoController {
   constructor(private readonly service: GeoService) {}

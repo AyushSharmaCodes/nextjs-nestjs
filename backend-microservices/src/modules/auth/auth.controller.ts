@@ -28,7 +28,6 @@ import {
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { toNodeHandler } from 'better-auth/node';
 import { auth } from './bootstrap/better-auth.config';
 import { Public } from './decorators/public.decorator';
 import { AuthService } from './auth.service';
@@ -47,8 +46,6 @@ interface AuthenticatedFastifyRequest extends FastifyRequest {
     twoFactorVerified: boolean | null;
   };
 }
-
-const betterAuthHandler = toNodeHandler(auth);
 
 @UseFilters(AuthExceptionFilter)
 @Controller('api/auth')
@@ -74,13 +71,26 @@ export class AuthController {
   async getMe(
     @Req() req: AuthenticatedFastifyRequest,
   ): Promise<AuthResponseDto> {
-    const userId = req.user?.id;
-
-    if (!userId) {
+    if (!req.user?.id || !req.session?.id) {
       throw new TokenInvalidException();
     }
 
-    return this.authService.getAuthContext(toUserId(userId));
+    return this.authService.buildAuthResponseFromRawSession({
+      userId: req.user.id,
+      email: req.user.email,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      image: req.user.image,
+      role: req.user.role,
+      emailVerified: req.user.emailVerified,
+      twoFactorEnabled: req.user.twoFactorEnabled,
+      sessionId: req.session.id,
+      tokenExpiresAt: req.session.expiresAt,
+      twoFactorVerified: req.user.twoFactorEnabled
+        ? req.session.twoFactorVerified ?? false
+        : true,
+      createdAt: req.user.createdAt,
+    });
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -103,39 +113,101 @@ export class AuthController {
     @Req() req: FastifyRequest,
     @Res() res: FastifyReply,
   ): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const rawRes = res.raw;
-      const rawReq = req.raw;
-      // Wrap res.raw.end to resolve the Promise when Better Auth finishes writing
-      const originalEnd = rawRes.end.bind(rawRes) as typeof rawRes.end;
-      rawRes.end = function overriddenEnd(
-        chunk?: Parameters<typeof rawRes.end>[0],
-        encodingOrCb?: Parameters<typeof rawRes.end>[1],
-        cb?: Parameters<typeof rawRes.end>[2],
-      ): typeof rawRes {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- necessary for res.end overloads
-        (originalEnd as (...a: unknown[]) => void)(chunk, encodingOrCb, cb);
-        resolve();
-        return rawRes;
-      } as typeof rawRes.end;
+    return this.forwardToBetterAuth(req, res);
+  }
 
-      betterAuthHandler(rawReq, rawRes).catch((err: unknown) => {
-        const message = err instanceof Error ? err.message : String(err);
-        this.logger.error({ err }, `Better Auth handler threw: ${message}`);
-        if (!rawRes.headersSent) {
-          // Return typed error shape even for BA internal failures using Fastify reply
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-            success: false,
-            errorCode: 'AUTH_050',
-            message: 'Authentication service error',
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-            timestamp: new Date().toISOString(),
-            path: req.url,
-            requestId: (req as FastifyRequest & { traceId?: string }).traceId ?? 'unknown',
-          });
-        }
-        resolve();
-      });
+  private async forwardToBetterAuth(
+    req: FastifyRequest,
+    res: FastifyReply,
+  ): Promise<void> {
+    try {
+      const request = this.toWebRequest(req);
+      const response = await auth.handler(request);
+
+      res.status(response.status);
+      this.copyResponseHeaders(response.headers, res);
+
+      const body = Buffer.from(await response.arrayBuffer());
+      res.send(body);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error({ err }, `Better Auth handler threw: ${message}`);
+
+      if (!res.sent) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+          success: false,
+          errorCode: 'AUTH_050',
+          message: 'Authentication service error',
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          timestamp: new Date().toISOString(),
+          path: req.url,
+          requestId: (req as FastifyRequest & { traceId?: string }).traceId ?? 'unknown',
+        });
+      }
+    }
+  }
+
+  private toWebRequest(req: FastifyRequest): Request {
+    const protocol = req.protocol || 'http';
+    const host = req.headers.host ?? 'localhost';
+    const url = `${protocol}://${host}${req.url}`;
+
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (Array.isArray(value)) {
+        for (const item of value) headers.append(key, item);
+      } else if (value !== undefined) {
+        headers.set(key, String(value));
+      }
+    }
+
+    const method = req.method.toUpperCase();
+    const init: RequestInit = { method, headers };
+
+    if (method !== 'GET' && method !== 'HEAD') {
+      init.body = this.serializeRequestBody(req.body);
+    }
+
+    return new Request(url, init);
+  }
+
+  private serializeRequestBody(body: unknown): BodyInit | undefined {
+    if (body === undefined || body === null) {
+      return undefined;
+    }
+    if (typeof body === 'string' || body instanceof URLSearchParams || body instanceof Blob) {
+      return body;
+    }
+    if (Buffer.isBuffer(body)) {
+      return body.buffer.slice(
+        body.byteOffset,
+        body.byteOffset + body.byteLength,
+      ) as ArrayBuffer;
+    }
+    return JSON.stringify(body);
+  }
+
+  private copyResponseHeaders(headers: Headers, res: FastifyReply): void {
+    const headerWithCookies = headers as Headers & {
+      getSetCookie?: () => string[];
+    };
+    const setCookies = headerWithCookies.getSetCookie?.() ?? [];
+
+    headers.forEach((value, key) => {
+      if (key.toLowerCase() === 'set-cookie') {
+        return;
+      }
+      res.header(key, value);
     });
+
+    if (setCookies.length > 0) {
+      res.header('set-cookie', setCookies);
+      return;
+    }
+
+    const setCookie = headers.get('set-cookie');
+    if (setCookie) {
+      res.header('set-cookie', setCookie);
+    }
   }
 }

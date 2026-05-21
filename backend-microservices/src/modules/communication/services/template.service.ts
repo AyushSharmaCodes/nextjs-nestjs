@@ -5,7 +5,7 @@
  *
  * All templates are in templates/en/{name}.hbs.
  * Emails are sent in English only — locale is NOT used for template
- * selection (the payload locale field is accepted but ignored here).
+ * selection. Locale is still used for fallback frontend URLs.
  *
  * Design notes:
  * - Subject lines live in a typed map indexed by template name.
@@ -34,6 +34,7 @@ import { COMM_ERROR_CODES } from '../constants/comm-error-codes.constant';
 
 const EMAIL_SUBJECTS: Record<EmailTemplateName, string> = {
   'welcome':                    'Welcome to MeriGauMata!',
+  'email-verification':         'Verify Your MeriGauMata Email Address',
   'password-reset':             'Reset Your MeriGauMata Password',
   'otp':                        'Your MeriGauMata Verification Code',
   'magic-link':                 'Your MeriGauMata Sign-In Link',
@@ -72,11 +73,11 @@ export class TemplateService {
    */
   async render(
     template: EmailTemplateName,
-    _locale:  string,        // ignored — English only
+    locale:   string,
     context:  TemplateContext,
   ): Promise<TemplateRenderResult> {
     const subject = EMAIL_SUBJECTS[template];
-    const html    = await this.renderHtml(template, context);
+    const html    = await this.renderHtml(template, locale, context);
     const text    = this.htmlToPlainText(html);
     return { subject, html, text };
   }
@@ -85,6 +86,7 @@ export class TemplateService {
 
   private async renderHtml(
     template: EmailTemplateName,
+    locale:   string,
     context:  TemplateContext,
   ): Promise<string> {
     const compiledTemplate = await this.loadTemplate(template);
@@ -101,19 +103,25 @@ export class TemplateService {
 
     try {
       const frontendUrl = this.config.get<string>('FRONTEND_URL', 'https://merigaumata.com');
+      const normalizedLocale = this.normalizeLocale(locale);
+      const fallbackResetUrl = this.buildAuthUrl(
+        frontendUrl,
+        `/${normalizedLocale}/auth/reset-password`,
+        context.resetToken,
+      );
+      const fallbackVerifyUrl = this.buildAuthUrl(
+        frontendUrl,
+        `/${normalizedLocale}/auth/verify`,
+        context.verifyToken,
+      );
 
       return compiledTemplate({
         ...context,
         year:        new Date().getFullYear(),
         frontendUrl,
-        // Build full URL from token for password-reset template
-        resetUrl: context.resetToken
-          ? `${frontendUrl}/reset-password?token=${context.resetToken}`
-          : undefined,
-        // Build full URL from token for email-change template
-        verifyUrl: context.verifyToken
-          ? `${frontendUrl}/verify-email?token=${context.verifyToken}`
-          : undefined,
+        // Prefer auth-provider generated callback URLs and only fall back to local route reconstruction.
+        resetUrl: context.resetUrl ?? fallbackResetUrl,
+        verifyUrl: context.verifyUrl ?? fallbackVerifyUrl,
       } as Record<string, unknown>);
     } catch (err: unknown) {
       const reason = err instanceof Error ? err.message : String(err);
@@ -153,5 +161,27 @@ export class TemplateService {
       .replace(/&nbsp;/g, ' ')
       .replace(/\s{2,}/g, ' ')
       .trim();
+  }
+
+  private buildAuthUrl(baseUrl: string, pathName: string, token?: string): string | undefined {
+    if (!token) {
+      return undefined;
+    }
+
+    const url = new URL(pathName, this.ensureTrailingSlash(baseUrl));
+    url.searchParams.set('token', token);
+    return url.toString();
+  }
+
+  private ensureTrailingSlash(url: string): string {
+    return url.endsWith('/') ? url : `${url}/`;
+  }
+
+  private normalizeLocale(locale: string): string {
+    const normalized = locale.toLowerCase();
+    if (normalized === 'en' || normalized === 'hi' || normalized === 'ta' || normalized === 'te') {
+      return normalized;
+    }
+    return 'en';
   }
 }

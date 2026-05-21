@@ -109,7 +109,8 @@ export const setupResponseInterceptor = (apiInstance: AxiosInstance) => {
 
         if (typeof window !== 'undefined') {
           localStorage.setItem('mgm_session_logout', Date.now().toString());
-          window.location.href = '/';
+          const redirectUrl = resolveAuthLoginRedirect();
+          window.location.href = redirectUrl;
         }
       }
 
@@ -117,3 +118,21 @@ export const setupResponseInterceptor = (apiInstance: AxiosInstance) => {
     }
   );
 };
+
+function resolveAuthLoginRedirect(): string {
+  if (typeof window === 'undefined') {
+    return '/en/auth/login';
+  }
+
+  const pathname = window.location.pathname;
+  const search = window.location.search;
+  const segments = pathname.split('/');
+  const maybeLocale = segments[1];
+  const locale =
+    maybeLocale === 'en' || maybeLocale === 'hi' || maybeLocale === 'ta' || maybeLocale === 'te'
+      ? maybeLocale
+      : 'en';
+
+  const returnTo = encodeURIComponent(`${pathname}${search}`);
+  return `/${locale}/auth/login?next=${returnTo}`;
+}

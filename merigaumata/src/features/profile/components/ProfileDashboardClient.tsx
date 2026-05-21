@@ -14,6 +14,7 @@ import { PreferencesSection } from './PreferencesSection';
 import { DeleteAccountModal } from './DeleteAccountModal';
 import { authClient } from '@/lib/auth-client';
 import { toast } from '@/shared/lib/toast';
+import { useStrictAuth } from '@/features/auth/hooks/useStrictAuth';
 
 export function ProfileDashboardClient() {
   const t = useTranslations('profile');
@@ -21,6 +22,8 @@ export function ProfileDashboardClient() {
   const params = useParams();
   const currentLocale = (params.locale as string) || 'en';
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const authState = useStrictAuth();
+  const authenticatedUser = authState.status === 'authenticated' ? authState.user : null;
   
   const {
     userRole,
@@ -42,7 +45,12 @@ export function ProfileDashboardClient() {
     hasAccountChanges
   } = useProfile();
 
-  const computedFullName = `${personalDetails.firstName || ''} ${personalDetails.lastName || ''}`.trim() || 'User';
+  const computedFullName = `${personalDetails.firstName || ''} ${personalDetails.lastName || ''}`.trim()
+    || authenticatedUser?.firstName
+    || authenticatedUser?.email.split('@')[0]
+    || 'User';
+  const userEmail = authenticatedUser?.email ?? '';
+  const emailVerified = authenticatedUser?.emailVerified ?? false;
 
   // Danger Zone State
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -190,7 +198,7 @@ export function ProfileDashboardClient() {
                       <StatusIcon status="verified" size="md" showBackground={false} className="text-blue-500" />
                     </div>
                     
-                    <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">fuse.vegeto@gmail.com</p>
+                    <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{userEmail}</p>
                 </div>
              </div>
 
@@ -206,6 +214,7 @@ export function ProfileDashboardClient() {
                   setIsEditingPersonal={setIsEditingPersonal}
                   savePersonalDetails={savePersonalDetails}
                   hasPersonalChanges={hasPersonalChanges}
+                  userEmail={userEmail}
                   translateIfKey={translateIfKey}
                 />
 
@@ -219,6 +228,7 @@ export function ProfileDashboardClient() {
                   saveAccountDetails={saveAccountDetails}
                   hasAccountChanges={hasAccountChanges}
                   userRole={userRole}
+                  emailVerified={emailVerified}
                   translateIfKey={translateIfKey}
                 />
 

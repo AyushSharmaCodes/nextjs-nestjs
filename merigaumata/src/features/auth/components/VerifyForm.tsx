@@ -6,10 +6,26 @@ import { useStrictAuth } from '@/features/auth/hooks/useStrictAuth';
 import { authClient } from '@/lib/auth-client';
 import { AppIcon } from '@/shared/icons';
 import { motion } from 'motion/react';
-import { apiInstance } from '@/shared/lib/api/axios';
 import { toast } from '@/shared/lib/toast';
 import { authLogger } from '@/shared/lib/logger';
 import { useTranslations } from 'next-intl';
+import { authApiClient } from '../api/auth.client';
+
+async function resolveTargetPath(locale: string): Promise<string> {
+  try {
+    const meRes = await authApiClient.getMe();
+    if (meRes.data.role === 'ADMIN') {
+      return `/${locale}/admin`;
+    }
+    if (meRes.data.role === 'MANAGER') {
+      return `/${locale}/manager`;
+    }
+  } catch (err) {
+    authLogger.error('Failed to resolve roles for auth redirect', { error: err });
+  }
+
+  return `/${locale}`;
+}
 
 export default function VerifyForm() {
   const router = useRouter();
@@ -53,19 +69,7 @@ export default function VerifyForm() {
       const isTwoFactorPending = user.twoFactorEnabled && !session.twoFactorVerified;
       if (!isTwoFactorPending) {
         const redirectUser = async () => {
-          let targetPath = `/${locale}`;
-          try {
-            const meRes = await apiInstance.get<{ user: { roles: string[] } }>('/api/auth/me');
-            const roles = meRes.data?.user?.roles || [];
-            const primaryRole = roles[0];
-            if (primaryRole === 'ADMIN') {
-              targetPath = `/${locale}/admin`;
-            } else if (primaryRole === 'MANAGER') {
-              targetPath = `/${locale}/manager`;
-            }
-          } catch (err) {
-            authLogger.error('Failed to resolve roles on auto-redirect', { error: err });
-          }
+          const targetPath = await resolveTargetPath(locale);
           router.replace(targetPath);
         };
         const timer = setTimeout(redirectUser, 1500);
@@ -140,19 +144,7 @@ export default function VerifyForm() {
         setIsSuccess(true);
         refetch();
 
-        let targetPath = `/${locale}`;
-        try {
-          const meRes = await apiInstance.get<{ user: { roles: string[] } }>('/api/auth/me');
-          const roles = meRes.data?.user?.roles || [];
-          const primaryRole = roles[0];
-          if (primaryRole === 'ADMIN') {
-            targetPath = `/${locale}/admin`;
-          } else if (primaryRole === 'MANAGER') {
-            targetPath = `/${locale}/manager`;
-          }
-        } catch (err) {
-          authLogger.error('Failed to resolve roles on success', { error: err });
-        }
+        const targetPath = await resolveTargetPath(locale);
 
         toast.success(t('signedInSuccess'), {
           description: t('welcomeBackName', { name: user?.firstName || user?.email || 'friend' }),

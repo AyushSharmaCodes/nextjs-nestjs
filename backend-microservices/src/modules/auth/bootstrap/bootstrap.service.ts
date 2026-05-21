@@ -3,7 +3,7 @@ import { PrismaService } from '../../../infrastructure/database/prisma/prisma.se
 import { AppConfigService } from '../../../infrastructure/config/app-config.service';
 import { SuspiciousSessionService } from '../session/suspicious-session.service';
 import { GlobalSuspiciousSessionDispatcher } from '../../../infrastructure/events/global-suspicious-session-dispatcher';
-import * as bcryptjs from 'bcryptjs';
+import { hashAuthPassword } from './password-hashing';
 
 @Injectable()
 export class BootstrapService implements OnModuleInit {
@@ -61,7 +61,7 @@ export class BootstrapService implements OnModuleInit {
     });
 
     if (!existingAccount) {
-      const passwordHash = await bcryptjs.hash(adminPassword, 12);
+      const passwordHash = await hashAuthPassword(adminPassword);
       await this.prisma.account.create({
         data: {
           userId: admin.id,

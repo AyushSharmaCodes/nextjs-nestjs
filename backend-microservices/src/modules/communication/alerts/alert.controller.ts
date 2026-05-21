@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/
 import { AlertService } from './alert.service';
 import { ApiResponse } from '../../../common/utils/api-response';
 import { AlertStatus, AlertType, AlertPriority } from './entities/alert.entity';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 interface GetAlertsQuery {
   status?: AlertStatus;
@@ -17,6 +18,7 @@ interface CreateAlertBody {
   userId?: string;
 }
 
+@Roles('ADMIN')
 @Controller('admin/alerts')
 export class AlertController {
   constructor(private readonly service: AlertService) {}

@@ -36,6 +36,7 @@ export class PasswordResetListener {
       'password-reset',
       payload.locale,
       {
+        resetUrl:   payload.resetUrl,
         resetToken: payload.resetToken,
         expiresAt:  payload.expiresAt,
         ipAddress:  payload.ipAddress,

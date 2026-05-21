@@ -19,6 +19,8 @@ export const AUTH_EVENTS = {
 
   PASSWORD_RESET_REQUESTED: 'auth.password.reset.requested',
 
+  EMAIL_VERIFICATION_REQUESTED: 'auth.email.verification.requested',
+
   OTP_REQUESTED: 'auth.otp.requested',
 
   MAGIC_LINK_REQUESTED: 'auth.magic_link.requested',

@@ -13,6 +13,7 @@ interface AccountDetailsSectionProps {
   saveAccountDetails: () => void;
   hasAccountChanges: boolean;
   userRole: string;
+  emailVerified: boolean;
   translateIfKey: (text: string) => string;
 }
 
@@ -32,6 +33,7 @@ export function AccountDetailsSection({
   saveAccountDetails,
   hasAccountChanges,
   userRole,
+  emailVerified,
   translateIfKey,
 }: AccountDetailsSectionProps) {
   const t = useTranslations('profile');
@@ -98,8 +100,14 @@ export function AccountDetailsSection({
               </span>
             } />
             <DetailRow label="Account Verification:" value={
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium bg-green-50 text-green-600 border border-green-200/50 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30">
-                Verified
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium border ${
+                  emailVerified
+                    ? 'bg-green-50 text-green-600 border-green-200/50 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30'
+                    : 'bg-amber-50 text-amber-700 border-amber-200/50 dark:bg-amber-950/20 dark:text-amber-300 dark:border-amber-800/30'
+                }`}
+              >
+                {emailVerified ? 'Verified' : 'Not verified'}
               </span>
             } />
             <DetailRow label="Time Zone:" value={translateIfKey(accountDetails.timeZone)} />

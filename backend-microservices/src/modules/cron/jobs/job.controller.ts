@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { JobService } from './job.service';
 import { JobStatus, JobType, JobPriority } from './entities/job.entity';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Permissions } from '../../auth/decorators/permissions.decorator';
 
 interface ApiResponse<T = Record<string, string | number | boolean | null>> {
   success: boolean;
@@ -37,6 +39,8 @@ const ApiResponse = {
   error: (message: string): ApiResponse => ({ success: false, message }),
 };
 
+@Roles('ADMIN', 'MANAGER')
+@Permissions('jobs')
 @Controller('jobs')
 export class JobController {
   constructor(private readonly service: JobService) {}

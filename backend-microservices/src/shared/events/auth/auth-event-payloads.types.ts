@@ -84,10 +84,17 @@ export interface UserRegisteredPayload extends BaseAuthEventPayload {
 }
 
 export interface PasswordResetRequestedPayload extends BaseAuthEventPayload {
+  readonly resetUrl:    string;  // full Better Auth callback URL — preferred over rebuilding
   readonly resetToken:  string;  // included in reset link URL — DO NOT log
   readonly expiresAt:   string;  // ISO 8601 — shown in email body
   readonly ipAddress:   string;  // security context for the email body
   readonly userAgent:   string;  // security context for the email body
+}
+
+export interface EmailVerificationRequestedPayload extends BaseAuthEventPayload {
+  readonly verifyUrl:   string;  // full Better Auth callback URL — preferred over rebuilding
+  readonly verifyToken: string;  // included in verify link URL — DO NOT log
+  readonly expiresAt:   string;  // ISO 8601
 }
 
 export interface OtpRequestedPayload extends BaseAuthEventPayload {
@@ -163,6 +170,7 @@ export interface SuspiciousSessionPayload extends BaseAuthEventPayload {
 
 export interface EmailChangeRequestedPayload extends BaseAuthEventPayload {
   readonly newEmail:    string;   // destination address for the verify email
+  readonly verifyUrl?:  string;   // full callback URL if provided by the auth provider
   readonly verifyToken: string;   // included in verify link — DO NOT log
   readonly expiresAt:   string;   // ISO 8601
 }
@@ -184,6 +192,7 @@ export interface EmailChangeRequestedPayload extends BaseAuthEventPayload {
 export type AuthEventPayloadMap = {
   [AUTH_EVENTS.USER_REGISTERED]:          UserRegisteredPayload;
   [AUTH_EVENTS.PASSWORD_RESET_REQUESTED]: PasswordResetRequestedPayload;
+  [AUTH_EVENTS.EMAIL_VERIFICATION_REQUESTED]: EmailVerificationRequestedPayload;
   [AUTH_EVENTS.OTP_REQUESTED]:            OtpRequestedPayload;
   [AUTH_EVENTS.MAGIC_LINK_REQUESTED]:     MagicLinkRequestedPayload;
   [AUTH_EVENTS.TWO_FA_CODE_REQUESTED]:    TwoFaCodeRequestedPayload;

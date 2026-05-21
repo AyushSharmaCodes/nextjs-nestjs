@@ -20,6 +20,7 @@
 
 import { authClient } from '@/lib/auth-client';
 import { clientEnv } from '@/core/env/client';
+import { routing } from '@/i18n/routing';
 import {
   AuthApiError,
   ApiSuccessResponse,
@@ -29,6 +30,7 @@ import {
   isAuthErrorCode,
   toUserId,
 } from '../types/auth.types';
+import { extractAuthResponseData } from '../lib/auth-response';
 
 // ---------------------------------------------------------------------------
 // Interface definition
@@ -56,7 +58,7 @@ export interface AuthApiClient {
   requestMagicLink(email: string): Promise<void>;
 
   /** Request an email OTP code. */
-  requestOtp(email: string, type?: 'sign-in' | 'email-verification'): Promise<void>;
+  requestOtp(email: string, type?: 'sign-in' | 'email-verification' | 'forget-password' | 'change-email'): Promise<void>;
 
   /** Verify an email OTP code and complete sign-in. */
   verifyOtp(payload: { email: string; otp: string }): Promise<void>;
@@ -100,10 +102,9 @@ async function apiFetch<T>(
     },
   });
 
-  // Parse the response body — it always follows our envelope shape
-  const body = await response.json() as ApiSuccessResponse<T> | ApiErrorResponse;
+  const body = await response.json() as unknown;
 
-  if (!response.ok || !body.success) {
+  if (!response.ok) {
     const errorBody = body as ApiErrorResponse;
     throw new AuthApiError({
       message: errorBody.message || 'An error occurred',
@@ -114,7 +115,24 @@ async function apiFetch<T>(
     });
   }
 
-  return body as ApiSuccessResponse<T>;
+  if (
+    body &&
+    typeof body === 'object' &&
+    'success' in body &&
+    (body as { success?: unknown }).success === true &&
+    'data' in body
+  ) {
+    return body as ApiSuccessResponse<T>;
+  }
+
+  return {
+    success: true,
+    data: body as T,
+    message: 'OK',
+    statusCode: response.status,
+    timestamp: new Date().toISOString(),
+    requestId: response.headers.get('x-trace-id') ?? '',
+  };
 }
 
 /**
@@ -141,6 +159,21 @@ function normalizeAuthClientError(error: unknown): never {
     statusCode: 0,
     requestId: '',
   });
+}
+
+function resolveAuthRedirectUrl(path: string): string {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+  if (typeof window !== 'undefined') {
+    const [, maybeLocale] = window.location.pathname.split('/');
+    const locale = (routing.locales as readonly string[]).includes(maybeLocale)
+      ? maybeLocale
+      : null;
+
+    return `${window.location.origin}${locale ? `/${locale}` : ''}${normalizedPath}`;
+  }
+
+  return `${clientEnv.NEXT_PUBLIC_APP_URL}${normalizedPath}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -187,7 +220,22 @@ function buildDisplayName(raw: Record<string, unknown>): string {
 export const authApiClient: AuthApiClient = {
   // ─── GET /api/auth/me ────────────────────────────────────────────────────
   async getMe(): Promise<ApiSuccessResponse<AuthResponseData>> {
-    return apiFetch<AuthResponseData>('/api/auth/me');
+    const response = await apiFetch<AuthResponseData>('/api/auth/me');
+    const normalized = extractAuthResponseData(response.data);
+
+    if (!normalized) {
+      throw new AuthApiError({
+        message: 'Invalid auth session response',
+        errorCode: 'UNKNOWN',
+        statusCode: response.statusCode,
+        requestId: response.requestId,
+      });
+    }
+
+    return {
+      ...response,
+      data: normalized,
+    };
   },
 
   // ─── Sign in with email/password ─────────────────────────────────────────
@@ -246,7 +294,7 @@ export const authApiClient: AuthApiClient = {
   // ─── OTP ─────────────────────────────────────────────────────────────────
   async requestOtp(
     email: string,
-    type: 'sign-in' | 'email-verification' = 'sign-in',
+    type: 'sign-in' | 'email-verification' | 'forget-password' | 'change-email' = 'sign-in',
   ): Promise<void> {
     const result = await authClient.emailOtp.sendVerificationOtp({
       email,
@@ -271,7 +319,7 @@ export const authApiClient: AuthApiClient = {
   async requestPasswordReset(email: string): Promise<void> {
     const result = await (authClient as any).forgetPassword({
       email,
-      redirectTo: `${clientEnv.NEXT_PUBLIC_API_URL}/auth/reset-password`,
+      redirectTo: resolveAuthRedirectUrl('/auth/reset-password'),
     });
     if (result.error) {
       normalizeAuthClientError(result.error);
@@ -303,7 +351,7 @@ export const authApiClient: AuthApiClient = {
   async signInWithGoogle(callbackURL?: string): Promise<void> {
     await authClient.signIn.social({
       provider: 'google',
-      callbackURL: callbackURL ?? `${clientEnv.NEXT_PUBLIC_API_URL}/auth/verify`,
+      callbackURL: callbackURL ?? resolveAuthRedirectUrl('/auth/verify'),
     });
     // Google OAuth redirects — no return value needed
   },

@@ -16,11 +16,13 @@ export const OtpRequestSchema = z.object({
 
   /**
    * OTP type determines which Better Auth plugin handles generation.
-   *  - 'sign-in'        → emailOTP plugin (sign-in flow)
+   *  - 'sign-in'            → emailOTP plugin (sign-in flow)
    *  - 'email-verification' → emailOTP plugin (account verification)
+   *  - 'forget-password'    → emailOTP plugin (password reset)
+   *  - 'change-email'       → emailOTP plugin (email change)
    */
   type: z
-    .enum(['sign-in', 'email-verification', 'forget-password'])
+    .enum(['sign-in', 'email-verification', 'forget-password', 'change-email'])
     .default('sign-in'),
 });
 

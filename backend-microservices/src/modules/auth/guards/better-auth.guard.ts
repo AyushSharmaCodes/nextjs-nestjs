@@ -11,6 +11,9 @@ export interface SessionUser {
   lastName: string | null;
   image: string | null;
   emailVerified: boolean;
+  role: string;
+  twoFactorEnabled: boolean;
+  createdAt: string;
 }
 
 export interface AuthenticatedRequest extends FastifyRequest {
@@ -65,15 +68,24 @@ export class BetterAuthGuard implements CanActivate {
     }
 
     // 2.1 Enforce Two-Factor verification if enabled
-    const userObj = session.user as { twoFactorEnabled?: boolean };
+    const userObj = session.user as Record<string, unknown>;
     const sessionObj = session.session as { twoFactorVerified?: boolean | null };
-    if (userObj.twoFactorEnabled && !sessionObj.twoFactorVerified) {
+    if (userObj['twoFactorEnabled'] === true && !sessionObj.twoFactorVerified) {
       throw new UnauthorizedException('Authentication failed: Two-Factor Verification required');
     }
 
-    const u = session.user as Record<string, any>;
-    const fName = u.firstName || session.user.name || null;
-    const lName = u.lastName || null;
+    const fName =
+      typeof userObj['firstName'] === 'string'
+        ? userObj['firstName']
+        : session.user.name || null;
+    const lName = typeof userObj['lastName'] === 'string' ? userObj['lastName'] : null;
+    const role = typeof userObj['role'] === 'string' ? userObj['role'] : 'CUSTOMER';
+    const twoFactorEnabled = userObj['twoFactorEnabled'] === true;
+    const createdAt =
+      typeof userObj['createdAt'] === 'string'
+        ? userObj['createdAt']
+        : new Date().toISOString();
+
     request.user = {
       id: session.user.id,
       email: session.user.email,
@@ -81,6 +93,9 @@ export class BetterAuthGuard implements CanActivate {
       lastName: lName,
       image: session.user.image ?? null,
       emailVerified: session.user.emailVerified,
+      role,
+      twoFactorEnabled,
+      createdAt,
     };
 
     request.session = session.session;

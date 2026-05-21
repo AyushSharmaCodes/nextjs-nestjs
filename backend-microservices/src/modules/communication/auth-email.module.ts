@@ -1,7 +1,7 @@
 /**
  * @file communication/auth-email.module.ts
  *
- * Feature module that wires all 11 typed auth event listeners with their
+ * Feature module that wires all typed auth event listeners with their
  * shared services: EmailService, TemplateService, EmailAuditRepository.
  *
  * Email delivery is exclusively handled by SesEmailProvider, which delegates
@@ -38,8 +38,9 @@ import { TemplateService } from './services/template.service';
 // Repository
 import { EmailAuditRepository } from './repositories/email-audit.repository';
 
-// All 11 auth event listeners
+// All auth event listeners
 import { UserRegisteredListener } from './listeners/auth/user-registered.listener';
+import { EmailVerificationListener } from './listeners/auth/email-verification.listener';
 import { PasswordResetListener } from './listeners/auth/password-reset.listener';
 import { OtpRequestedListener } from './listeners/auth/otp-requested.listener';
 import { MagicLinkListener } from './listeners/auth/magic-link.listener';
@@ -53,6 +54,7 @@ import { EmailChangeListener } from './listeners/auth/email-change.listener';
 
 const ALL_LISTENERS = [
   UserRegisteredListener,
+  EmailVerificationListener,
   PasswordResetListener,
   OtpRequestedListener,
   MagicLinkListener,
@@ -88,7 +90,7 @@ const ALL_LISTENERS = [
     TemplateService,
     EmailAuditRepository,
 
-    // ─── All 11 listeners ─────────────────────────────────────────────────────
+    // ─── All listeners ────────────────────────────────────────────────────────
     ...ALL_LISTENERS,
   ],
   exports: [

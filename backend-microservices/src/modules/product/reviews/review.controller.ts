@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
 import { ReviewService } from './review.service';
 import { ApiResponse } from '../../../common/utils/api-response';
 
@@ -22,11 +24,12 @@ export class ReviewController {
   @Post()
   async create(
     @Body() body: { productId: string; rating: number; title?: string; comment?: string },
-    @Headers('x-user-id') userId: string,
+    @CurrentUser() user: { id: string },
   ) {
-    return ApiResponse.success(await this.service.create(body.productId, userId, body.rating, body.title, body.comment), 'Review created');
+    return ApiResponse.success(await this.service.create(body.productId, user.id, body.rating, body.title, body.comment), 'Review created');
   }
 
+  @Roles('ADMIN', 'MANAGER')
   @Put(':id/approve')
   async approve(@Param('id') id: string) {
     return ApiResponse.success(await this.service.approve(id), 'Review approved');
@@ -42,6 +45,7 @@ export class ReviewController {
     return ApiResponse.success(await this.service.markNotHelpful(id), 'Marked not helpful');
   }
 
+  @Roles('ADMIN', 'MANAGER')
   @Delete(':id')
   async delete(@Param('id') id: string) {
     await this.service.delete(id);

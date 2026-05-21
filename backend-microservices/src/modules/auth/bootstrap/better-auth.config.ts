@@ -9,15 +9,17 @@ import { createAuthMiddleware } from 'better-auth/api';
 import { GlobalEventDispatcher } from '../../../infrastructure/events/global-event-dispatcher';
 import { GlobalSuspiciousSessionDispatcher } from '../../../infrastructure/events/global-suspicious-session-dispatcher';
 import { AUTH_EVENTS } from '../../../shared/events/auth/auth-events.constants';
+import { hashAuthPassword, verifyAuthPassword } from './password-hashing';
 import type {
   UserRegisteredPayload,
   PasswordResetRequestedPayload,
+  EmailVerificationRequestedPayload,
   OtpRequestedPayload,
   MagicLinkRequestedPayload,
   TwoFaCodeRequestedPayload,
   TwoFaEnabledPayload,
   GoogleAccountLinkedPayload,
-  SuspiciousSessionPayload,
+  EmailChangeRequestedPayload,
 } from '../../../shared/events/auth/auth-event-payloads.types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -32,6 +34,18 @@ if (!process.env.BETTER_AUTH_SECRET) {
 }
 
 const logger = new Logger('BetterAuthConfig');
+const EMAIL_VERIFICATION_EXPIRES_IN_SECONDS = 60 * 60;
+
+interface BetterAuthEmailUser {
+  readonly id: string;
+  readonly email: string;
+}
+
+interface EmailVerificationTokenPayload {
+  readonly email?: string;
+  readonly updateTo?: string;
+  readonly requestType?: string;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: build a base event payload from the fields available inside BA hooks.
@@ -50,6 +64,51 @@ function basePayload(userId: string, email: string) {
     triggeredAt: new Date().toISOString(),
     requestId:   crypto.randomUUID(), // no request context in BA hooks
   };
+}
+
+function decodeEmailVerificationToken(token: string): EmailVerificationTokenPayload | null {
+  const [, payload] = token.split('.');
+  if (!payload) return null;
+
+  try {
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const parsed = JSON.parse(Buffer.from(padded, 'base64').toString('utf8')) as Record<string, unknown>;
+
+    return {
+      email:       typeof parsed.email === 'string' ? parsed.email : undefined,
+      updateTo:    typeof parsed.updateTo === 'string' ? parsed.updateTo : undefined,
+      requestType: typeof parsed.requestType === 'string' ? parsed.requestType : undefined,
+    };
+  } catch (err) {
+    logger.warn(`[EmailVerification] Could not decode verification token metadata: ${err instanceof Error ? err.message : String(err)}`);
+    return null;
+  }
+}
+
+function emitVerificationEmailEvent(user: BetterAuthEmailUser, url: string, token: string): void {
+  const tokenPayload = decodeEmailVerificationToken(token);
+  const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_EXPIRES_IN_SECONDS * 1000).toISOString();
+  const currentEmail = tokenPayload?.email ?? user.email;
+  const newEmail = tokenPayload?.updateTo;
+
+  if (newEmail) {
+    GlobalEventDispatcher.emit(AUTH_EVENTS.EMAIL_CHANGE_REQUESTED, {
+      ...basePayload(user.id, currentEmail),
+      newEmail,
+      verifyUrl: url,
+      verifyToken: token,
+      expiresAt,
+    } satisfies EmailChangeRequestedPayload);
+    return;
+  }
+
+  GlobalEventDispatcher.emit(AUTH_EVENTS.EMAIL_VERIFICATION_REQUESTED, {
+    ...basePayload(user.id, user.email),
+    verifyUrl: url,
+    verifyToken: token,
+    expiresAt,
+  } satisfies EmailVerificationRequestedPayload);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -489,6 +548,10 @@ export const auth = betterAuth({
     fields: {
       name: 'firstName',
     },
+    changeEmail: {
+      enabled: true,
+      updateEmailWithoutVerification: false,
+    },
     additionalFields: {
       lastName: {
         type: 'string',
@@ -597,10 +660,25 @@ export const auth = betterAuth({
     },
   },
 
+  emailVerification: {
+    expiresIn: EMAIL_VERIFICATION_EXPIRES_IN_SECONDS,
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async (
+      { user, url, token }: { user: BetterAuthEmailUser; url: string; token: string },
+    ) => {
+      emitVerificationEmailEvent(user, url, token);
+    },
+  },
+
   // ── Email/password ────────────────────────────────────────────────────────
 
   emailAndPassword: {
     enabled: true,
+    password: {
+      hash: hashAuthPassword,
+      verify: verifyAuthPassword,
+    },
     /**
      * PASSWORD_RESET_REQUESTED — Better Auth calls this when the user
      * requests a password reset. `token` is the raw reset token; `url` is
@@ -613,6 +691,7 @@ export const auth = betterAuth({
       GlobalEventDispatcher.emit(AUTH_EVENTS.PASSWORD_RESET_REQUESTED, {
         ...basePayload(user.id, user.email),
 
+        resetUrl:   url,
         resetToken: token,
         expiresAt,
         ipAddress:  'unknown', // no request context in BA callback — enrich via middleware if needed
@@ -677,8 +756,8 @@ export const auth = betterAuth({
     emailOTP({
       /**
        * OTP_REQUESTED — fired when the emailOTP plugin sends a verification code.
-       * Covers: sign-up email verification, login OTP, email change verification.
-       * `type` can be 'sign-in' | 'email-verification' | 'forget-password'
+       * Covers: sign-up email verification, login OTP, and OTP-based email change verification.
+       * `type` can be 'sign-in' | 'email-verification' | 'forget-password' | 'change-email'
        */
       sendVerificationOTP: async ({ email, otp, type }: { email: string; otp: string; type: string }) => {
         const user = await prismaClient.user.findUnique({
@@ -698,6 +777,7 @@ export const auth = betterAuth({
           'email-verification': 'EMAIL_VERIFICATION',
           'sign-in':            'LOGIN',
           'forget-password':    'PASSWORD_RESET',
+          'change-email':       'EMAIL_VERIFICATION',
         };
         const purpose = purposeMap[type] ?? 'EMAIL_VERIFICATION';
 

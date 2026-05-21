@@ -11,6 +11,7 @@
  */
 export type EmailTemplateName =
   | 'welcome'
+  | 'email-verification'
   | 'password-reset'
   | 'otp'
   | 'magic-link'
@@ -40,7 +41,9 @@ export interface TemplateContext {
   readonly expiresAt?:          string;
   readonly purpose?:            string;
   readonly magicLinkUrl?:       string;
+  readonly resetUrl?:           string;
   readonly resetToken?:         string;
+  readonly verifyUrl?:          string;
   readonly verifyToken?:        string;
   readonly deviceHint?:         string;
   readonly lockedUntil?:        string;

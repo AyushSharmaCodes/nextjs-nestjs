@@ -3,6 +3,7 @@ import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 import { serverEnv } from '@/core/env/server';
 import { jwtVerify } from 'jose';
+import { extractAuthResponseData } from '@/features/auth/lib/auth-response';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -11,7 +12,7 @@ const API_URL = serverEnv.NEXT_PUBLIC_API_URL;
 
 
 export default async function middleware(request: NextRequest) {
-  let response = intlMiddleware(request);
+  const response = intlMiddleware(request);
 
   const path = request.nextUrl.pathname;
   const isProtected = protectedRoutes.some((route) => path.includes(route));
@@ -36,6 +37,7 @@ export default async function middleware(request: NextRequest) {
       let userRoles: string[] = [];
       let meResStatus = 200;
       let sessionDataValid = false;
+      let isTwoFactorEnabled = false;
       let isTwoFactorVerified = true;
 
       // 2. Validate JWT locally at the Edge (Fast path)
@@ -44,9 +46,13 @@ export default async function middleware(request: NextRequest) {
         try {
           const { payload } = await jwtVerify(jwtToken, secret);
           const role = (payload.user as { role?: string })?.role;
-          if (role) userRoles = [role];
+          if (role) {
+            userRoles = [role];
+          }
+          isTwoFactorEnabled = (payload.user as { twoFactorEnabled?: boolean })?.twoFactorEnabled ?? false;
           isTwoFactorVerified = (payload.session as { twoFactorVerified?: boolean })?.twoFactorVerified ?? true;
-          sessionDataValid = true;
+          const requiresRole = path.includes('/admin') || path.includes('/manager');
+          sessionDataValid = !requiresRole || userRoles.length > 0;
         } catch (jwtError) {
           // If expired or invalid, we fallback to backend validation
           sessionDataValid = false;
@@ -66,25 +72,26 @@ export default async function middleware(request: NextRequest) {
 
         if (meRes.ok) {
           const payload = await meRes.json();
-          // better-auth user object might have `role` string or `roles` array
-          if (payload.user?.role) {
-            userRoles = [payload.user.role];
-          } else if (payload.user?.roles) {
-            userRoles = payload.user.roles;
+          const authContext = extractAuthResponseData(payload);
+          if (authContext?.role) {
+            userRoles = [authContext.role];
           }
-          // if better-auth returns 200, 2FA is verified or not required
-          isTwoFactorVerified = true; 
+          isTwoFactorEnabled = authContext?.twoFactorEnabled ?? false;
+          isTwoFactorVerified = authContext?.twoFactorVerified ?? !isTwoFactorEnabled;
         }
       }
 
       // 4. Handle Unauthenticated / 2FA Pending
-      if (meResStatus === 401 || meResStatus === 403 || isTwoFactorVerified === false) {
+      const isTwoFactorPending = isTwoFactorEnabled && !isTwoFactorVerified;
+      if (meResStatus >= 400 || isTwoFactorPending) {
         const hasSessionCookie = Boolean(request.cookies.get(sessionCookieName)?.value);
-        if (hasSessionCookie && (meResStatus === 401 || isTwoFactorVerified === false)) {
+        if (hasSessionCookie && (meResStatus === 401 || meResStatus === 403 || isTwoFactorPending)) {
           return NextResponse.redirect(new URL(`/${locale}/auth/verify`, request.url));
         }
         const redirectRes = NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url));
-        redirectRes.cookies.delete(sessionCookieName);
+        if (meResStatus === 401 || meResStatus === 403) {
+          redirectRes.cookies.delete(sessionCookieName);
+        }
         return redirectRes;
       }
 
@@ -105,7 +112,7 @@ export default async function middleware(request: NextRequest) {
           return NextResponse.redirect(homeUrl);
         }
       }
-    } catch (err) {
+    } catch {
       // On transient network / 5xx errors, redirect to login without clearing the session cookie
       // so the user can retry. Don't delete the cookie on server errors.
       return NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url));

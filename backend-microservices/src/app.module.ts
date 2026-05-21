@@ -32,6 +32,8 @@ import { CronDomainModule } from './modules/cron/cron-domain.module';
 import { TracingInterceptor } from './common/interceptors/tracing.interceptor';
 import { CsrfGuard } from './common/guards/csrf.guard';
 import { BetterAuthGuard } from './modules/auth/guards/better-auth.guard';
+import { RolesGuard } from './modules/auth/guards/roles.guard';
+import { ManagerPermissionsGuard } from './modules/auth/guards/manager-permissions.guard';
 
 @Module({
   imports: [
@@ -90,9 +92,12 @@ import { BetterAuthGuard } from './modules/auth/guards/better-auth.guard';
     { provide: APP_GUARD, useClass: CsrfGuard },
     // Global Better Auth validation
     { provide: APP_GUARD, useClass: BetterAuthGuard },
+    // Global RBAC metadata enforcement
+    { provide: APP_GUARD, useClass: RolesGuard },
+    // Global fine-grained manager permission enforcement
+    { provide: APP_GUARD, useClass: ManagerPermissionsGuard },
     // Global request tracing
     { provide: APP_INTERCEPTOR, useClass: TracingInterceptor },
   ],
 })
 export class AppModule {}
-
