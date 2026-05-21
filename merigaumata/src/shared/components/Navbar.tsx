@@ -128,7 +128,21 @@ export default function Navbar() {
               href="/profile"
               className="p-2 sm:p-2.5 text-neutral-500 dark:text-neutral-400 hover:text-tertiary-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl hidden sm:block relative animate-in fade-in"
             >
-              <AppIcon name="user" className="h-[22px] w-[22px]" strokeWidth={1.5} />
+              {authState.user.image ? (
+                <div className="h-[22px] w-[22px] rounded-full overflow-hidden">
+                  <Image
+                    src={authState.user.image}
+                    alt="Profile"
+                    width={22}
+                    height={22}
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="h-[22px] w-[22px] rounded-full bg-tertiary-900 dark:bg-tertiary-100 flex items-center justify-center text-[10px] font-bold text-white dark:text-tertiary-900">
+                  {authState.user.firstName?.[0]?.toUpperCase() || 'U'}
+                </div>
+              )}
               <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0a0a0a]" />
             </Link>
           ) : (
@@ -179,8 +193,22 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
               className="w-full text-base font-medium px-4 py-3 rounded-xl transition-all text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-50 dark:hover:bg-white/5 sm:hidden flex items-center gap-2 mt-2 border-t border-neutral-100 dark:border-neutral-800 pt-3"
             >
-              <AppIcon name="user" className="h-[18px] w-[18px]" strokeWidth={1.5} />
-              {t('nav.about')}
+              {authState.user.image ? (
+                <div className="h-[18px] w-[18px] rounded-full overflow-hidden">
+                  <Image
+                    src={authState.user.image}
+                    alt="Profile"
+                    width={18}
+                    height={18}
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="h-[18px] w-[18px] rounded-full bg-tertiary-900 dark:bg-tertiary-100 flex items-center justify-center text-[8px] font-bold text-white dark:text-tertiary-900">
+                  {authState.user.firstName?.[0]?.toUpperCase() || 'U'}
+                </div>
+              )}
+              {t('nav.profile')}
             </Link>
           ) : (
             <Link
