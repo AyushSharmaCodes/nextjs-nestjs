@@ -6,6 +6,9 @@ import { ErrorCode, getErrorResponse } from '../../../common/constants/error-cod
 
 @Injectable()
 export class OtpService {
+  private readonly otpExpiryMinutes = 10;
+  private readonly otpResendCooldownSeconds = 30;
+
   constructor(
     private prisma: PrismaService,
     private mailService: MailService,
@@ -20,6 +23,23 @@ export class OtpService {
   }
 
   async createChallenge(userId: string, email: string, type: string) {
+    const latestActiveChallenge = await this.prisma.oTPChallenge.findFirst({
+      where: { userId, type, isVerified: false },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (latestActiveChallenge) {
+      const earliestResendAt = new Date(latestActiveChallenge.createdAt.getTime() + this.otpResendCooldownSeconds * 1000);
+      if (earliestResendAt > new Date()) {
+        throw new BadRequestException(
+          getErrorResponse(
+            ErrorCode.BAD_REQUEST,
+            `Please wait ${this.otpResendCooldownSeconds} seconds before requesting a new OTP.`,
+          ),
+        );
+      }
+    }
+
     const otp = this.generateOtp();
     const otpHash = this.hashOtp(otp);
 
@@ -29,7 +49,7 @@ export class OtpService {
     });
 
     const expiresAt = new Date();
-    expiresAt.setMinutes(expiresAt.getMinutes() + 10); // 10 minutes expiry
+    expiresAt.setMinutes(expiresAt.getMinutes() + this.otpExpiryMinutes);
 
     await this.prisma.oTPChallenge.create({
       data: {
@@ -44,8 +64,8 @@ export class OtpService {
     await this.mailService.sendMail({
       to: email,
       subject: `Your ${type === 'LOGIN' ? 'Login' : 'Verification'} OTP Code`,
-      html: `<p>Your code is: <strong>${otp}</strong></p><p>It will expire in 10 minutes.</p>`,
-      text: `Your code is: ${otp}. It will expire in 10 minutes.`,
+      html: `<p>Your code is: <strong>${otp}</strong></p><p>It will expire in ${this.otpExpiryMinutes} minutes.</p>`,
+      text: `Your code is: ${otp}. It will expire in ${this.otpExpiryMinutes} minutes.`,
     });
 
     return true;

@@ -21,6 +21,16 @@
     "invalidEmail": "சரியான மின்னஞ்சலை உள்ளிடவும்.",
     "passwordMinLength": "கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.",
     "firstNameRequired": "முதல் பெயர் தேவை.",
-    "lastNameRequired": "கடைசி பெயர் தேவை."
-  }
+    "lastNameRequired": "கடைசி பெயர் தேவை.",
+    "passwordMismatch": "Passwords do not match."
+  },
+  "confirmPasswordLabel": "Confirm Password",
+  "otpTitle": "Verify your email",
+  "otpSentTo": "We've sent a verification code to",
+  "verifyCodeBtn": "Verify Code",
+  "otpExpiresIn": "Code expires in {time}",
+  "otpExpired": "Code expired",
+  "resendCode": "Resend code",
+  "resending": "Resending...",
+  "otpResentSuccess": "A new OTP has been sent to your email."
 }

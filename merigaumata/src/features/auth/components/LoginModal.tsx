@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useLogin, Mode } from '../hooks/use-login';
 import { LoginFormValues, SignupFormValues } from '../schemas/auth.schema';
 import { logError } from '@/shared/lib/errors';
+import { OTPVerificationModal } from './OTPVerificationModal';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -27,6 +28,11 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
     signupForm,
     loginMutation,
     signupMutation,
+    otpMutation,
+    resendOtpMutation,
+    isOtpStep,
+    setIsOtpStep,
+    emailForOtp,
   } = useLogin(initialMode);
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -43,7 +49,12 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
     setStatusFeedback({ type: null, message: '' });
     loginMutation.mutate(values, {
       onSuccess: (data) => {
-        setStatusFeedback({ type: 'success', message: data.message });
+        if (data?.requiresOtp) {
+          setStatusFeedback({ type: 'success', message: data.message || 'OTP sent to your email.' });
+          return;
+        }
+
+        setStatusFeedback({ type: 'success', message: data.message || 'Login successful' });
         setTimeout(() => {
           onClose();
           redirectUser(data.user.role);
@@ -60,11 +71,7 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
     setStatusFeedback({ type: null, message: '' });
     signupMutation.mutate(values, {
       onSuccess: (data) => {
-        setStatusFeedback({ type: 'success', message: data.message });
-        setTimeout(() => {
-          onClose();
-          redirectUser(data.user.role);
-        }, 1200);
+        setStatusFeedback({ type: 'success', message: data.message || 'OTP sent to your email.' });
       },
       onError: (err) => {
         logError(err, { component: 'LoginModal', action: 'signup', email: values.email });
@@ -113,10 +120,12 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
   };
 
   const isPending = loginMutation.isPending || signupMutation.isPending;
+  const otpError = otpMutation.error?.message;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
+    <>
+      <AnimatePresence>
+        {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8">
           {/* Backdrop Blur */}
           <motion.div 
@@ -401,6 +410,26 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
 
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between ml-1 pr-1">
+                            <label className="text-[11px] font-black tracking-wider uppercase text-neutral-500 dark:text-neutral-400">{t('confirmPasswordLabel')}</label>
+                          </div>
+                          <div className="relative group">
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              disabled={isPending}
+                              placeholder="••••••"
+                              {...signupForm.register('confirmPassword')}
+                              className="w-full px-4.5 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-[13.5px] rounded-full focus:outline-none focus:ring-2 focus:ring-secondary-500 transition-all placeholder:text-neutral-400/80 pr-12 disabled:opacity-50"
+                            />
+                          </div>
+                          {signupForm.formState.errors.confirmPassword?.message && (
+                            <p className="text-xs text-red-500 ml-3 mt-1 font-semibold">
+                              {t(signupForm.formState.errors.confirmPassword.message as Parameters<typeof t>[0])}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between ml-1 pr-1">
                             <label className="text-[11px] font-black tracking-wider uppercase text-neutral-500 dark:text-neutral-400">{t('passwordLabel')}</label>
                           </div>
                           <div className="relative group">
@@ -639,7 +668,28 @@ export function LoginModal({ isOpen, onClose, initialMode = 'login' }: LoginModa
             </div>
           </motion.div>
         </div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+
+      <OTPVerificationModal
+        isOpen={isOtpStep}
+        onClose={() => setIsOtpStep(false)}
+        email={emailForOtp}
+        onVerify={(otp) => otpMutation.mutate(otp, { onSuccess: () => window.location.reload() })}
+        onResend={() => {
+          resendOtpMutation.mutate(emailForOtp, {
+            onSuccess: () => {
+              setStatusFeedback({ type: 'success', message: t('otpResentSuccess') });
+            },
+            onError: (error) => {
+              setStatusFeedback({ type: 'error', message: error.message });
+            },
+          });
+        }}
+        isLoading={otpMutation.isPending}
+        isResendLoading={resendOtpMutation.isPending}
+        error={otpError}
+      />
+    </>
   );
 }

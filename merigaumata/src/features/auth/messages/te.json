@@ -21,6 +21,16 @@
     "invalidEmail": "దయచేసి సరైన ఈమెయిల్ నమోదు చేయండి.",
     "passwordMinLength": "పాస్వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.",
     "firstNameRequired": "మొదటి పేరు తప్పనిసరి.",
-    "lastNameRequired": "చివరి పేరు తప్పనిసరి."
-  }
+    "lastNameRequired": "చివరి పేరు తప్పనిసరి.",
+    "passwordMismatch": "Passwords do not match."
+  },
+  "confirmPasswordLabel": "Confirm Password",
+  "otpTitle": "Verify your email",
+  "otpSentTo": "We've sent a verification code to",
+  "verifyCodeBtn": "Verify Code",
+  "otpExpiresIn": "Code expires in {time}",
+  "otpExpired": "Code expired",
+  "resendCode": "Resend code",
+  "resending": "Resending...",
+  "otpResentSuccess": "A new OTP has been sent to your email."
 }

@@ -10,7 +10,9 @@ interface OTPVerificationModalProps {
   onClose: () => void;
   email: string;
   onVerify: (otp: string) => void;
+  onResend: () => void;
   isLoading: boolean;
+  isResendLoading: boolean;
   error?: string | null;
 }
 
@@ -19,10 +21,12 @@ export function OTPVerificationModal({
   onClose,
   email,
   onVerify,
+  onResend,
   isLoading,
+  isResendLoading,
   error
 }: OTPVerificationModalProps) {
-  const t = useTranslations('Auth');
+  const t = useTranslations('auth');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
 
@@ -117,10 +121,10 @@ export function OTPVerificationModal({
                   </svg>
                 </div>
                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-                  Verify your email
+                  {t('otpTitle')}
                 </h2>
                 <p className="text-neutral-500 dark:text-neutral-400">
-                  We've sent a verification code to <br />
+                  {t('otpSentTo')} <br />
                   <span className="font-medium text-neutral-900 dark:text-white">{email}</span>
                 </p>
               </div>
@@ -160,7 +164,7 @@ export function OTPVerificationModal({
                   {isLoading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
-                    'Verify Code'
+                    t('verifyCodeBtn')
                   )}
                 </button>
               </form>
@@ -168,16 +172,20 @@ export function OTPVerificationModal({
               <div className="mt-6 text-center">
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
                   {timeLeft > 0 ? (
-                    <>Code expires in <span className="font-medium text-neutral-900 dark:text-white">{formatTime(timeLeft)}</span></>
+                    <>
+                      {t('otpExpiresIn', { time: formatTime(timeLeft) })}
+                    </>
                   ) : (
-                    <span className="text-red-500">Code expired</span>
+                    <span className="text-red-500">{t('otpExpired')}</span>
                   )}
                 </p>
                 <button
-                  disabled={timeLeft > 570} // 30 sec cooldown
+                  type="button"
+                  onClick={onResend}
+                  disabled={timeLeft > 570 || isResendLoading} // 30 sec cooldown
                   className="mt-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 disabled:opacity-50 transition-colors"
                 >
-                  Resend code
+                  {isResendLoading ? t('resending') : t('resendCode')}
                 </button>
               </div>
             </div>
