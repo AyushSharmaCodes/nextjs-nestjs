@@ -1,7 +1,7 @@
 version: '3.8'
 
 # Local development infrastructure only
-# Production uses Supabase (Postgres) and Render (Redis)
+# Production infrastructure (Postgres, Redis) should be configured separately
 services:
   postgres:
     image: postgres:16-alpine

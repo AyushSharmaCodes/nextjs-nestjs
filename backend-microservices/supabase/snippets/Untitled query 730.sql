@@ -358,22 +358,6 @@ ALTER TABLE auth.sessions ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "service_role_sessions" ON auth.sessions;
 CREATE POLICY "service_role_sessions" ON auth.sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
 
--- 4.5 Trusted Devices
-CREATE TABLE IF NOT EXISTS auth.trusted_devices (
-    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    identity_id  UUID NOT NULL REFERENCES auth.identities(id) ON DELETE CASCADE,
-    device_hash  TEXT NOT NULL,
-    device_label TEXT,
-    last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    expires_at   TIMESTAMPTZ NOT NULL,
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE (identity_id, device_hash)
-);
-CREATE INDEX IF NOT EXISTS idx_trusted_devices_identity ON auth.trusted_devices(identity_id);
-ALTER TABLE auth.trusted_devices ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "service_role_trusted_devices" ON auth.trusted_devices;
-CREATE POLICY "service_role_trusted_devices" ON auth.trusted_devices FOR ALL TO service_role USING (true) WITH CHECK (true);
-
 -- ==========================================
 -- 5. USER SCHEMA
 -- ==========================================

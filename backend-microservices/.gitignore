@@ -3,6 +3,8 @@
 .env.local
 .env.production
 .env.staging
+.env.example
+.env.*
 
 # Build output
 dist/
@@ -15,6 +17,10 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+./src/modules/.DS_Store
+../DS_Store
+.vscode
+.claude
 
 # IDE
 .idea/
