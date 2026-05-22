@@ -9,6 +9,12 @@ import { extractAuthResponseData } from '../lib/auth-response';
 const API_URL = serverEnv.NEXT_PUBLIC_API_URL;
 
 
+// Cookie name matches better-auth.config.ts:
+//   production  → '__Host-session' (requires HTTPS + Secure flag)
+//   development → 'session'        (__Host- prefix is rejected on HTTP localhost)
+const SESSION_COOKIE_NAME =
+  process.env.NODE_ENV === 'production' ? '__Host-session' : 'session';
+
 /**
  * Server Action that resolves the authenticated user profile server-side.
  * Ideal for use inside Next.js Server Components.
@@ -16,7 +22,7 @@ const API_URL = serverEnv.NEXT_PUBLIC_API_URL;
 export async function getCurrentServerSession(): Promise<StrictUser | null> {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('__Host-session')?.value;
+    const sessionToken = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
     if (!sessionToken) {
       return null;
@@ -26,9 +32,9 @@ export async function getCurrentServerSession(): Promise<StrictUser | null> {
     const res = await fetch(`${API_URL}/api/auth/me`, {
       method: 'GET',
       headers: {
-        'Cookie': `__Host-session=${sessionToken}`,
+        Cookie: `${SESSION_COOKIE_NAME}=${sessionToken}`,
       },
-      cache: 'no-store', // Disable caching for session checks
+      cache: 'no-store',
     });
 
     if (!res.ok) {

@@ -24,12 +24,10 @@ export default async function ManagerPage({ params }: ManagerPageProps) {
     },
   });
 
-  // Prefetch manager dashboard queries server-side in parallel
+  // Prefetch non-user-specific manager dashboard queries server-side in parallel.
+  // The manager profile is user-specific and fetched client-side by useManager()
+  // once the session is confirmed via useStrictAuth().
   await Promise.all([
-    queryClient.prefetchQuery({
-      queryKey: managerKeys.profile(),
-      queryFn: managerService.getManagerProfile,
-    }),
     queryClient.prefetchQuery({
       queryKey: managerKeys.events(),
       queryFn: managerService.getEventsList,

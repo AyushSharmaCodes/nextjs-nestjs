@@ -45,6 +45,7 @@ export function ProductGallery({ galleryImages, productName }: ProductGalleryPro
                   src={img} 
                   alt={`Angle ${actualIdx + 1}`} 
                   fill 
+                  sizes="80px"
                   className="object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -77,6 +78,7 @@ export function ProductGallery({ galleryImages, productName }: ProductGalleryPro
             src={galleryImages[activeImageIndex]} 
             alt={productName} 
             fill
+            sizes="(max-width: 1024px) 100vw, 60vw"
             className="object-cover transition-all duration-500"
             priority
             referrerPolicy="no-referrer"

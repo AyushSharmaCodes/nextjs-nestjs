@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ManagerAccount, SanctuaryEvent, Product, Donation } from '../types/manager.types';
 import { managerService } from '../services/manager.service';
 import { managerKeys } from './managerKeys';
+import { useStrictAuth } from '@/features/auth/hooks/useStrictAuth';
 
 export type ManagerTab = 'events' | 'products' | 'welfare' | 'donations';
 
@@ -13,11 +14,17 @@ export function useManager() {
   const [userSelectedTab, setUserSelectedTab] = useState<ManagerTab | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Get the authenticated user's email from the session cookie (not localStorage)
+  const authState = useStrictAuth();
+  const sessionEmail = authState.status === 'authenticated' ? authState.user.email : undefined;
+
   // Queries
   const { data: managerProfile = null } = useQuery<ManagerAccount | null>({
-    queryKey: managerKeys.profile(),
-    queryFn: managerService.getManagerProfile,
+    queryKey: managerKeys.profile(sessionEmail),
+    queryFn: () => managerService.getManagerProfile(sessionEmail),
     staleTime: 5 * 60 * 1000,
+    // Only fetch once we have a confirmed session
+    enabled: authState.status === 'authenticated',
   });
 
   const { data: eventsList = [] } = useQuery<SanctuaryEvent[]>({

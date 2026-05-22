@@ -31,17 +31,18 @@ import { BootstrapService } from './bootstrap/bootstrap.service';
 import { BetterAuthGuard } from './guards/better-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { AuthAuditListener } from './listeners/auth-audit.listener';
-import { AuthEventEmitter } from './events/auth-event.emitter';
+import { AuthEventEmitterModule } from './events/auth-event-emitter.module';
 import { SessionModule } from './session/session.module';
 
 @Module({
   imports: [
     PrismaModule,
-    SessionModule,   // device detection, GeoIP, risk assessment, SuspiciousSessionService
+    AuthEventEmitterModule,  // provides AuthEventEmitter — shared with SessionModule
+    SessionModule,           // device detection, GeoIP, risk assessment, SuspiciousSessionService
   ],
   controllers: [
     AuthController,
-    SessionController,  // GET /auth/sessions, POST /auth/session/confirm/:id, POST /auth/session/revoke/:id
+    SessionController,
   ],
   providers: [
     AuthService,
@@ -50,17 +51,14 @@ import { SessionModule } from './session/session.module';
     BetterAuthGuard,
     RolesGuard,
     AuthAuditListener,
-    // AuthEventEmitter is provided here and visible to SessionModule
-    // via the parent module context — NestJS resolves it cross-module
-    // when SessionModule is imported here.
-    AuthEventEmitter,
+    // AuthEventEmitter is provided by AuthEventEmitterModule (imported above)
   ],
   exports: [
     BetterAuthGuard,
     RolesGuard,
     AuthService,
     AuthRepository,
-    AuthEventEmitter,
+    AuthEventEmitterModule,  // re-export the module so consumers get AuthEventEmitter
   ],
 })
 export class AuthDomainModule {}

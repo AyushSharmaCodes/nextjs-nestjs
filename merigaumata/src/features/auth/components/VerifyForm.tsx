@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useStrictAuth } from '@/features/auth/hooks/useStrictAuth';
 import { authClient } from '@/lib/auth-client';
 import { AppIcon } from '@/shared/icons';
@@ -9,115 +9,121 @@ import { motion } from 'motion/react';
 import { toast } from '@/shared/lib/toast';
 import { authLogger } from '@/shared/lib/logger';
 import { useTranslations } from 'next-intl';
-import { authApiClient } from '../api/auth.client';
+import type { Role } from '../types/auth.types';
 
-async function resolveTargetPath(locale: string): Promise<string> {
-  try {
-    const meRes = await authApiClient.getMe();
-    if (meRes.data.role === 'ADMIN') {
-      return `/${locale}/admin`;
-    }
-    if (meRes.data.role === 'MANAGER') {
-      return `/${locale}/manager`;
-    }
-  } catch (err) {
-    authLogger.error('Failed to resolve roles for auth redirect', { error: err });
-  }
-
+// ─── Role → destination path ─────────────────────────────────────────────────
+// Derives the post-auth destination from the role already in the session.
+// No extra network call needed — role is in useStrictAuth().
+function roleToPath(locale: string, role: Role): string {
+  if (role === 'ADMIN')   return `/${locale}/admin`;
+  if (role === 'MANAGER') return `/${locale}/manager`;
   return `/${locale}`;
 }
 
+// Validate a `?next=` redirect param: must be a relative path on the same
+// origin and must not be an auth page (prevents open-redirect and loops).
+function resolveNextParam(next: string | null, locale: string, role: Role): string {
+  const fallback = roleToPath(locale, role);
+  if (!next) return fallback;
+
+  try {
+    // Decode and ensure it's a relative path (no protocol/host)
+    const decoded = decodeURIComponent(next);
+    if (!decoded.startsWith('/') || decoded.includes('//') || decoded.includes('auth/')) {
+      return fallback;
+    }
+    return decoded;
+  } catch {
+    return fallback;
+  }
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export default function VerifyForm() {
-  const router = useRouter();
-  const params = useParams();
-  const locale = typeof params.locale === 'string' ? params.locale : 'en';
-  const t = useTranslations('auth');
+  const router       = useRouter();
+  const params       = useParams();
+  const searchParams = useSearchParams();
+  const locale       = typeof params.locale === 'string' ? params.locale : 'en';
+  const nextParam    = searchParams.get('next');
+  const t            = useTranslations('auth');
 
   const { status, user, session, error, refetch } = useStrictAuth();
-  
-  const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
-  const [otpError, setOtpError] = useState<string | null>(null);
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
-  const [resendingOtp, setResendingOtp] = useState(false);
-  const [resendSuccess, setResendSuccess] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const hasSentOtp = useRef(false);
 
-  // Automatically trigger OTP dispatch on mount when 2FA is pending
+  const [otpCode,       setOtpCode]       = useState(['', '', '', '', '', '']);
+  const [otpError,      setOtpError]      = useState<string | null>(null);
+  const [verifyingOtp,  setVerifyingOtp]  = useState(false);
+  const [resendingOtp,  setResendingOtp]  = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
+  const [isSuccess,     setIsSuccess]     = useState(false);
+
+  // Guard: only auto-send OTP once per mount
+  const hasSentOtp = useRef(false);
+  // Guard: only trigger redirect once
+  const hasRedirected = useRef(false);
+
+  // ── Auto-send 2FA OTP on mount when pending ─────────────────────────────
   useEffect(() => {
-    if (status === 'authenticated') {
-      const isTwoFactorPending = user.twoFactorEnabled && !session.twoFactorVerified;
-      if (isTwoFactorPending && !hasSentOtp.current) {
-        hasSentOtp.current = true;
-        authLogger.info('User landed on verification page. Automatically dispatching OTP mail...');
-        authClient.twoFactor.sendOtp().then((res) => {
-          if (res?.error) {
-            authLogger.error('Failed to auto-send initial OTP', { error: res.error.message });
-          } else {
-            authLogger.info('OTP mail dispatched successfully on page load.');
-          }
-        }).catch((err) => {
-          authLogger.error('Failed to auto-send initial OTP', { error: err });
-        });
-      }
+    if (status !== 'authenticated') return;
+    const pending = user.twoFactorEnabled && !session.twoFactorVerified;
+    if (pending && !hasSentOtp.current) {
+      hasSentOtp.current = true;
+      authLogger.info('VerifyForm: auto-dispatching 2FA OTP');
+      authClient.twoFactor.sendOtp().catch((err) => {
+        authLogger.error('VerifyForm: auto-send OTP failed', { error: err });
+      });
     }
   }, [status, user, session]);
 
-  // Auto-redirect authenticated users once verified
+  // ── Auto-redirect once session is fully verified ─────────────────────────
+  // Uses role from the session — no extra /api/auth/me call needed.
   useEffect(() => {
-    if (status === 'authenticated') {
-      const isTwoFactorPending = user.twoFactorEnabled && !session.twoFactorVerified;
-      if (!isTwoFactorPending) {
-        const redirectUser = async () => {
-          const targetPath = await resolveTargetPath(locale);
-          router.replace(targetPath);
-        };
-        const timer = setTimeout(redirectUser, 1500);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [status, user, session, locale, router]);
+    if (status !== 'authenticated') return;
+    const pending = user.twoFactorEnabled && !session.twoFactorVerified;
+    if (pending || hasRedirected.current) return;
 
-  // If unauthenticated or error, redirect back to login
+    hasRedirected.current = true;
+    const destination = resolveNextParam(nextParam, locale, user.role);
+
+    authLogger.info('VerifyForm: session verified, redirecting', { destination, role: user.role });
+    router.replace(destination);
+  }, [status, user, session, locale, nextParam, router]);
+
+  // ── Redirect unauthenticated users back to login ─────────────────────────
   useEffect(() => {
-    if (status === 'unauthenticated' || status === 'error') {
-      const timer = setTimeout(() => {
-        router.replace(`/${locale}/auth/login`);
-      }, 3500);
-      return () => clearTimeout(timer);
-    }
+    if (status !== 'unauthenticated' && status !== 'error') return;
+    const timer = setTimeout(() => {
+      router.replace(`/${locale}/auth/login`);
+    }, 3000);
+    return () => clearTimeout(timer);
   }, [status, locale, router]);
 
+  // ── OTP input handlers ───────────────────────────────────────────────────
   const handleOtpChange = (index: number, value: string) => {
-    if (isNaN(Number(value))) return;
-    const newOtp = [...otpCode];
-    newOtp[index] = value;
-    setOtpCode(newOtp);
-
-    // Auto-focus next input
+    if (!/^\d?$/.test(value)) return; // digits only
+    const next = [...otpCode];
+    next[index] = value;
+    setOtpCode(next);
     if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
-      nextInput?.focus();
+      document.getElementById(`otp-${index + 1}`)?.focus();
     }
   };
 
   const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && !otpCode[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      prevInput?.focus();
+      document.getElementById(`otp-${index - 1}`)?.focus();
     }
   };
 
   const handleOtpPaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData('text').slice(0, 6).split('');
-    const newOtp = [...otpCode];
-    pastedData.forEach((char, i) => {
-      if (!isNaN(Number(char)) && i < 6) {
-        newOtp[i] = char;
-      }
-    });
-    setOtpCode(newOtp);
+    const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6).split('');
+    const next = [...otpCode];
+    digits.forEach((d, i) => { next[i] = d; });
+    setOtpCode(next);
+    // Focus the next empty slot or the last one
+    const focusIdx = Math.min(digits.length, 5);
+    document.getElementById(`otp-${focusIdx}`)?.focus();
   };
 
   const submitOtp = async (e: React.FormEvent) => {
@@ -130,31 +136,41 @@ export default function VerifyForm() {
 
     setVerifyingOtp(true);
     setOtpError(null);
+
     try {
-      const res = await authClient.twoFactor.verifyOtp({
-        code: fullCode,
-      });
+      const res = await authClient.twoFactor.verifyOtp({ code: fullCode });
 
       if (res.error) {
         setOtpError(res.error.message || t('otpVerifyFailed'));
         setOtpCode(['', '', '', '', '', '']);
-        const firstInput = document.getElementById('otp-0');
-        firstInput?.focus();
-      } else {
-        setIsSuccess(true);
-        refetch();
-
-        const targetPath = await resolveTargetPath(locale);
-
-        toast.success(t('signedInSuccess'), {
-          description: t('welcomeBackName', { name: user?.firstName || user?.email || 'friend' }),
-          duration: 4000,
-        });
-        setTimeout(() => router.replace(targetPath), 1200);
+        document.getElementById('otp-0')?.focus();
+        return;
       }
+
+      setIsSuccess(true);
+
+      // Refetch session so useStrictAuth reflects twoFactorVerified=true,
+      // which triggers the auto-redirect effect above.
+      refetch();
+
+      toast.success(t('signedInSuccess'), {
+        description: t('welcomeBackName', {
+          name: user?.firstName || user?.email || 'friend',
+        }),
+        duration: 3000,
+      });
+
+      // Fallback redirect in case the effect doesn't fire fast enough
+      setTimeout(() => {
+        if (!hasRedirected.current) {
+          hasRedirected.current = true;
+          const destination = resolveNextParam(nextParam, locale, user?.role ?? 'CUSTOMER');
+          router.replace(destination);
+        }
+      }, 1000);
+
     } catch (err) {
-      const msg = err instanceof Error ? err.message : t('otpVerifyFailed');
-      setOtpError(msg);
+      setOtpError(err instanceof Error ? err.message : t('otpVerifyFailed'));
     } finally {
       setVerifyingOtp(false);
     }
@@ -173,14 +189,13 @@ export default function VerifyForm() {
         setTimeout(() => setResendSuccess(false), 5000);
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : t('resendFailed');
-      setOtpError(msg);
+      setOtpError(err instanceof Error ? err.message : t('resendFailed'));
     } finally {
       setResendingOtp(false);
     }
   };
 
-  // State: Loading / Resolving Session
+  // ── Render: loading ──────────────────────────────────────────────────────
   if (status === 'loading') {
     return (
       <div className="flex flex-col items-center justify-center text-center min-h-[400px]">
@@ -195,7 +210,7 @@ export default function VerifyForm() {
     );
   }
 
-  // State: Auth Failures / Errors
+  // ── Render: unauthenticated / error ──────────────────────────────────────
   if (status === 'error' || status === 'unauthenticated') {
     return (
       <div className="flex flex-col items-center justify-center text-center min-h-[400px]">
@@ -212,6 +227,7 @@ export default function VerifyForm() {
 
   const isTwoFactorPending = user.twoFactorEnabled && !session.twoFactorVerified;
 
+  // ── Render: 2FA OTP form ─────────────────────────────────────────────────
   if (isTwoFactorPending) {
     return (
       <motion.div
@@ -225,11 +241,16 @@ export default function VerifyForm() {
 
         <h2 className="text-2xl font-serif font-black mb-2 tracking-tight">{t('securityCheckTitle')}</h2>
         <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[280px] mx-auto mb-8">
-          {t('enterPasscodePrefix')}<span className="font-semibold text-foreground">{user.email}</span>{t('colon')}
+          {t('enterPasscodePrefix')}
+          <span className="font-semibold text-foreground">{user.email}</span>
+          {t('colon')}
         </p>
 
         <form onSubmit={submitOtp}>
-          <div className="flex justify-between gap-2 max-w-[300px] mx-auto mb-6" onPaste={handleOtpPaste}>
+          <div
+            className="flex justify-between gap-2 max-w-[300px] mx-auto mb-6"
+            onPaste={handleOtpPaste}
+          >
             {otpCode.map((digit, index) => (
               <input
                 key={index}
@@ -249,9 +270,10 @@ export default function VerifyForm() {
           {otpError && (
             <p className="text-xs text-red-500 font-semibold mb-4 text-center">{otpError}</p>
           )}
-
           {resendSuccess && (
-            <p className="text-xs text-emerald-500 font-semibold mb-4 text-center">{t('newPasscodeDispatched')}</p>
+            <p className="text-xs text-emerald-500 font-semibold mb-4 text-center">
+              {t('newPasscodeDispatched')}
+            </p>
           )}
 
           <button
@@ -286,19 +308,24 @@ export default function VerifyForm() {
     );
   }
 
-  // State: Authenticated & 2FA Cleared (Successful flow)
+  // ── Render: verified — redirect in progress ──────────────────────────────
   return (
     <div className="flex flex-col items-center justify-center text-center min-h-[400px]">
       <div className="relative mb-6">
-        <div className="absolute inset-0 rounded-full bg-emerald-500/10 scale-120 animate-ping" />
+        <div className="absolute inset-0 rounded-full bg-emerald-500/10 scale-125 animate-ping" />
         <div className="w-16 h-16 bg-gradient-to-tr from-emerald-600 to-emerald-400 rounded-full flex items-center justify-center text-white text-xl shadow-lg relative z-10 font-bold">
           ✓
         </div>
       </div>
-
       <h3 className="font-serif text-xl font-black mb-2">{t('accessGrantedTitle')}</h3>
       <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed font-light max-w-sm">
-        {t('welcomeBackPrefix')}<span className="font-semibold text-foreground">{user.lastName ? `${user.firstName} ${user.lastName}` : (user.firstName || user.email)}</span>{t('preparingSanctuary')}
+        {t('welcomeBackPrefix')}
+        <span className="font-semibold text-foreground">
+          {user.lastName
+            ? `${user.firstName} ${user.lastName}`
+            : user.firstName || user.email}
+        </span>
+        {t('preparingSanctuary')}
       </p>
     </div>
   );

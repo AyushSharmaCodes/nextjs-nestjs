@@ -90,6 +90,7 @@ export class AuthController {
         ? req.session.twoFactorVerified ?? false
         : true,
       createdAt: req.user.createdAt,
+      lastLoginAt: req.user.lastLoginAt,
     });
   }
 

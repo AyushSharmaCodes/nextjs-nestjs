@@ -52,6 +52,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
             src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=1000&auto=format&fit=crop"
             alt="Gir Cow"
             fill
+            sizes="(max-width: 1024px) 0vw, 45vw"
             className="object-cover"
             priority
           />

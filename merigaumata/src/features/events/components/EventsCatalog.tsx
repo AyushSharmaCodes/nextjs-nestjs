@@ -158,6 +158,7 @@ export function EventsCatalog({ initialEvents }: EventsCatalogProps) {
             src="https://picsum.photos/seed/vedicfestival/1920/1080" 
             alt="Festival" 
             fill 
+            sizes="100vw"
             className="object-cover brightness-[0.85] dark:brightness-[0.7]"
             referrerPolicy="no-referrer"
             priority
@@ -235,6 +236,7 @@ export function EventsCatalog({ initialEvents }: EventsCatalogProps) {
                     src={event.imageUrl} 
                     alt={event.title} 
                     fill 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500" 
                     referrerPolicy="no-referrer" 
                   />

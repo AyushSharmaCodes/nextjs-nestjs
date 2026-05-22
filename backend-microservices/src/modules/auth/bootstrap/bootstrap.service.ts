@@ -44,7 +44,8 @@ export class BootstrapService implements OnModuleInit {
           email: adminEmail,
           firstName: 'Admin',
           lastName: 'User',
-          emailVerified: false,
+          // Bootstrapped admin email is trusted by default.
+          emailVerified: true,
           role: 'ADMIN',
         },
       });

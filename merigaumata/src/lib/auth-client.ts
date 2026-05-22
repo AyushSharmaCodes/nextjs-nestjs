@@ -13,7 +13,8 @@ export const authClient = createAuthClient({
     twoFactorClient(),
     inferAdditionalFields({
       user: {
-        lastName: { type: 'string' }
+        lastName: { type: 'string' },
+        lastLoginAt: { type: 'date', required: false, input: false },
       }
     })
   ],

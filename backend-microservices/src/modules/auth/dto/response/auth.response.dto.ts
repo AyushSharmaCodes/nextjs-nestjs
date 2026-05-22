@@ -47,6 +47,9 @@ export class AuthResponseDto {
   /** ISO 8601 — account created date. */
   readonly createdAt: string;
 
+  /** ISO 8601 — null until the first completed sign-in. */
+  readonly lastLoginAt: string | null;
+
   constructor(params: {
     userId: UserId;
     email: string;
@@ -60,6 +63,7 @@ export class AuthResponseDto {
     tokenExpiresAt: string;
     twoFactorVerified: boolean;
     createdAt: string;
+    lastLoginAt: string | null;
   }) {
     this.userId = params.userId;
     this.email = params.email;
@@ -73,6 +77,7 @@ export class AuthResponseDto {
     this.tokenExpiresAt = params.tokenExpiresAt;
     this.twoFactorVerified = params.twoFactorVerified;
     this.createdAt = params.createdAt;
+    this.lastLoginAt = params.lastLoginAt;
 
     // Build display name
     const parts = [params.firstName, params.lastName].filter(Boolean);

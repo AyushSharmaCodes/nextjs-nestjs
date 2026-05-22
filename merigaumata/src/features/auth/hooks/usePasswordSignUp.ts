@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { toast } from '@/shared/lib/toast';
 import { signupSchema } from '../schemas/auth.schema';
@@ -24,6 +24,7 @@ export function usePasswordSignUp(
   externalSetEmail?: (val: string) => void
 ) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [localEmail, setLocalEmail] = useState('');
@@ -60,13 +61,14 @@ export function usePasswordSignUp(
         password,
         name: firstName,
         lastName,
-        callbackURL: `${window.location.origin}/${locale}/auth/verify`,
       });
       if (res.error) {
         throw res.error;
       } else {
         toast.success('Account created successfully!', { description: 'Logging you in...' });
-        router.replace(`/${locale}/auth/verify`);
+        const next = searchParams.get('next');
+        const verifyPath = `/${locale}/auth/verify${next ? `?next=${encodeURIComponent(next)}` : ''}`;
+        router.replace(verifyPath);
       }
     } catch (err) {
       const apiError = normalizeError(err);

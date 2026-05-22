@@ -82,9 +82,13 @@ async function bootstrap(): Promise<void> {
       'Accept',
       'Origin',
       'X-Requested-With',
+      'X-Request-ID',
+      'x-trace-id',
       'x-better-auth-handshake',
       'better-auth-agent',
       'cookie',
+      'sentry-trace',
+      'baggage',
     ],
     exposedHeaders: ['set-cookie'],
   });

@@ -1,50 +1,51 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Role, PersonalDetails, AccountDetails } from '../types/profile.types';
 import { profileService } from '../services/profile.service';
 import { useStrictAuth } from '../../auth/hooks/useStrictAuth';
 import { profileKeys } from './profileKeys';
 import { logError } from '@/shared/lib/errors';
+import { toast } from '@/shared/lib/toast';
 
 export function useProfile() {
   const queryClient = useQueryClient();
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);
-
-  // Clean up object URL to prevent browser memory leaks
-  useEffect(() => {
-    return () => {
-      if (profilePicture && profilePicture.startsWith('blob:')) {
-        URL.revokeObjectURL(profilePicture);
-      }
-    };
-  }, [profilePicture]);
 
   const authState = useStrictAuth();
+  const isAuthenticated = authState.status === 'authenticated';
   const userRole = authState.user?.role || 'CUSTOMER';
+
+  const { data: media = { avatarUrl: null, coverUrl: null } } = useQuery({
+    queryKey: profileKeys.media(),
+    queryFn: profileService.getMedia,
+    enabled: isAuthenticated,
+    staleTime: 5 * 60 * 1000,
+    refetchInterval: 60000,
+  });
 
   const { data: personalDetails = {
     firstName: '',
     lastName: '',
-    dob: '',
-    gender: '',
-    nationality: '',
+    dob: null,
+    gender: null,
+    nationality: null,
     address: '',
     phone: '',
   } } = useQuery<PersonalDetails>({
     queryKey: profileKeys.personal(),
     queryFn: profileService.getPersonalDetails,
+    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
+    refetchInterval: 30000, // Refetch every 30 seconds for "realtime" feel
   });
 
-  const { data: accountDetails = {
-    displayName: '',
-    timeZone: '',
-  } } = useQuery<AccountDetails>({
+  const { data: accountDetails = {} } = useQuery<AccountDetails>({
     queryKey: profileKeys.account(),
     queryFn: profileService.getAccountDetails,
+    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
+    refetchInterval: 30000, // Refetch every 30 seconds for "realtime" feel
   });
 
   // Local temp editing states
@@ -86,10 +87,46 @@ export function useProfile() {
     }
   };
 
-  const handleProfilePictureUpload = (file: File) => {
-    const url = URL.createObjectURL(file);
-    setProfilePicture(url);
-  };
+  // Media Mutations
+  const uploadAvatarMutation = useMutation({
+    mutationFn: profileService.uploadAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.media() });
+      toast.success('Avatar updated successfully');
+    },
+    onError: (error) => {
+      logError(error, { feature: 'profile', action: 'uploadAvatar' });
+      toast.error('Failed to update avatar');
+    }
+  });
+
+  const removeAvatarMutation = useMutation({
+    mutationFn: profileService.removeAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.media() });
+      toast.success('Avatar removed');
+    },
+  });
+
+  const uploadCoverMutation = useMutation({
+    mutationFn: profileService.uploadCover,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.media() });
+      toast.success('Cover photo updated successfully');
+    },
+    onError: (error) => {
+      logError(error, { feature: 'profile', action: 'uploadCover' });
+      toast.error('Failed to update cover photo');
+    }
+  });
+
+  const removeCoverMutation = useMutation({
+    mutationFn: profileService.removeCover,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.media() });
+      toast.success('Cover photo removed');
+    },
+  });
 
   // Mutations
   const savePersonalMutation = useMutation({
@@ -119,8 +156,14 @@ export function useProfile() {
 
   return {
     userRole,
-    profilePicture,
-    handleProfilePictureUpload,
+    profilePicture: media.avatarUrl,
+    coverPicture: media.coverUrl,
+    handleProfilePictureUpload: (file: File) => uploadAvatarMutation.mutate(file),
+    handleCoverPictureUpload: (file: File) => uploadCoverMutation.mutate(file),
+    removeAvatar: () => removeAvatarMutation.mutate(),
+    removeCover: () => removeCoverMutation.mutate(),
+    isUploadingAvatar: uploadAvatarMutation.isPending,
+    isUploadingCover: uploadCoverMutation.isPending,
     personalDetails,
     tempPersonalDetails,
     setTempPersonalDetails,

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["app_auth"]
+  schemas  = ["app_auth", "app_user"]
 }
 
 model User {
@@ -16,6 +16,10 @@ model User {
   twoFactorEnabled Boolean  @default(false)
   image            String?
   role             String   @default("CUSTOMER")
+  gender           String?
+  dob              DateTime?
+  nationality      String?
+  lastLoginAt      DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -26,6 +30,7 @@ model User {
   twoFactor       TwoFactor?
   deviceSessions  DeviceSession[]   @relation("UserDeviceSessions")
   roleRelation    Role              @relation(fields: [role], references: [name], onDelete: Restrict)
+  profile         Profile?
 
   @@index([role])
   @@map("user")
@@ -108,6 +113,7 @@ model Role {
 
   permissions RolePermission[]
   users       User[]
+  profiles    Profile[]        @relation("ProfileRole")
 
   @@map("roles")
   @@schema("app_auth")
@@ -319,4 +325,151 @@ enum AuditResolution {
   EXPIRED // audit record aged out
 
   @@schema("app_auth")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// User Module
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Profile {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleId      String
+  role        Role      @relation("ProfileRole", fields: [roleId], references: [id], onDelete: Restrict)
+  firstName   String?
+  lastName    String?
+  locale      String    @default("en")
+  timezone    String    @default("UTC")
+  isActive    Boolean   @default(true)
+  isVerified  Boolean   @default(false)
+  avatarUrl   String?
+  coverUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  phoneNumbers              UserPhoneNumber[]
+  addresses                 UserAddress[]
+  managerPermissionGrants   ManagerPermissionGrant[] @relation("ManagerGrants")
+  adminPermissionGrants     ManagerPermissionGrant[] @relation("AdminGrants")
+  adminActivityLogs         AdminActivityLog[]       @relation("AdminLogs")
+  targetManagerActivityLogs AdminActivityLog[]       @relation("TargetManagerLogs")
+  actorAuditLogs            AuditLog[]               @relation("ActorAuditLogs")
+  
+  @@index([userId])
+  @@index([roleId])
+  @@index([deletedAt])
+  @@map("profiles")
+  @@schema("app_user")
+}
+
+model UserPhoneNumber {
+  id        String   @id @default(uuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  number    String
+  label     String   @default("MOBILE") // MOBILE, HOME, WORK, etc.
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_phone_numbers")
+  @@schema("app_user")
+}
+
+model UserAddress {
+  id         String       @id @default(uuid())
+  profileId  String
+  profile    Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  label      String       @default("HOME") // HOME, WORK, OTHER
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  countryCode String      @db.Char(2)
+  postalCode String
+  isDefault  Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  DateTime?
+
+  @@map("user_addresses")
+  @@schema("app_user")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  actor     Profile? @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: SetNull)
+  targetId  String?
+  action    String
+  payload   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([actorId])
+  @@index([targetId])
+  @@index([createdAt(sort: Desc)])
+  @@map("audit_log")
+  @@schema("app_user")
+}
+
+model ManagerPermissionDefinition {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  resource        String
+  action          String
+  labelI18n       String
+  descriptionI18n String
+  isDangerous     Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  grants          ManagerPermissionGrant[]
+
+  @@unique([resource, action])
+  @@map("manager_permission_definitions")
+  @@schema("app_user")
+}
+
+model ManagerPermissionGrant {
+  id                  String   @id @default(uuid())
+  managerProfileId    String
+  managerProfile      Profile  @relation("ManagerGrants", fields: [managerProfileId], references: [id], onDelete: Cascade)
+  permissionId        String
+  permission          ManagerPermissionDefinition @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  grantedByAdminId    String
+  grantedByAdmin      Profile  @relation("AdminGrants", fields: [grantedByAdminId], references: [id], onDelete: Restrict)
+  grantedAt           DateTime @default(now())
+  expiresAt           DateTime?
+  isActive            Boolean  @default(true)
+  revokedAt           DateTime?
+  revokedByAdminId    String?
+
+  @@unique([managerProfileId, permissionId])
+  @@index([managerProfileId, isActive])
+  @@index([expiresAt])
+  @@map("manager_permission_grants")
+  @@schema("app_user")
+}
+
+model AdminActivityLog {
+  id                String   @id @default(uuid())
+  adminProfileId    String
+  adminProfile      Profile  @relation("AdminLogs", fields: [adminProfileId], references: [id], onDelete: Restrict)
+  actionType        String
+  targetManagerId   String
+  targetManager     Profile  @relation("TargetManagerLogs", fields: [targetManagerId], references: [id], onDelete: Restrict)
+  permissionSlug    String?
+  note              String?
+  ipAddress         String?
+  userAgent         String?
+  createdAt         DateTime @default(now())
+
+  @@index([adminProfileId, createdAt(sort: Desc)])
+  @@index([targetManagerId, createdAt(sort: Desc)])
+  @@map("admin_activity_log")
+  @@schema("app_user")
 }

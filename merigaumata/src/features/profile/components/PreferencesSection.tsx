@@ -24,13 +24,6 @@ export function PreferencesSection() {
             Subscribed
           </span>
         } />
-        <DetailRow label="SMS Alerts:" value={
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium bg-green-50 text-green-600 border border-green-200/50 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30">
-            Enabled
-          </span>
-        } />
-        <DetailRow label="Default Dashboard View:" value="Compact Mode" />
-        <DetailRow label="Dark Mode:" value="Auto" />
         <DetailRow label="Preferred Currency:" value={
           <div className="relative inline-block w-full max-w-[140px]">
             <select 

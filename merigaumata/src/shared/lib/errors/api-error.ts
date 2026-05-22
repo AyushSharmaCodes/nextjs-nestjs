@@ -19,7 +19,8 @@ interface AxiosErrorShape {
   response: {
     status: number;
     data: {
-      code: string | null;
+      errorCode: string | null;  // backend uses `errorCode`, not `code`
+      code: string | null;       // kept for legacy compatibility
       message: string | null;
       details: AppErrorDetails | null;
     } | null;
@@ -57,7 +58,8 @@ export const normalizeError = (error: unknown): ApiError => {
     if (responseErr.response !== null) {
       const status = responseErr.response.status;
       const data = responseErr.response.data;
-      const code = (data !== null ? data.code : null) || `HTTP_ERROR_${status}`;
+      // Backend sends `errorCode` (e.g. "AUTH_001"); fall back to `code` for legacy
+      const code = (data !== null ? (data.errorCode ?? data.code) : null) || `HTTP_ERROR_${status}`;
       const message = (data !== null ? data.message : null) || responseErr.message || 'An unexpected server error occurred';
       return new ApiError(message, code, status, data !== null ? data.details : null);
     }
@@ -86,6 +88,9 @@ export const normalizeError = (error: unknown): ApiError => {
     if (code === 'INVALID_EMAIL_OR_PASSWORD') {
       code = 'AUTH_001';
     }
+    if (code === 'EMAIL_NOT_VERIFIED') {
+      code = 'AUTH_003';
+    }
 
     // Fallbacks
     if (message === null) {
@@ -113,4 +118,3 @@ export const normalizeError = (error: unknown): ApiError => {
     0
   );
 };
-

@@ -147,6 +147,15 @@ export class AppConfigService {
     return this.config.get('AWS_SECRET_ACCESS_KEY', { infer: true });
   }
 
+  // ─── Supabase ─────────────────────────────────────────────────────────────────
+  get supabaseUrl(): string {
+    return this.config.get('SUPABASE_URL', { infer: true });
+  }
+
+  get supabaseServiceRoleKey(): string {
+    return this.config.get('SUPABASE_SERVICE_ROLE_KEY', { infer: true });
+  }
+
   // ─── Rate Limiting ─────────────────────────────────────────────────────────
   get throttleTtlMs(): number {
     return this.config.get('THROTTLE_TTL_MS', { infer: true });

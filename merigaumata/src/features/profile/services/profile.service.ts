@@ -16,5 +16,25 @@ export const profileService = {
 
   updateAccountDetails: async (data: AccountDetails): Promise<AccountDetails> => {
     return await profileApi.updateAccountDetails(data);
+  },
+
+  getMedia: async () => {
+    return await profileApi.fetchMedia();
+  },
+
+  uploadAvatar: async (file: File) => {
+    return await profileApi.uploadAvatar(file);
+  },
+
+  removeAvatar: async () => {
+    return await profileApi.removeAvatar();
+  },
+
+  uploadCover: async (file: File) => {
+    return await profileApi.uploadCover(file);
+  },
+
+  removeCover: async () => {
+    return await profileApi.removeCover();
   }
 };

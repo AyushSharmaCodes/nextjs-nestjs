@@ -10,7 +10,13 @@
  *     default   → IpApiProvider
  *
  * Exported: SuspiciousSessionService + DeviceSessionRepository
- * (AuthModule imports SessionModule to get these)
+ * (AuthDomainModule imports SessionModule to get these)
+ *
+ * AuthEventEmitter is provided via AuthEventEmitterModule — a dedicated
+ * module that breaks the circular dependency:
+ *   AuthDomainModule → SessionModule → AuthDomainModule  ✗ (circular)
+ *   AuthDomainModule → AuthEventEmitterModule            ✓
+ *   SessionModule    → AuthEventEmitterModule            ✓
  */
 
 import { Module } from '@nestjs/common';
@@ -18,23 +24,25 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '../../../infrastructure/database/prisma/prisma.module';
 
 // Services
-import { DeviceParserService }       from './device-parser.service';
-import { GeoIpService }              from './geo-ip/geo-ip.service';
-import { RiskAssessmentService }     from './risk-assessment.service';
-import { DeviceSessionRepository }   from './device-session.repository';
-import { SuspiciousSessionService }  from './suspicious-session.service';
+import { DeviceParserService }      from './device-parser.service';
+import { GeoIpService }             from './geo-ip/geo-ip.service';
+import { RiskAssessmentService }    from './risk-assessment.service';
+import { DeviceSessionRepository }  from './device-session.repository';
+import { SuspiciousSessionService } from './suspicious-session.service';
 
 // GeoIP providers
 import { GEO_IP_PROVIDER_TOKEN, type IGeoIpProvider } from './geo-ip/geo-ip-provider.interface';
-import { IpApiProvider }    from './geo-ip/ip-api.provider';
-import { MaxMindProvider }  from './geo-ip/maxmind.provider';
+import { IpApiProvider }   from './geo-ip/ip-api.provider';
+import { MaxMindProvider } from './geo-ip/maxmind.provider';
 
-import { AuthEventEmitter }          from '../events/auth-event.emitter';
+// AuthEventEmitter via its own module — avoids circular dependency with AuthDomainModule
+import { AuthEventEmitterModule } from '../events/auth-event-emitter.module';
 
 @Module({
   imports: [
     PrismaModule,
     ConfigModule,
+    AuthEventEmitterModule,   // provides AuthEventEmitter for SuspiciousSessionService
   ],
   providers: [
     // ── GeoIP provider (env-driven) ─────────────────────────────────────────
@@ -56,7 +64,6 @@ import { AuthEventEmitter }          from '../events/auth-event.emitter';
     RiskAssessmentService,
     DeviceSessionRepository,
     SuspiciousSessionService,
-    AuthEventEmitter,
   ],
   exports: [
     SuspiciousSessionService,

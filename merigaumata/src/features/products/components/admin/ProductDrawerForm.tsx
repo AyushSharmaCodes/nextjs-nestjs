@@ -230,7 +230,7 @@ export function ProductDrawerForm({
                     <Input
                       type="text"
                       required
-                      value={formData.name}
+                      value={formData.name || ''}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('name', e.target.value)}
                       placeholder="e.g. Premium Vedic Bilona Ghee"
                       className="h-10 text-xs bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 rounded-xl"
@@ -257,7 +257,7 @@ export function ProductDrawerForm({
                     <Input
                       type="text"
                       required
-                      value={formData.slug}
+                      value={formData.slug || ''}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('slug', e.target.value)}
                       placeholder="e.g. premium-vedic-bilona-ghee"
                       className="h-10 text-xs bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 rounded-xl"
@@ -279,7 +279,7 @@ export function ProductDrawerForm({
                         required
                         min="0"
                         step="0.01"
-                        value={formData.price || ''}
+                        value={formData.price ?? ''}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('price', e.target.value)}
                         placeholder="450"
                         className="h-10 text-xs bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 rounded-xl"
@@ -298,7 +298,7 @@ export function ProductDrawerForm({
                         type="number"
                         min="0"
                         step="0.01"
-                        value={formData.mrp || ''}
+                        value={formData.mrp ?? ''}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('mrp', e.target.value ? parseFloat(e.target.value) : null)}
                         placeholder="e.g. 500"
                         className="h-10 text-xs bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 rounded-xl"
@@ -341,7 +341,7 @@ export function ProductDrawerForm({
                         type="number"
                         required
                         min="0"
-                        value={formData.stock === 0 ? '0' : formData.stock || ''}
+                        value={formData.stock ?? ''}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('stock', e.target.value)}
                         placeholder="10"
                         className="h-10 text-xs bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 rounded-xl"
@@ -360,7 +360,7 @@ export function ProductDrawerForm({
                     <Input
                       type="url"
                       required
-                      value={formData.imageUrl}
+                      value={formData.imageUrl || ''}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('imageUrl', e.target.value)}
                       placeholder="https://images.unsplash.com/..."
                       className="h-10 text-xs bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 rounded-xl"
@@ -398,7 +398,7 @@ export function ProductDrawerForm({
                     <Textarea
                       required
                       rows={4}
-                      value={formData.description}
+                      value={formData.description || ''}
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleInputChange('description', e.target.value)}
                       placeholder="Enter deep Vedic description of benefits, sourcing and handcrafting parameters..."
                       className="text-xs bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 rounded-xl resize-none"

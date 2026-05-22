@@ -108,6 +108,7 @@ export interface UserResponseData {
   readonly emailVerified: boolean;
   readonly twoFactorEnabled: boolean;
   readonly createdAt: string;
+  readonly lastLoginAt: string | null;
   readonly updatedAt: string;
 }
 
@@ -125,6 +126,7 @@ export interface AuthResponseData {
   readonly tokenExpiresAt: string;
   readonly twoFactorVerified: boolean;
   readonly createdAt: string;
+  readonly lastLoginAt: string | null;
 }
 
 // ---------------------------------------------------------------------------

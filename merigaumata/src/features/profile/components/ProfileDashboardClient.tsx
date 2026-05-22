@@ -28,7 +28,13 @@ export function ProfileDashboardClient() {
   const {
     userRole,
     profilePicture,
+    coverPicture,
     handleProfilePictureUpload,
+    handleCoverPictureUpload,
+    removeAvatar,
+    removeCover,
+    isUploadingAvatar,
+    isUploadingCover,
     personalDetails,
     tempPersonalDetails,
     setTempPersonalDetails,
@@ -45,10 +51,7 @@ export function ProfileDashboardClient() {
     hasAccountChanges
   } = useProfile();
 
-  const computedFullName = `${personalDetails.firstName || ''} ${personalDetails.lastName || ''}`.trim()
-    || authenticatedUser?.firstName
-    || authenticatedUser?.email.split('@')[0]
-    || 'User';
+  const computedFullName = `${personalDetails.firstName || ''} ${personalDetails.lastName || ''}`.trim() || 'User';
   const userEmail = authenticatedUser?.email ?? '';
   const emailVerified = authenticatedUser?.emailVerified ?? false;
 
@@ -162,9 +165,38 @@ export function ProfileDashboardClient() {
              </div>
 
              {/* Header section with background pattern and Avatar */}
-             <div className="relative pt-10 pb-8 flex flex-col items-center bg-card">
-                {/* Subtle checkered pattern */}
-                <div className="absolute inset-x-0 top-0 h-40 opacity-[0.03] dark:opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
+             <div className="relative pt-10 pb-8 flex flex-col items-center bg-card group/header">
+                {/* Cover Image / Pattern */}
+                <div className="absolute inset-x-0 top-0 h-40 overflow-hidden">
+                  {coverPicture ? (
+                    <Image src={coverPicture} alt="Cover" fill className="object-cover" />
+                  ) : (
+                    <div className="w-full h-full opacity-[0.03] dark:opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}></div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent"></div>
+                  
+                  {/* Cover Upload Overlay */}
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/header:opacity-100 transition-opacity z-20">
+                    {coverPicture && (
+                      <button 
+                        onClick={removeCover}
+                        className="p-2 rounded-lg bg-red-500/80 text-white hover:bg-red-600 transition-colors"
+                        title="Remove cover"
+                      >
+                        <AppIcon name="trash" size="sm" />
+                      </button>
+                    )}
+                    <label className="p-2 rounded-lg bg-primary-600/80 text-white hover:bg-primary-700 transition-colors cursor-pointer flex items-center gap-2 text-xs font-bold">
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleCoverPictureUpload(e.target.files[0]);
+                        }
+                      }} />
+                      <AppIcon name="camera" size="sm" />
+                      {isUploadingCover ? 'Uploading...' : (coverPicture ? 'Change Cover' : 'Add Cover')}
+                    </label>
+                  </div>
+                </div>
                 
                 <div className="relative z-10 flex flex-col items-center">
                     {/* Avatar Ring */}
@@ -172,21 +204,30 @@ export function ProfileDashboardClient() {
                       <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-card shadow-sm border border-neutral-100 dark:border-neutral-800 relative z-30">
                         {/* Avatar Image / Letter */}
                         <div className="w-full h-full rounded-full bg-primary-600 flex items-center justify-center text-white text-4xl sm:text-5xl font-medium overflow-hidden relative">
-                          {profilePicture ? (
+                          {isUploadingAvatar ? (
+                             <div className="animate-pulse">...</div>
+                          ) : profilePicture ? (
                             <Image src={profilePicture} alt="Profile" fill className="object-cover" />
                           ) : (
                             <span className="z-10">{translateIfKey(computedFullName).charAt(0).toUpperCase()}</span>
                           )}
                           
                           {/* Image Upload Overlay */}
-                          <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex items-center justify-center z-20">
-                            <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                              if (e.target.files && e.target.files[0]) {
-                                handleProfilePictureUpload(e.target.files[0]);
-                              }
-                            }} />
-                            <AppIcon name="camera" size="xl" className="text-white" />
-                          </label>
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex flex-col items-center justify-center gap-1">
+                            <label className="cursor-pointer">
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  handleProfilePictureUpload(e.target.files[0]);
+                                }
+                              }} />
+                              <AppIcon name="camera" size="xl" className="text-white" />
+                            </label>
+                            {profilePicture && (
+                              <button onClick={removeAvatar} className="p-1 rounded text-red-400 hover:text-red-500 transition-colors">
+                                <AppIcon name="trash" size="sm" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -194,8 +235,10 @@ export function ProfileDashboardClient() {
                     {/* Name & Badge */}
                     <div className="flex items-center justify-center gap-1.5 mb-1">
                       <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">{translateIfKey(computedFullName)}</h2>
-                      {/* Verified blue checkmark */}
-                      <StatusIcon status="verified" size="md" showBackground={false} className="text-blue-500" />
+                      {/* Verified blue checkmark - only shown if email is verified */}
+                      {emailVerified && (
+                        <StatusIcon status="verified" size="md" showBackground={false} className="text-blue-500" />
+                      )}
                     </div>
                     
                     <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{userEmail}</p>

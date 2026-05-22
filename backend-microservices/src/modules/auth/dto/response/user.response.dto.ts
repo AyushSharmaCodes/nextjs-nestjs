@@ -40,6 +40,9 @@ export class UserResponseDto {
   /** ISO 8601 string — NEVER a Date object. */
   readonly createdAt: string;
 
+  /** ISO 8601 string — null until the first completed sign-in. */
+  readonly lastLoginAt: string | null;
+
   /** ISO 8601 string — NEVER a Date object. */
   readonly updatedAt: string;
 
@@ -53,6 +56,7 @@ export class UserResponseDto {
     role: UserRole;
     twoFactorEnabled: boolean;
     createdAt: string;
+    lastLoginAt: string | null;
     updatedAt: string;
   }) {
     this.userId = params.userId;
@@ -64,6 +68,7 @@ export class UserResponseDto {
     this.role = params.role;
     this.twoFactorEnabled = params.twoFactorEnabled;
     this.createdAt = params.createdAt;
+    this.lastLoginAt = params.lastLoginAt;
     this.updatedAt = params.updatedAt;
 
     // Build display name

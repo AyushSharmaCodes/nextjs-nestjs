@@ -22,7 +22,7 @@ import { AuthEmailModule } from './auth-email.module';
     ContactModule,
     NotificationModule,
     AlertModule,
-    AuthEmailModule,  // registers all 11 typed listeners + audit infrastructure
+    AuthEmailModule,  // registers all 12 typed listeners + audit infrastructure
   ],
   exports: [
     EmailModule,

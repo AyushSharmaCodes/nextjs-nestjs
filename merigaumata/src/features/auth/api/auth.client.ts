@@ -200,6 +200,7 @@ function mapToUserResponseData(
     emailVerified: Boolean(rawUser['emailVerified']),
     twoFactorEnabled: Boolean(rawUser['twoFactorEnabled']),
     createdAt: String(rawUser['createdAt'] ?? new Date().toISOString()),
+    lastLoginAt: typeof rawUser['lastLoginAt'] === 'string' ? rawUser['lastLoginAt'] : null,
     updatedAt: String(rawUser['updatedAt'] ?? new Date().toISOString()),
   };
 }

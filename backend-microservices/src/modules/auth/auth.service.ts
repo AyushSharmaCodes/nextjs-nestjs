@@ -70,6 +70,7 @@ export class AuthService {
     tokenExpiresAt: Date | string;
     twoFactorVerified: boolean;
     createdAt: string;
+    lastLoginAt: string | null;
   }): AuthResponseDto {
     const upperRole = params.role.toUpperCase();
     // isUserRole is a type-guard → narrow explicitly so TS is satisfied
@@ -92,6 +93,7 @@ export class AuthService {
       tokenExpiresAt: expiresAt,
       twoFactorVerified: params.twoFactorVerified,
       createdAt: params.createdAt,
+      lastLoginAt: params.lastLoginAt,
     });
   }
 

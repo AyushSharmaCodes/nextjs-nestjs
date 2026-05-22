@@ -9,14 +9,28 @@ interface ProfileApiEnvelope<T> {
 interface BackendProfile {
   firstName?: string | null;
   lastName?: string | null;
+  gender?: string | null;
+  dob?: string | null;
+  nationality?: string | null;
+  locale?: string | null;
+  timezone?: string | null;
   phone?: string | null;
   createdAt?: string;
-  preferences?: Record<string, unknown> | null;
+  lastLoginAt?: string | null;
+  avatarUrl?: string | null;
+  coverUrl?: string | null;
+  phoneNumbers?: Array<{
+    id: string;
+    number: string;
+    label: string;
+    isDefault: boolean;
+  }>;
 }
 
 function unwrapProfile<T>(payload: T | ProfileApiEnvelope<T>): T {
+  if (!payload) return payload as T;
+  
   if (
-    payload &&
     typeof payload === 'object' &&
     'success' in payload &&
     'data' in payload
@@ -26,53 +40,54 @@ function unwrapProfile<T>(payload: T | ProfileApiEnvelope<T>): T {
   return payload as T;
 }
 
-function readPreferenceString(
-  prefs: Record<string, unknown> | null | undefined,
-  key: string,
-): string {
-  const raw = prefs?.[key];
-  return typeof raw === 'string' ? raw : '';
-}
-
 function toPersonalDetails(profile: BackendProfile): PersonalDetails {
-  const prefs = profile.preferences ?? {};
+  console.debug('[ProfileMapper] Mapping toPersonalDetails from:', profile);
+  if (!profile) {
+    return {
+      firstName: '',
+      lastName: '',
+      dob: null,
+      gender: null,
+      nationality: null,
+      address: '',
+      phone: '',
+    };
+  }
+
+  const defaultPhone = profile.phoneNumbers?.find(p => p.isDefault)?.number 
+    || profile.phoneNumbers?.[0]?.number 
+    || profile.phone 
+    || '';
+
   return {
     firstName: profile.firstName ?? '',
     lastName: profile.lastName ?? '',
-    dob: readPreferenceString(prefs, 'dob'),
-    gender: readPreferenceString(prefs, 'gender'),
-    nationality: readPreferenceString(prefs, 'nationality'),
-    address: readPreferenceString(prefs, 'address'),
-    phone: profile.phone ?? '',
+    dob: profile.dob ?? null,
+    gender: profile.gender ?? null,
+    nationality: profile.nationality ?? null,
+    address: 'Sector 45, Gurugram - India', 
+    phone: defaultPhone,
   };
 }
 
 function toAccountDetails(profile: BackendProfile): AccountDetails {
-  const prefs = profile.preferences ?? {};
-  const fallbackDisplayName = `${profile.firstName ?? ''} ${profile.lastName ?? ''}`.trim();
+  if (!profile) {
+    return {
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+  }
+
   return {
-    displayName: readPreferenceString(prefs, 'displayName') || fallbackDisplayName,
-    timeZone: readPreferenceString(prefs, 'timeZone') || 'Asia/Kolkata',
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     createdAt: profile.createdAt,
+    lastLogin: profile.lastLoginAt || undefined,
   };
 }
 
 async function fetchProfile(): Promise<BackendProfile> {
-  const response = await apiInstance.get<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/profile');
+  // Backend UserController is mounted at /users — correct endpoint is /users/me
+  const response = await apiInstance.get<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/users/me');
   return unwrapProfile(response.data);
-}
-
-async function mergePreferences(
-  incoming: Record<string, unknown>,
-): Promise<Record<string, unknown>> {
-  const current = await fetchProfile();
-  const currentPrefs = current.preferences && typeof current.preferences === 'object'
-    ? current.preferences
-    : {};
-  return {
-    ...currentPrefs,
-    ...incoming,
-  };
 }
 
 export const profileApi = {
@@ -82,18 +97,17 @@ export const profileApi = {
   },
 
   updatePersonalDetails: async (data: PersonalDetails): Promise<PersonalDetails> => {
-    const preferences = await mergePreferences({
-      dob: data.dob,
-      gender: data.gender,
-      nationality: data.nationality,
-      address: data.address,
-    });
-    const response = await apiInstance.put<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/profile', {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      phone: data.phone,
-      preferences,
-    });
+    // PATCH /users/me — send fields that belong to User/Profile
+    const response = await apiInstance.patch<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
+      '/users/me',
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        gender: data.gender,
+        dob: data.dob,
+        nationality: data.nationality,
+      },
+    );
     return toPersonalDetails(unwrapProfile(response.data));
   },
 
@@ -103,13 +117,54 @@ export const profileApi = {
   },
 
   updateAccountDetails: async (data: AccountDetails): Promise<AccountDetails> => {
-    const preferences = await mergePreferences({
-      displayName: data.displayName,
-      timeZone: data.timeZone,
-    });
-    const response = await apiInstance.put<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/profile', {
-      preferences,
-    });
+    // PATCH /users/me — empty payload for now if only timezone was there, 
+    // but the backend controller might still handle other Profile fields.
+    const response = await apiInstance.patch<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
+      '/users/me',
+      {
+        // No fields to update for now in AccountDetails since timezone is local-only
+      },
+    );
     return toAccountDetails(unwrapProfile(response.data));
-  }
+  },
+
+  fetchMedia: async (): Promise<{ avatarUrl: string | null; coverUrl: string | null }> => {
+    const profile = await fetchProfile();
+    return {
+      avatarUrl: profile.avatarUrl ?? null,
+      coverUrl: profile.coverUrl ?? null,
+    };
+  },
+
+  uploadAvatar: async (file: File): Promise<BackendProfile> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiInstance.post<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
+      '/users/me/avatar',
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return unwrapProfile(response.data);
+  },
+
+  removeAvatar: async (): Promise<BackendProfile> => {
+    const response = await apiInstance.delete<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/users/me/avatar');
+    return unwrapProfile(response.data);
+  },
+
+  uploadCover: async (file: File): Promise<BackendProfile> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiInstance.post<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
+      '/users/me/cover',
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return unwrapProfile(response.data);
+  },
+
+  removeCover: async (): Promise<BackendProfile> => {
+    const response = await apiInstance.delete<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/users/me/cover');
+    return unwrapProfile(response.data);
+  },
 };

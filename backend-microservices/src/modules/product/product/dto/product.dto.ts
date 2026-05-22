@@ -1,217 +1,68 @@
-import { IsString, IsNumber, IsOptional, IsArray, IsBoolean, IsObject, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-export class CreateProductDto {
-  @IsString()
-  title: string;
+export const CreateProductSchema = z.object({
+  title: z.string().min(1),
+  titleI18n: z.record(z.string(), z.string()).optional(),
+  description: z.string().optional(),
+  descriptionI18n: z.record(z.string(), z.string()).optional(),
+  sellingPrice: z.number().min(0),
+  mrp: z.number().min(0).optional(),
+  images: z.array(z.string()).optional(),
+  categoryId: z.string().uuid().optional(),
+  variantMode: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  benefits: z.array(z.string()).optional(),
+  isNew: z.boolean().optional(),
+  isReturnable: z.boolean().optional(),
+  returnDays: z.number().int().min(0).optional(),
+  defaultHsnCode: z.string().optional(),
+  defaultGstRate: z.number().min(0).optional(),
+  defaultTaxApplicable: z.boolean().optional(),
+  defaultPriceIncludesTax: z.boolean().optional(),
+});
 
-  @IsObject()
-  @IsOptional()
-  titleI18n?: Record<string, string>;
+export class CreateProductDto extends createZodDto(CreateProductSchema) {}
 
-  @IsString()
-  @IsOptional()
-  description?: string;
+export const UpdateProductSchema = CreateProductSchema.partial().extend({
+  isActive: z.boolean().optional(),
+});
 
-  @IsObject()
-  @IsOptional()
-  descriptionI18n?: Record<string, string>;
+export class UpdateProductDto extends createZodDto(UpdateProductSchema) {}
 
-  @IsNumber()
-  sellingPrice: number;
+export const ProductQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  categoryId: z.string().uuid().optional(),
+  search: z.string().optional(),
+  minPrice: z.coerce.number().min(0).optional(),
+  maxPrice: z.coerce.number().min(0).optional(),
+  sortBy: z.string().default('createdAt'),
+  sortOrder: z.enum(['ASC', 'DESC']).default('DESC'),
+});
 
-  @IsNumber()
-  @IsOptional()
-  mrp?: number;
+export class ProductQueryDto extends createZodDto(ProductQuerySchema) {}
 
-  @IsArray()
-  @IsOptional()
-  images?: string[];
+export const CreateVariantSchema = z.object({
+  sku: z.string().min(1),
+  sizeLabel: z.string().optional(),
+  sizeValue: z.string().optional(),
+  unit: z.string().optional(),
+  mrp: z.number().min(0).optional(),
+  sellingPrice: z.number().min(0).optional(),
+  stockQuantity: z.number().int().min(0).optional(),
+  variantImageUrl: z.string().optional(),
+  isDefault: z.boolean().optional(),
+});
 
-  @IsString()
-  @IsOptional()
-  categoryId?: string;
+export class CreateVariantDto extends createZodDto(CreateVariantSchema) {}
 
-  @IsString()
-  @IsOptional()
-  variantMode?: string;
+export const UpdateVariantSchema = z.object({
+  sku: z.string().optional(),
+  mrp: z.number().min(0).optional(),
+  sellingPrice: z.number().min(0).optional(),
+  stockQuantity: z.number().int().min(0).optional(),
+  isActive: z.boolean().optional(),
+});
 
-  @IsArray()
-  @IsOptional()
-  tags?: string[];
-
-  @IsArray()
-  @IsOptional()
-  benefits?: string[];
-
-  @IsBoolean()
-  @IsOptional()
-  isNew?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  isReturnable?: boolean;
-
-  @IsNumber()
-  @IsOptional()
-  returnDays?: number;
-
-  @IsString()
-  @IsOptional()
-  defaultHsnCode?: string;
-
-  @IsNumber()
-  @IsOptional()
-  defaultGstRate?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  defaultTaxApplicable?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  defaultPriceIncludesTax?: boolean;
-}
-
-export class UpdateProductDto {
-  @IsString()
-  @IsOptional()
-  title?: string;
-
-  @IsObject()
-  @IsOptional()
-  titleI18n?: Record<string, string>;
-
-  @IsString()
-  @IsOptional()
-  description?: string;
-
-  @IsObject()
-  @IsOptional()
-  descriptionI18n?: Record<string, string>;
-
-  @IsNumber()
-  @IsOptional()
-  sellingPrice?: number;
-
-  @IsNumber()
-  @IsOptional()
-  mrp?: number;
-
-  @IsArray()
-  @IsOptional()
-  images?: string[];
-
-  @IsString()
-  @IsOptional()
-  categoryId?: string;
-
-  @IsArray()
-  @IsOptional()
-  tags?: string[];
-
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  isNew?: boolean;
-}
-
-export class ProductQueryDto {
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  page?: number = 1;
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  limit?: number = 20;
-
-  @IsString()
-  @IsOptional()
-  categoryId?: string;
-
-  @IsString()
-  @IsOptional()
-  search?: string;
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  minPrice?: number;
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  maxPrice?: number;
-
-  @IsString()
-  @IsOptional()
-  sortBy?: string = 'createdAt';
-
-  @IsString()
-  @IsOptional()
-  sortOrder?: 'ASC' | 'DESC' = 'DESC';
-}
-
-export class CreateVariantDto {
-  @IsString()
-  sku: string;
-
-  @IsString()
-  @IsOptional()
-  sizeLabel?: string;
-
-  @IsString()
-  @IsOptional()
-  sizeValue?: string;
-
-  @IsString()
-  @IsOptional()
-  unit?: string;
-
-  @IsNumber()
-  @IsOptional()
-  mrp?: number;
-
-  @IsNumber()
-  @IsOptional()
-  sellingPrice?: number;
-
-  @IsNumber()
-  @IsOptional()
-  stockQuantity?: number;
-
-  @IsString()
-  @IsOptional()
-  variantImageUrl?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  isDefault?: boolean;
-}
-
-export class UpdateVariantDto {
-  @IsString()
-  @IsOptional()
-  sku?: string;
-
-  @IsNumber()
-  @IsOptional()
-  mrp?: number;
-
-  @IsNumber()
-  @IsOptional()
-  sellingPrice?: number;
-
-  @IsNumber()
-  @IsOptional()
-  stockQuantity?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
-}
+export class UpdateVariantDto extends createZodDto(UpdateVariantSchema) {}

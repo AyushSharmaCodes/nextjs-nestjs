@@ -54,24 +54,6 @@ export function AccountDetailsSection({
       <div className="flex flex-col py-1 flex-1">
         {isEditingAccount ? (
           <div className="p-6 grid grid-cols-1 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">Display Name</label>
-              <input 
-                type="text" 
-                className="w-full px-4 py-2 border rounded-lg bg-card border-neutral-200 dark:border-neutral-700 text-foreground text-sm focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-500" 
-                value={translateIfKey(tempAccountDetails.displayName)} 
-                onChange={e => setTempAccountDetails({...tempAccountDetails, displayName: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">Time Zone</label>
-              <input 
-                type="text" 
-                className="w-full px-4 py-2 border rounded-lg bg-card border-neutral-200 dark:border-neutral-700 text-foreground text-sm focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-500" 
-                value={translateIfKey(tempAccountDetails.timeZone)} 
-                onChange={e => setTempAccountDetails({...tempAccountDetails, timeZone: e.target.value})} 
-              />
-            </div>
             <div className="flex gap-2 justify-end mt-4">
               <button 
                 onClick={() => setIsEditingAccount(false)} 
@@ -90,15 +72,8 @@ export function AccountDetailsSection({
           </div>
         ) : (
           <>
-            <DetailRow label="Display Name:" value={translateIfKey(accountDetails.displayName)} />
-            <DetailRow label="Account Created:" value="March 20, 2020" />
-            <DetailRow label="Last Login:" value="August 22, 2024" />
-            <DetailRow label="Membership Status:" value="Premium Member" />
-            <DetailRow label="User Role:" value={
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[12px] font-bold bg-primary-100 text-primary-700 dark:bg-primary-950/30 dark:text-primary-400 border border-primary-200/20 uppercase tracking-wider">
-                {translateIfKey(`MockData.roles.${userRole.toLowerCase()}`)}
-              </span>
-            } />
+            <DetailRow label="Account Created:" value={accountDetails.createdAt ? new Date(accountDetails.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'}) : '—'} />
+            <DetailRow label="Last Login:" value={accountDetails.lastLogin ? new Date(accountDetails.lastLogin).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : '—'} />
             <DetailRow label="Account Verification:" value={
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium border ${
@@ -110,7 +85,7 @@ export function AccountDetailsSection({
                 {emailVerified ? 'Verified' : 'Not verified'}
               </span>
             } />
-            <DetailRow label="Time Zone:" value={translateIfKey(accountDetails.timeZone)} />
+            <DetailRow label="Time Zone:" value={accountDetails.timeZone} />
           </>
         )}
       </div>

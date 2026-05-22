@@ -1,8 +1,31 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+/**
+ * @file better-auth.guard.ts
+ *
+ * Global authentication guard for all non-@Public() routes.
+ *
+ * Auth architecture:
+ *  - Session is carried exclusively in the `__Host-session` HTTP-only cookie.
+ *  - No Authorization header, no Bearer token, no localStorage.
+ *  - Better Auth validates the cookie and returns a typed session object.
+ *  - The guard populates `request.user` and `request.session` for downstream
+ *    handlers and the RolesGuard.
+ *
+ * 2FA enforcement:
+ *  - If `twoFactorEnabled=true` and `twoFactorVerified=false` on the session,
+ *    the request is rejected with TOKEN_INVALID (AUTH_010).
+ *  - The frontend must complete 2FA verification at /auth/verify before
+ *    accessing protected routes.
+ */
+
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { FastifyRequest } from 'fastify';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { auth } from '../bootstrap/better-auth.config';
+import {
+  TokenInvalidException,
+  TokenExpiredException,
+} from '../exceptions/auth.exceptions';
 
 export interface SessionUser {
   id: string;
@@ -14,6 +37,7 @@ export interface SessionUser {
   role: string;
   twoFactorEnabled: boolean;
   createdAt: string;
+  lastLoginAt: string | null;
 }
 
 export interface AuthenticatedRequest extends FastifyRequest {
@@ -36,57 +60,72 @@ export class BetterAuthGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // 1. Support bypassing auth via @Public() decorator
+    // Routes decorated with @Public() bypass this guard entirely
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
+    if (isPublic) return true;
 
-    if (isPublic) {
-      return true;
-    }
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
 
-    const request = context.switchToHttp().getRequest();
+    // Forward Fastify headers to the Fetch Headers API that Better Auth expects
     const headers = new Headers();
-
-    // Map Fastify headers to Fetch Headers API for Better Auth compatibility
-    Object.entries(request.headers).forEach(([key, val]) => {
+    for (const [key, val] of Object.entries(request.headers)) {
       if (typeof val === 'string') {
         headers.set(key, val);
       } else if (Array.isArray(val)) {
-        val.forEach((v) => headers.append(key, v));
+        for (const v of val) headers.append(key, v);
       }
-    });
+    }
 
-    // 2. Fetch session from Better Auth
-    const session = await auth.api.getSession({
-      headers,
-    });
+    // Validate the __Host-session cookie via Better Auth
+    const session = await auth.api.getSession({ headers });
 
     if (!session) {
-      throw new UnauthorizedException('Authentication failed: Missing or invalid session');
+      // No cookie present or cookie is invalid/expired
+      throw new TokenInvalidException();
     }
 
-    // 2.1 Enforce Two-Factor verification if enabled
+    // Check if the session itself has expired (belt-and-suspenders — BA should
+    // already reject expired sessions, but we guard explicitly for HIGH_RISK
+    // revocations where we set expiresAt = epoch rather than deleting the row)
+    if (session.session.expiresAt < new Date()) {
+      throw new TokenExpiredException();
+    }
+
+    // Enforce 2FA: if the user has 2FA enabled, the session must be verified
     const userObj = session.user as Record<string, unknown>;
     const sessionObj = session.session as { twoFactorVerified?: boolean | null };
-    if (userObj['twoFactorEnabled'] === true && !sessionObj.twoFactorVerified) {
-      throw new UnauthorizedException('Authentication failed: Two-Factor Verification required');
+    const twoFactorEnabled = userObj['twoFactorEnabled'] === true;
+
+    if (twoFactorEnabled && !sessionObj.twoFactorVerified) {
+      // Return 401 with the typed TOKEN_INVALID code so the frontend can
+      // redirect to /auth/verify rather than showing a generic error
+      throw new TokenInvalidException({ reason: '2fa-required' });
     }
 
+    // Populate request.user and request.session for downstream handlers
     const fName =
       typeof userObj['firstName'] === 'string'
         ? userObj['firstName']
-        : session.user.name || null;
-    const lName = typeof userObj['lastName'] === 'string' ? userObj['lastName'] : null;
-    const role = typeof userObj['role'] === 'string' ? userObj['role'] : 'CUSTOMER';
-    const twoFactorEnabled = userObj['twoFactorEnabled'] === true;
+        : typeof session.user.name === 'string'
+          ? session.user.name
+          : null;
+    const lName =
+      typeof userObj['lastName'] === 'string' ? userObj['lastName'] : null;
+    const role =
+      typeof userObj['role'] === 'string' ? userObj['role'] : 'CUSTOMER';
     const createdAt =
       typeof userObj['createdAt'] === 'string'
         ? userObj['createdAt']
         : new Date().toISOString();
+    const lastLoginAt =
+      typeof userObj['lastLoginAt'] === 'string'
+        ? userObj['lastLoginAt']
+        : null;
 
-    request.user = {
+    (request as unknown as AuthenticatedRequest).user = {
       id: session.user.id,
       email: session.user.email,
       firstName: fName,
@@ -96,9 +135,20 @@ export class BetterAuthGuard implements CanActivate {
       role,
       twoFactorEnabled,
       createdAt,
+      lastLoginAt,
     };
 
-    request.session = session.session;
+    (request as unknown as AuthenticatedRequest).session = {
+      id:                session.session.id,
+      expiresAt:         session.session.expiresAt,
+      token:             session.session.token,
+      createdAt:         session.session.createdAt,
+      updatedAt:         session.session.updatedAt,
+      userId:            session.session.userId,
+      ipAddress:         session.session.ipAddress ?? null,
+      userAgent:         session.session.userAgent ?? null,
+      twoFactorVerified: sessionObj.twoFactorVerified ?? null,
+    };
 
     return true;
   }

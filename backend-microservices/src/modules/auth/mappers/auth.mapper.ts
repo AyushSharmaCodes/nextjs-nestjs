@@ -37,6 +37,7 @@ export class AuthMapper {
       role: AuthMapper.resolveRole(entity.role),
       twoFactorEnabled: entity.twoFactorEnabled ?? false,
       createdAt: entity.createdAt.toISOString(),
+      lastLoginAt: entity.lastLoginAt?.toISOString() ?? null,
       updatedAt: entity.updatedAt.toISOString(),
     });
   }
@@ -62,6 +63,7 @@ export class AuthMapper {
       tokenExpiresAt: session.expiresAt.toISOString(),
       twoFactorVerified: session.twoFactorVerified ?? false,
       createdAt: user.createdAt.toISOString(),
+      lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
     });
   }
 

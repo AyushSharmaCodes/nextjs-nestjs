@@ -14,6 +14,7 @@ export function BlogHero({ image, title }: BlogHeroProps) {
         src={image}
         alt={title}
         fill
+        sizes="100vw"
         priority
         className="object-cover object-center transition-transform duration-[6s] hover:scale-105"
         referrerPolicy="no-referrer"

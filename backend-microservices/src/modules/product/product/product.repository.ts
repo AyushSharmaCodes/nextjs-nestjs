@@ -52,8 +52,8 @@ export class ProductRepository {
 
     if (search) {
       qb.andWhere(
-        '(product.title ILIKE :search OR product.description ILIKE :search OR product.tags && :searchArray)',
-        { search: `%${search}%`, searchArray: [search] },
+        '(product.title ILIKE :search OR product.description ILIKE :search OR product.tags @> :searchJson)',
+        { search: `%${search}%`, searchJson: JSON.stringify([search]) },
       );
     }
 

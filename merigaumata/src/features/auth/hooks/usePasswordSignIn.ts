@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { toast } from '@/shared/lib/toast';
 import { loginSchema } from '../schemas/auth.schema';
@@ -12,6 +12,7 @@ export function usePasswordSignIn(
   externalSetEmail?: (val: string) => void
 ) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [localEmail, setLocalEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,13 +38,16 @@ export function usePasswordSignIn(
       const res = await authClient.signIn.email({
         email,
         password,
-        callbackURL: `${window.location.origin}/${locale}/auth/verify`,
       });
       if (res.error) {
         throw res.error;
       } else {
         toast.success('Successfully signed in!', { description: 'Welcome back!' });
-        router.replace(`/${locale}/auth/verify`);
+        // Carry the ?next= param forward so VerifyForm redirects to the
+        // originally requested page after session is confirmed.
+        const next = searchParams.get('next');
+        const verifyPath = `/${locale}/auth/verify${next ? `?next=${encodeURIComponent(next)}` : ''}`;
+        router.replace(verifyPath);
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);

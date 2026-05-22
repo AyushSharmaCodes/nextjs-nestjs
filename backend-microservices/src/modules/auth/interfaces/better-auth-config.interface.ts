@@ -26,6 +26,7 @@ export interface BetterAuthSessionAdditionalFields {
 export interface BetterAuthUserAdditionalFields {
   readonly lastName: string | null;
   readonly role: UserRole;
+  readonly lastLoginAt: Date | null;
 }
 
 /**
@@ -56,6 +57,7 @@ export interface BetterAuthSessionUser {
   readonly lastName?: string | null;
   readonly role?: UserRole;
   readonly twoFactorEnabled?: boolean;
+  readonly lastLoginAt?: Date | string | null;
 }
 
 export interface BetterAuthSessionRecord {

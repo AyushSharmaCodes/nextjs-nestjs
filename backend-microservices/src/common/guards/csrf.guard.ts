@@ -51,8 +51,11 @@ export class CsrfGuard implements CanActivate {
     // Safe methods don't mutate state
     if (SAFE_METHODS.has(req.method)) return true;
 
-    // Only enforce on cookie-authenticated requests (Better Auth uses __Host-session)
-    const hasCookieAuth = Boolean(req.cookies?.['__Host-session']);
+    // Only enforce on cookie-authenticated requests
+    // Cookie name is env-dependent — see better-auth.config.ts advanced.cookies
+    const sessionCookieName =
+      process.env.NODE_ENV === 'production' ? '__Host-session' : 'session';
+    const hasCookieAuth = Boolean(req.cookies?.[sessionCookieName]);
     if (!hasCookieAuth) return true;
 
     const allowedOrigins = this.getAllowedOrigins();

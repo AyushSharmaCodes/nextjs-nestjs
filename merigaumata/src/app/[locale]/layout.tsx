@@ -62,7 +62,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${inter.variable} ${playfair.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground transition-colors duration-300">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <QueryProvider>

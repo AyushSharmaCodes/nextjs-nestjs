@@ -67,6 +67,10 @@ export const BackendEnvSchema = z.object({
   AWS_ACCESS_KEY_ID: z.string().optional(),
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
 
+  // ─── Supabase ─────────────────────────────────────────────────────────────────
+  SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
+
   // ─── Rate Limiting ─────────────────────────────────────────────────────────
   THROTTLE_TTL_MS: z.string().transform(Number).default(900000),
   THROTTLE_LIMIT: z.string().transform(Number).default(1000),

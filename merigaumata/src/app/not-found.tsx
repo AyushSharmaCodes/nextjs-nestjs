@@ -5,7 +5,7 @@ import './[locale]/globals.css';
 
 export default function NotFound() {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         <div className="min-h-screen flex flex-col items-center justify-center bg-[#F6F5F2] text-center px-4 font-sans">
           <div className="flex flex-col items-center">

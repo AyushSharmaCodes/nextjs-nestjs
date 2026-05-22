@@ -20,7 +20,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className="flex items-center justify-center min-h-screen bg-stone-50 dark:bg-stone-950 font-sans text-stone-900 dark:text-stone-100 m-0">
         <div className="flex flex-col items-center justify-center p-8 text-center max-w-lg">
           <div className="w-20 h-20 mb-6 flex items-center justify-center rounded-full bg-red-100 dark:bg-red-950/40 text-red-650 dark:text-red-400 text-4xl border border-red-200/50">

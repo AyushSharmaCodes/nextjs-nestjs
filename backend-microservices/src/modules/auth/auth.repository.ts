@@ -55,6 +55,7 @@ export class AuthRepository {
           emailVerified: true,
           role: true,
           twoFactorEnabled: true,
+          lastLoginAt: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -74,6 +75,7 @@ export class AuthRepository {
         emailVerified: user.emailVerified,
         role: user.role,
         twoFactorEnabled: user.twoFactorEnabled,
+        lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       } as Parameters<typeof AuthMapper.toUserResponseDto>[0]);
@@ -101,6 +103,7 @@ export class AuthRepository {
           emailVerified: true,
           role: true,
           twoFactorEnabled: true,
+          lastLoginAt: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -117,6 +120,7 @@ export class AuthRepository {
         emailVerified: user.emailVerified,
         role: user.role,
         twoFactorEnabled: user.twoFactorEnabled,
+        lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       } as Parameters<typeof AuthMapper.toUserResponseDto>[0]);
@@ -149,6 +153,7 @@ export class AuthRepository {
           emailVerified: true,
           role: true,
           twoFactorEnabled: true,
+          lastLoginAt: true,
           createdAt: true,
           updatedAt: true,
           sessions: {
@@ -188,6 +193,7 @@ export class AuthRepository {
         emailVerified: user.emailVerified,
         role: user.role,
         twoFactorEnabled: user.twoFactorEnabled,
+        lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       } as Parameters<typeof AuthMapper.toAuthResponseDto>[0];
@@ -276,6 +282,7 @@ export class AuthRepository {
           emailVerified: true,
           role: true,
           twoFactorEnabled: true,
+          lastLoginAt: true,
           createdAt: true,
           updatedAt: true,
         },

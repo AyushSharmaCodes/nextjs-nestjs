@@ -1,40 +1,60 @@
-import { tokenVault } from '@/shared/lib/api/tokens';
+/**
+ * @file manager.service.ts
+ *
+ * Mock manager service — used until the real API endpoints are wired.
+ *
+ * NOTE: The `isProductionApi` flag previously read `auth_token` from localStorage.
+ * That has been removed — auth is cookie-only. Production API detection should
+ * be driven by an environment variable (NEXT_PUBLIC_USE_MOCK_API) or by the
+ * presence of real API endpoints, not by localStorage state.
+ *
+ * The manager's identity (email) is no longer read from localStorage.
+ * Callers that need the current user's email should pass it in from
+ * `useStrictAuth()` at the component level.
+ */
+
 import { ManagerAccount, SanctuaryEvent, Product, Donation } from '../types/manager.types';
 import { mockEvents, mockProducts, mockDonations } from '@/mocks/sanctuaryMocks';
 import { mockDefaultManagers } from '@/mocks/userMocks';
 
-// Dynamic mock flag using environment presence
-const isProductionApi = typeof window !== 'undefined' && !!localStorage.getItem('auth_token');
+// In production this will be replaced by a real API flag or env var.
+// Never use localStorage to detect auth state.
+const isProductionApi = process.env.NEXT_PUBLIC_USE_MOCK_API !== 'true' &&
+  process.env.NODE_ENV === 'production';
 
 export const managerService = {
-  getManagerProfile: async (): Promise<ManagerAccount> => {
-    let loggedInEmail = 'manager@merigaumata.com';
-    if (typeof window !== 'undefined') {
-      const storedEmail = tokenVault.getUserEmail();
-      if (storedEmail) loggedInEmail = storedEmail;
-    }
-
+  /**
+   * Fetch the manager profile for the given email.
+   * The email must be passed in from the authenticated session (useStrictAuth),
+   * not read from localStorage.
+   */
+  getManagerProfile: async (loggedInEmail = 'manager@merigaumata.com'): Promise<ManagerAccount> => {
     if (isProductionApi) {
-      // Production API endpoint hooks go here
+      // TODO: replace with real API call: GET /users/me (returns ProfileResponse)
     }
 
     if (typeof window !== 'undefined') {
-      const storedAccounts = localStorage.getItem('mgm_manager_accounts');
+      const storedAccounts = sessionStorage.getItem('mgm_manager_accounts');
       if (storedAccounts) {
-        const accounts: ManagerAccount[] = JSON.parse(storedAccounts);
-        const found = accounts.find((a) => a.email.toLowerCase() === loggedInEmail.toLowerCase());
-        if (found) return found;
+        try {
+          const accounts: ManagerAccount[] = JSON.parse(storedAccounts) as ManagerAccount[];
+          const found = accounts.find(
+            (a) => a.email.toLowerCase() === loggedInEmail.toLowerCase(),
+          );
+          if (found) return found;
+        } catch {
+          // Corrupt data — fall through to mock
+        }
       }
     }
 
-    // Default mock lookup
     const defaultManager = mockDefaultManagers.find(
-      (m) => m.email.toLowerCase() === loggedInEmail.toLowerCase()
-    ) || {
+      (m) => m.email.toLowerCase() === loggedInEmail.toLowerCase(),
+    ) ?? {
       ...mockDefaultManagers[0],
       email: loggedInEmail,
       id: 'default-fallback',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     return defaultManager as unknown as ManagerAccount;
@@ -42,48 +62,36 @@ export const managerService = {
 
   getEventsList: async (): Promise<SanctuaryEvent[]> => {
     if (isProductionApi) {
-      // In production API fetch events
-    }
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('mgm_sanctuary_events');
-      if (stored) return JSON.parse(stored) as SanctuaryEvent[];
+      // TODO: GET /events
     }
     return mockEvents as SanctuaryEvent[];
   },
 
   saveEventsList: async (events: SanctuaryEvent[]): Promise<SanctuaryEvent[]> => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('mgm_sanctuary_events', JSON.stringify(events));
+    if (isProductionApi) {
+      // TODO: POST /events (bulk)
     }
     return events;
   },
 
   getProductsList: async (): Promise<Product[]> => {
     if (isProductionApi) {
-      // In production API fetch products
-    }
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('mgm_sanctuary_products');
-      if (stored) return JSON.parse(stored) as Product[];
+      // TODO: GET /products
     }
     return mockProducts as Product[];
   },
 
   saveProductsList: async (products: Product[]): Promise<Product[]> => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('mgm_sanctuary_products', JSON.stringify(products));
+    if (isProductionApi) {
+      // TODO: POST /products (bulk)
     }
     return products;
   },
 
   getDonationsList: async (): Promise<Donation[]> => {
     if (isProductionApi) {
-      // In production API fetch donations
-    }
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('mgm_sanctuary_donations');
-      if (stored) return JSON.parse(stored) as Donation[];
+      // TODO: GET /donations
     }
     return mockDonations as Donation[];
-  }
+  },
 };

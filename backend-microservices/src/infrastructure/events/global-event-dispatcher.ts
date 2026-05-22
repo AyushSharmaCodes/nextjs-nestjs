@@ -25,7 +25,7 @@ export class GlobalEventDispatcher {
    * Emits an event globally.
    * Logs a warning and fails safely if the emitter hasn't been initialized yet.
    */
-  static emit(event: string, payload: any): void {
+  static emit(event: string, payload: Record<string, unknown>): void {
     if (!GlobalEventDispatcher.emitter) {
       logger.warn(`Failed to emit event '${event}': GlobalEventDispatcher is not initialized yet.`);
       return;
@@ -36,7 +36,7 @@ export class GlobalEventDispatcher {
   /**
    * Emits an event globally and waits for the listeners to complete.
    */
-  static async emitAsync(event: string, payload: any): Promise<void> {
+  static async emitAsync(event: string, payload: Record<string, unknown>): Promise<void> {
     if (!GlobalEventDispatcher.emitter) {
       logger.warn(`Failed to emitAsync event '${event}': GlobalEventDispatcher is not initialized yet.`);
       return;

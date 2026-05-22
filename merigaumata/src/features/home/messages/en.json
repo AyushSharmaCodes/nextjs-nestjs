@@ -7,7 +7,8 @@
     "blog": "Blog",
     "about": "About",
     "contact": "Contact",
-    "login": "Login"
+    "login": "Login",
+    "profile": "Profile"
   },
   "hero": {
     "title": "MeriGauMata",

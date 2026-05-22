@@ -1,48 +1,36 @@
 /**
- * Client-side session state manager.
- * 
- * IMPORTANT: Auth tokens (JWTs) are now managed exclusively via secure HTTP-Only cookies.
- * This vault is used only to keep track of user metadata (role, email) for UI logic 
- * and hydration, ensuring a consistent user experience without exposing sensitive tokens to JS.
+ * @file tokens.ts
+ *
+ * Auth is handled exclusively via secure HTTP-only cookies managed by Better Auth.
+ * No JWT, access token, or auth-sensitive data is ever stored in localStorage,
+ * sessionStorage, or JS-accessible memory.
+ *
+ * This module is kept as a no-op stub so existing import sites compile without
+ * changes. All methods are intentional no-ops — the real auth state lives in
+ * the `__Host-session` HTTP-only cookie and is validated server-side on every
+ * request by BetterAuthGuard.
+ *
+ * For reading the current user, use:
+ *   - Client components: `useStrictAuth()` hook (reads from Better Auth SDK session)
+ *   - Server components: `getCurrentServerSession()` server action
+ *   - API routes: `BetterAuthGuard` populates `request.user`
  */
 
-
 export const tokenVault = {
+  // ── Auth token — always no-op (cookie-only) ──────────────────────────────
   getToken: (): string | null => null,
-  setToken: (token: string): void => {},
+  setToken: (_token: string): void => {},
   clearToken: (): void => {},
 
-  getUserRole: (): string | null => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('mgm_user_role');
-    }
-    return null;
-  },
-  setUserRole: (role: string): void => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('mgm_user_role', role);
-    }
-  },
-  clearUserRole: (): void => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('mgm_user_role');
-    }
-  },
+  // ── Role / email — no-op: derive from useStrictAuth() or session cookie ──
+  // These were previously stored in localStorage which is incorrect for a
+  // cookie-only auth architecture. Role and email are available from the
+  // Better Auth session without any client-side storage.
+  getUserRole: (): string | null => null,
+  setUserRole: (_role: string): void => {},
+  clearUserRole: (): void => {},
 
-  getUserEmail: (): string | null => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('mgm_user_email');
-    }
-    return null;
-  },
-  setUserEmail: (email: string): void => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('mgm_user_email', email);
-    }
-  },
-  clearUserEmail: (): void => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('mgm_user_email');
-    }
-  }
+  getUserEmail: (): string | null => null,
+  setUserEmail: (_email: string): void => {},
+  clearUserEmail: (): void => {},
 };

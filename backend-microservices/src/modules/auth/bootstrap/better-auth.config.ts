@@ -562,6 +562,11 @@ export const auth = betterAuth({
         required: false,
         defaultValue: 'CUSTOMER',
       },
+      lastLoginAt: {
+        type: 'date',
+        required: false,
+        input: false,
+      },
     },
   },
   rateLimit: {
@@ -580,7 +585,17 @@ export const auth = betterAuth({
     disableCSRFCheck: process.env.DISABLE_CSRF_PROTECTION === 'true',
     cookies: {
       session_token: {
-        name: '__Host-session',
+        name: process.env.NODE_ENV === 'production' ? '__Host-session' : 'session',
+        // __Host- prefix requires Secure + HTTPS — only valid in production.
+        // In development (HTTP localhost) we use a plain name so the browser
+        // actually sends the cookie. The Secure flag is still set in production
+        // by Better Auth automatically when the URL is HTTPS.
+        attributes: {
+          sameSite: 'lax',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+        },
       },
     },
     getIp: (req: Request) => {
@@ -632,28 +647,32 @@ export const auth = betterAuth({
          * which BA populates from the request before calling this hook.
          */
         after: async (session) => {
-          // BA already stores ipAddress and userAgent on the session record
-          const ipAddress = session.ipAddress ?? '0.0.0.0';
-          const userAgent = session.userAgent ?? '';
+          try {
+            // BA already stores ipAddress and userAgent on the session record
+            const ipAddress = session.ipAddress ?? '0.0.0.0';
+            const userAgent = session.userAgent ?? '';
 
-          // Look up user email — needed for event payload
-          const user = await prismaClient.user.findUnique({
-            where: { id: session.userId },
-            select: { email: true },
-          });
+            // Track last successful sign-in on the user record while keeping
+            // request auth fully stateless (JWT validation still needs no DB read).
+            const user = await prismaClient.user.update({
+              where: { id: session.userId },
+              data: { lastLoginAt: session.createdAt },
+              select: { email: true },
+            });
 
-          if (!user) return;  // should not happen, but guard defensively
-
-          await GlobalSuspiciousSessionDispatcher.processSignIn({
-            userId:              session.userId as (string & { readonly _brand: 'UserId' }),
-            betterAuthSessionId: session.id,
-            sessionId:           session.token  as (string & { readonly _brand: 'SessionId' }),
-            email:               user.email,
-            locale:              'en',
-            ipAddress:           ipAddress      as (string & { readonly _brand: 'IpAddress' }),
-            userAgent,
-            requestId:           crypto.randomUUID(),  // no request context in BA hooks
-          });
+            await GlobalSuspiciousSessionDispatcher.processSignIn({
+              userId:              session.userId as (string & { readonly _brand: 'UserId' }),
+              betterAuthSessionId: session.id,
+              sessionId:           session.token  as (string & { readonly _brand: 'SessionId' }),
+              email:               user.email,
+              locale:              'en',
+              ipAddress:           ipAddress      as (string & { readonly _brand: 'IpAddress' }),
+              userAgent,
+              requestId:           crypto.randomUUID(),  // no request context in BA hooks
+            });
+          } catch (err) {
+            logger.error('[Session Create Hook] Failed to persist lastLoginAt or process suspicious-session checks:', err);
+          }
 
         },
       },
@@ -663,6 +682,7 @@ export const auth = betterAuth({
   emailVerification: {
     expiresIn: EMAIL_VERIFICATION_EXPIRES_IN_SECONDS,
     sendOnSignUp: true,
+    sendOnSignIn: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async (
       { user, url, token }: { user: BetterAuthEmailUser; url: string; token: string },
@@ -675,6 +695,7 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: false,
     password: {
       hash: hashAuthPassword,
       verify: verifyAuthPassword,

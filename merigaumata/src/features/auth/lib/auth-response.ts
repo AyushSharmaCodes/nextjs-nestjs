@@ -52,6 +52,10 @@ function coerceAuthResponseData(value: unknown): AuthResponseData | null {
       typeof raw['createdAt'] === 'string'
         ? raw['createdAt']
         : new Date(0).toISOString(),
+    lastLoginAt:
+      typeof raw['lastLoginAt'] === 'string'
+        ? raw['lastLoginAt']
+        : null,
   };
 }
 

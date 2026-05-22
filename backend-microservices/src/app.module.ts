@@ -16,7 +16,7 @@ import { MailModule } from './infrastructure/mail/mail.module';
 
 // Domain modules
 import { AuthDomainModule } from './modules/auth/auth-domain.module';
-import { UserDomainModule } from './modules/user/user-domain.module';
+import { UserModule } from './modules/user/user.module';
 import { ProductDomainModule } from './modules/product/product-domain.module';
 import { CartDomainModule } from './modules/cart/cart-domain.module';
 import { OrderDomainModule } from './modules/order/order-domain.module';
@@ -73,7 +73,7 @@ import { ManagerPermissionsGuard } from './modules/auth/guards/manager-permissio
     // DOMAIN MODULES
     // ═══════════════════════════════════════
     AuthDomainModule,
-    UserDomainModule,
+    UserModule,
     ProductDomainModule,
     CartDomainModule,
     OrderDomainModule,

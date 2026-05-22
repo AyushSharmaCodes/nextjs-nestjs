@@ -23,6 +23,7 @@ export interface AuthUser {
   readonly emailVerified: boolean;
   readonly role: UserRole;
   readonly twoFactorEnabled: boolean;
+  readonly lastLoginAt?: string | null;
 }
 
 /**
