@@ -19,8 +19,7 @@ logs/
 Thumbs.db
 ./src/modules/.DS_Store
 ../DS_Store
-.vscode
-.claude
+.vscode/
 
 # IDE
 .idea/
