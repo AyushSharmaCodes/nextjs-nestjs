@@ -70,7 +70,7 @@ export function usePasswordSignUp(
         const verifyPath = `/${locale}/auth/verify${next ? `?next=${encodeURIComponent(next)}` : ''}`;
         router.replace(verifyPath);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       const apiError = normalizeError(err);
       setError(apiError.message);
       toast.error('Registration Failed', { description: apiError.message });

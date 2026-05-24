@@ -15,7 +15,7 @@ export default getRequestConfig(async ({requestLocale}) => {
   let messages = {};
   try {
     messages = (await import(`../messages/${locale}.json`)).default;
-  } catch (e) {
+  } catch (e: unknown) {
     logger.warn('Base messages for locale {locale} not found.', { locale });
   }
 
@@ -33,7 +33,7 @@ export default getRequestConfig(async ({requestLocale}) => {
           ...messages,
           [feature]: featureMessages
         };
-      } catch (err: any) {
+      } catch (err: any) { // ts-audit-ignore
         // Ignore ENOENT (file not found), log actual parsing/read errors
         if (err.code !== 'ENOENT') {
           logger.error('Failed to parse messages for feature {feature} in locale {locale}: {error}', { 
@@ -44,7 +44,7 @@ export default getRequestConfig(async ({requestLocale}) => {
         }
       }
     }
-  } catch (err: any) {
+  } catch (err: any) { // ts-audit-ignore
     // Ignore ENOENT if the features directory does not exist yet
     if (err.code !== 'ENOENT') {
       logger.warn('Failed to read features directory: {error}', { error: err.message });

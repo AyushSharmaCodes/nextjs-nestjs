@@ -77,7 +77,7 @@ export class MailService {
         });
         await this.sesClient.send(command);
         this.logger.log(`Sent email to ${options.to} via SES`);
-      } catch (error) {
+      } catch (error: unknown) {
         this.logger.error(`Failed to send email to ${options.to} via SES`, error);
       }
     } else if (provider === 'smtp' && this.transporter) {
@@ -87,7 +87,7 @@ export class MailService {
           ...options,
         });
         this.logger.log(`Sent email to ${options.to} via SMTP`);
-      } catch (error) {
+      } catch (error: unknown) {
         this.logger.error(`Failed to send email to ${options.to} via SMTP`, error);
       }
     } else {

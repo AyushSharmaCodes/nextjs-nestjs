@@ -12,7 +12,7 @@ export const BackendEnvSchema = z.object({
   PORT: z
     .string()
     .transform(Number)
-    .refine((n) => n > 0 && n < 65536, 'PORT must be a valid port number')
+    .refine(n => n > 0 && n < 65536, 'PORT must be a valid port number')
     .default(5001),
 
   // ─── Database ──────────────────────────────────────────────────────────────
@@ -35,9 +35,7 @@ export const BackendEnvSchema = z.object({
   ALLOWED_ORIGINS: z.string().min(1, 'ALLOWED_ORIGINS is required'),
 
   // ─── Better Auth ───────────────────────────────────────────────────────────
-  BETTER_AUTH_SECRET: z
-    .string()
-    .min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
+  BETTER_AUTH_SECRET: z.string().min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
   BETTER_AUTH_URL: z.string().url('BETTER_AUTH_URL must be a valid URL'),
 
   // ─── Google OAuth ──────────────────────────────────────────────────────────
@@ -76,6 +74,24 @@ export const BackendEnvSchema = z.object({
   THROTTLE_LIMIT: z.string().transform(Number).default(1000),
   THROTTLE_AUTH_TTL_MS: z.string().transform(Number).default(900000),
   THROTTLE_AUTH_LIMIT: z.string().transform(Number).default(20),
+
+  // ─── Country State City API ───────────────────────────────────────────────
+  COUNTRY_API_BASE_URL: z.string().url('COUNTRY_API_BASE_URL must be a valid URL'),
+  COUNTRY_API_KEY: z.string().min(1, 'COUNTRY_API_KEY is required'),
+
+  // ─── Cron Security ────────────────────────────────────────────────────────
+  CRON_SECRET: z.string().min(1, 'CRON_SECRET is required'),
+
+  // ─── NVIDIA NIM ───────────────────────────────────────────
+  NVIDIA_NIM_BASE_URL: z
+    .string()
+    .url('NVIDIA_NIM_BASE_URL must be a valid URL')
+    .default('https://integrate.api.nvidia.com/v1'),
+  NVIDIA_NIM_API_KEY: z.string().min(1, 'NVIDIA_NIM_API_KEY is required'),
+  NVIDIA_NIM_DEFAULT_MODEL: z.string().default('openai/gpt-oss-120b'),
+  NVIDIA_NIM_MAX_TOKENS: z.string().transform(Number).default(2048),
+  NVIDIA_NIM_TIMEOUT_MS: z.string().transform(Number).default(30000),
+  NVIDIA_NIM_TEMPERATURE: z.string().transform(Number).default(0.7),
 });
 
 export type BackendEnv = z.infer<typeof BackendEnvSchema>;
@@ -90,9 +106,7 @@ export function validateEnvironment(config: Record<string, unknown>): BackendEnv
   const result = BackendEnvSchema.safeParse(config);
 
   if (!result.success) {
-    const formatted = result.error.issues
-      .map((issue) => `  • ${issue.path.join('.')}: ${issue.message}`)
-      .join('\n');
+    const formatted = result.error.issues.map(issue => `  • ${issue.path.join('.')}: ${issue.message}`).join('\n');
     logger.error(`\n❌ Environment validation failed:\n${formatted}\n`);
     process.exit(1);
   }
@@ -103,10 +117,7 @@ export function validateEnvironment(config: Record<string, unknown>): BackendEnv
     process.exit(1);
   }
 
-  if (
-    result.data.MAIL_PROVIDER === 'ses' &&
-    (!result.data.AWS_ACCESS_KEY_ID || !result.data.AWS_SECRET_ACCESS_KEY)
-  ) {
+  if (result.data.MAIL_PROVIDER === 'ses' && (!result.data.AWS_ACCESS_KEY_ID || !result.data.AWS_SECRET_ACCESS_KEY)) {
     logger.error('\n❌ MAIL_PROVIDER=ses but AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY is not set\n');
     process.exit(1);
   }

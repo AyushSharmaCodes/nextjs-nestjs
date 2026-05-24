@@ -5,8 +5,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { USER_EVENTS, UserUpdatedEvent } from '../events/user.events';
 import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 
-import { Profile, Role, UserPhoneNumber } from '@prisma/client';
-
 @Injectable()
 export class UpdateProfileCommand {
   constructor(
@@ -20,6 +18,20 @@ export class UpdateProfileCommand {
       throw new UserNotFoundException();
     }
 
+    // ── Phone number upsert ──────────────────────────────────────────────────
+    // Upsert the default phone number, carrying the country FK for dial-code derivation.
+    if (dto.phone !== undefined) {
+      await this.repository.upsertDefaultPhoneNumber(
+        profile.id,
+        dto.phone,
+        dto.phoneCountryId, // may be undefined (no change) or a valid country id
+      );
+    } else if (dto.phoneCountryId !== undefined) {
+      // Country changed but phone number text stayed the same — update country FK only.
+      await this.repository.updatePhoneNumberCountry(profile.id, dto.phoneCountryId);
+    }
+
+    // ── Profile / User fields update ─────────────────────────────────────────
     const updated = await this.repository.updateProfile(profile.id, {
       firstName: dto.firstName,
       lastName: dto.lastName,
@@ -29,11 +41,13 @@ export class UpdateProfileCommand {
         update: {
           firstName: dto.firstName,
           lastName: dto.lastName,
-          gender: dto.gender,
+          genderId: dto.genderId,
+          nationalityCountryCode: dto.nationalityCountryCode,
+          preferredCurrency: dto.preferredCurrency,
+          emailNotification: dto.emailNotification,
           dob: dto.dob ? new Date(dto.dob) : undefined,
-          nationality: dto.nationality,
-        }
-      }
+        },
+      },
     });
 
     const changedFields = Object.keys(dto);

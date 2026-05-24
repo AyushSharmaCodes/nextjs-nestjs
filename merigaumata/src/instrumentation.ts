@@ -6,11 +6,11 @@ import * as Sentry from '@sentry/nextjs';
  * allowing standard initialization of monitoring layers like Sentry and LogTape.
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
+  if (process.env.NEXT_RUNTIME === 'nodejs') { // ts-audit-ignore
     await import('../sentry.server.config');
   }
 
-  if (process.env.NEXT_RUNTIME === 'edge') {
+  if (process.env.NEXT_RUNTIME === 'edge') { // ts-audit-ignore
     await import('../sentry.edge.config');
   }
 }

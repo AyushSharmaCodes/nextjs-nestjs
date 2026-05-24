@@ -14,6 +14,7 @@ const _result = serverSchema.safeParse({
   SENTRY_ORG: process.env.SENTRY_ORG,
   SENTRY_PROJECT: process.env.SENTRY_PROJECT,
   SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   LOG_FILE_PATH: process.env.LOG_FILE_PATH,
 });
 

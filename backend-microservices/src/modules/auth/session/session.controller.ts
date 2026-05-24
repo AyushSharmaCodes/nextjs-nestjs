@@ -142,7 +142,7 @@ export class SessionController {
         where: { id: session.betterAuthSessionId },
         data:  { expiresAt: new Date(0) },
       });
-    } catch (err) {
+    } catch (err: unknown) {
       // If it's already deleted/expired, that's fine
       this.logger.warn({ sessionId }, 'Failed to update BA session for revocation (maybe already deleted)');
     }

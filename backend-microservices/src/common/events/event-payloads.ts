@@ -53,3 +53,9 @@ export interface CommunicationEventPayload {
   variables?: Record<string, string>;
   timestamp: string;
 }
+
+export interface CscEventPayload {
+  triggeredBy: string;
+  force?: boolean;
+  timestamp: string;
+}

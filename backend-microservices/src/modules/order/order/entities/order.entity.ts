@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { OrderItem } from './order-item.entity';
 import { OrderStatusHistory } from './order-status-history.entity';
 
-@Entity('orders')
+@Entity({ name: 'orders', schema: 'app_order' })
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;

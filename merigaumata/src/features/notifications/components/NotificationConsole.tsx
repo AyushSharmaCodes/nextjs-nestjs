@@ -21,7 +21,7 @@ export function NotificationConsole() {
 
   const notifications = data?.data || [];
   const meta = data?.meta || { page: 1, limit: 20, totalPages: 1, totalCount: 0 };
-  const stats = data?.stats;
+  const stats = data?.stats || { total: 0, unread: 0, read: 0, archived: 0 };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

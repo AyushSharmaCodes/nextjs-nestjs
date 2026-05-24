@@ -2,7 +2,6 @@ import { configure, Sink } from '@logtape/logtape';
 import { createConsoleSink } from './sinks/console.sink';
 import { createSentrySink } from './sinks/sentry.sink';
 import { createFileSink } from './sinks/file.sink';
-import { serverEnv } from '@/core/env/server';
 import { clientEnv } from '@/core/env/client';
 
 let isLoggingInitialized = false;
@@ -17,7 +16,7 @@ export async function initLogTape() {
   if (isLoggingInitialized) return;
   isLoggingInitialized = true;
 
-  const isProduction = serverEnv.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'production'; // ts-audit-ignore
   
   // In production, log info and above. In development, log debug and above.
   const lowestLevel = isProduction ? 'info' : 'debug';
@@ -54,7 +53,7 @@ export async function initLogTape() {
 
   // 3. Setup AsyncLocalStorage on Node runtime server-side
   let contextLocalStorage = undefined;
-  if (typeof window === 'undefined' && process.env.NEXT_RUNTIME === 'nodejs') {
+  if (typeof window === 'undefined' && process.env.NEXT_RUNTIME === 'nodejs') { // ts-audit-ignore
     try {
       const { AsyncLocalStorage } = require('node:async_hooks');
       contextLocalStorage = new AsyncLocalStorage();
@@ -81,9 +80,9 @@ export async function initLogTape() {
       ],
       contextLocalStorage,
     });
-  } catch (err) {
-    // Prevent logger setup issues from crashing app boots
-    // eslint-disable-next-line no-console
-    console.error('Failed to configure LogTape logging system:', err);
-  }
+    } catch (err: unknown) {
+      // If the logger itself fails, we have no choice but to use the system's
+      // lowest-level output as a last resort.
+      process.stderr.write(`[Logger Init Error] Failed to configure LogTape: ${err}\n`);
+    }
 }

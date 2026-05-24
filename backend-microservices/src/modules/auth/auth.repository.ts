@@ -79,7 +79,7 @@ export class AuthRepository {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       } as Parameters<typeof AuthMapper.toUserResponseDto>[0]);
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof TokenInvalidException) throw err;
       this.logger.error({ err, userId: id }, 'findUserById failed');
       throw new DbWriteFailedException();
@@ -124,7 +124,7 @@ export class AuthRepository {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       } as Parameters<typeof AuthMapper.toUserResponseDto>[0]);
-    } catch (err) {
+    } catch (err: unknown) {
       this.logger.error({ err, email }, 'findUserByEmail failed');
       throw new DbWriteFailedException();
     }
@@ -211,7 +211,7 @@ export class AuthRepository {
       } as Parameters<typeof AuthMapper.toAuthResponseDto>[1];
 
       return AuthMapper.toAuthResponseDto(prismaUser, prismaSession);
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof TokenInvalidException) throw err;
       this.logger.error({ err, userId }, 'getUserWithActiveSession failed');
       throw new DbWriteFailedException();
@@ -229,7 +229,7 @@ export class AuthRepository {
   async revokeSessionByToken(token: string): Promise<void> {
     try {
       await this.prisma.session.deleteMany({ where: { token } });
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
         // Session not found — already deleted, not an error
         return;
@@ -251,7 +251,7 @@ export class AuthRepository {
           token: { not: currentToken },
         },
       });
-    } catch (err) {
+    } catch (err: unknown) {
       this.logger.error({ err, userId }, 'revokeOtherSessions failed');
       throw new DbWriteFailedException();
     }
@@ -294,7 +294,7 @@ export class AuthRepository {
         lastName: user.lastName ?? null,
         image: user.image ?? null,
       } as Parameters<typeof AuthMapper.toUserResponseDto>[0]);
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === 'P2002') throw new EmailAlreadyExistsException();
         if (err.code === 'P2025') throw new TokenInvalidException({ userId });

@@ -17,7 +17,7 @@ export const aboutService = {
     if (isProductionApi) {
       try {
         return await aboutApi.getStats();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for stats. Falling back to mocks: {error}', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -31,7 +31,7 @@ export const aboutService = {
     if (isProductionApi) {
       try {
         return await aboutApi.getTimeline();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for timeline. Falling back to mocks: {error}', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -45,7 +45,7 @@ export const aboutService = {
     if (isProductionApi) {
       try {
         return await aboutApi.getTeam();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for team. Falling back to mocks: {error}', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -59,7 +59,7 @@ export const aboutService = {
     if (isProductionApi) {
       try {
         return await aboutApi.getTestimonials(row);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for testimonials row {row}. Falling back to mocks: {error}', {
           row,
           error: error instanceof Error ? error.message : String(error),

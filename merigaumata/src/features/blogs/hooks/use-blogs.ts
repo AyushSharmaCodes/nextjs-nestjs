@@ -46,7 +46,7 @@ export function useBlogs({ initialPosts = [], itemsPerPage = 6 }: UseBlogsProps)
         Promise.resolve().then(() => {
           setReadLaterIds(parsed);
         });
-      } catch (e) {
+      } catch (e: unknown) {
         logError(e, { component: 'useBlogs', action: 'parse_bookmarks' });
       }
     }

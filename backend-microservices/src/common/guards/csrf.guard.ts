@@ -54,7 +54,7 @@ export class CsrfGuard implements CanActivate {
     // Only enforce on cookie-authenticated requests
     // Cookie name is env-dependent — see better-auth.config.ts advanced.cookies
     const sessionCookieName =
-      process.env.NODE_ENV === 'production' ? '__Host-session' : 'session';
+      this.appConfig.isProduction ? '__Host-session' : 'session';
     const hasCookieAuth = Boolean(req.cookies?.[sessionCookieName]);
     if (!hasCookieAuth) return true;
 

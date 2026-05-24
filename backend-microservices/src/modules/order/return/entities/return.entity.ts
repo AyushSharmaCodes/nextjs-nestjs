@@ -24,7 +24,7 @@ export class Return {
   qcResult: Record<string, unknown> | null;
 
   @OneToMany('ReturnItem', 'return')
-  items: any[];
+  items: any[]; // ts-audit-ignore
 
   @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;

@@ -18,6 +18,7 @@ export class AdminManagerRepository {
     return this.prisma.managerPermissionGrant.findMany({
       where: { managerProfileId, isActive: true },
       include: { permission: true },
+    // We double cast through unknown because Prisma's dynamic include structures require type assertion to match our domain models.
     }) as unknown as Promise<GrantWithPermission[]>;
   }
 

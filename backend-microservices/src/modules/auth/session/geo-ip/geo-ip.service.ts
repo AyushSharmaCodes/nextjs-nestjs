@@ -13,22 +13,22 @@
  * short enough not to serve stale data for VPN/proxy users who change locations.
  */
 
-import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import type { CountryCode, GeoLocation, IpAddress } from '../../../../shared/types/device.types';
 import { GEO_IP_PROVIDER_TOKEN, type IGeoIpProvider } from './geo-ip-provider.interface';
-import type { GeoLocation, IpAddress, CountryCode } from '../../../../shared/types/device.types';
 
 const CACHE_MAX_SIZE = 500;
-const CACHE_TTL_MS   = 10 * 60 * 1000;  // 10 minutes
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 interface CacheEntry {
-  readonly location:  GeoLocation;
+  readonly location: GeoLocation;
   readonly expiresAt: number;
 }
 
 @Injectable()
 export class GeoIpService {
   private readonly logger = new Logger(GeoIpService.name);
-  private readonly cache  = new Map<string, CacheEntry>();
+  private readonly cache = new Map<string, CacheEntry>();
 
   constructor(
     @Inject(GEO_IP_PROVIDER_TOKEN)
@@ -52,10 +52,7 @@ export class GeoIpService {
       return location;
     } catch (err: unknown) {
       const reason = err instanceof Error ? err.message : String(err);
-      this.logger.warn(
-        { ip, reason },
-        `GeoIpService: provider resolution failed — degrading to unknown location`,
-      );
+      this.logger.warn({ ip, reason }, `GeoIpService: provider resolution failed — degrading to unknown location`);
       return this.unknownLocation(ip);
     }
   }
@@ -76,12 +73,12 @@ export class GeoIpService {
   private unknownLocation(ip: IpAddress): GeoLocation {
     return {
       ip,
-      city:      null,
-      region:    null,
-      country:   'XX' as CountryCode,
-      latitude:  null,
+      city: null,
+      region: null,
+      country: 'XX' as CountryCode,
+      latitude: null,
       longitude: null,
-      isp:       null,
+      isp: null,
     };
   }
 }

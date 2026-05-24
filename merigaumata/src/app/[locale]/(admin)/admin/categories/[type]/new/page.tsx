@@ -28,7 +28,7 @@ export default function NewCategoryPage() {
       try {
         const data = await mockCategoriesApi.getCategories(categoryType);
         setAllCategories(data);
-      } catch (err) {
+      } catch (err: unknown) {
         logger.error(`Failed reference lists load:: {error}`, { error: String(err) });
       } finally {
         setLoading(false);
@@ -37,17 +37,17 @@ export default function NewCategoryPage() {
     loadReferences();
   }, [categoryType]);
 
-  const handleSave = async (formData: any) => {
+  const handleSave = async (formData: Record<string, unknown>) => {
     try {
       // Inject standard fields
       const savePayload = {
         ...formData,
-        parentId: formData.parentId || parentIdFromQuery
-      };
+        parentId: (formData.parentId as string | null | undefined) || parentIdFromQuery
+      } as unknown as Omit<Category, 'id' | 'createdAt' | 'updatedAt' | 'itemCount'>;
       await mockCategoriesApi.saveCategory(savePayload);
       alert(t('successCreate'));
       router.push('/admin/categories');
-    } catch (err) {
+    } catch (err: unknown) {
       logger.error(`Save failed:: {error}`, { error: String(err) });
       alert('Failed saving category node. Please verify validations.');
     }

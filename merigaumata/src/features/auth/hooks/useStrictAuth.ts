@@ -7,10 +7,11 @@
  * Usage:
  *  const auth = useStrictAuth();
  *  if (auth.status === 'authenticated') {
- *    console.log(auth.user.email); // fully typed
+ *    logger.info(auth.user.email); // fully typed
  *  }
  */
 
+import { logger } from '@/shared/lib/logger';
 import { authClient } from '../../../lib/auth-client';
 import { isRole } from '../types/auth.types';
 import type { Role } from '../types/auth.types';
@@ -18,6 +19,17 @@ import type { Role } from '../types/auth.types';
 // ---------------------------------------------------------------------------
 // Strict types
 // ---------------------------------------------------------------------------
+
+interface RawUserFields {
+  role?: string;
+  firstName?: string;
+  lastName?: string;
+  twoFactorEnabled?: boolean;
+}
+
+interface RawSessionFields {
+  twoFactorVerified?: boolean;
+}
 
 export interface StrictUser {
   id: string;
@@ -87,27 +99,21 @@ export function useStrictAuth(): AuthState {
   const rawUser = data.user as Record<string, unknown>;
 
   // Narrow role: default to CUSTOMER for unrecognized values
-  const rawRole = rawUser['role'];
+  const rawRole = rawUser.role;
   const normalizedRole = typeof rawRole === 'string' ? rawRole.toUpperCase() : '';
   const resolvedRole: Role = isRole(normalizedRole) ? normalizedRole : 'CUSTOMER';
 
   // Narrow name fields — Better Auth maps `name` to `firstName` via user.fields config
   const firstName =
-    typeof rawUser['firstName'] === 'string'
-      ? rawUser['firstName']
+    typeof rawUser.firstName === 'string'
+      ? rawUser.firstName
       : typeof data.user.name === 'string'
         ? data.user.name
         : null;
 
-  const lastName =
-    typeof rawUser['lastName'] === 'string'
-      ? rawUser['lastName']
-      : null;
+  const lastName = typeof rawUser.lastName === 'string' ? rawUser.lastName : null;
 
-  const twoFactorEnabled =
-    typeof rawUser['twoFactorEnabled'] === 'boolean'
-      ? rawUser['twoFactorEnabled']
-      : false;
+  const twoFactorEnabled = typeof rawUser.twoFactorEnabled === 'boolean' ? rawUser.twoFactorEnabled : false;
 
   const mappedUser: StrictUser = {
     id: data.user.id,
@@ -124,10 +130,7 @@ export function useStrictAuth(): AuthState {
   // ─── Type-safe session extraction ─────────────────────────────────────
   const rawSession = data.session as Record<string, unknown>;
 
-  const twoFactorVerified =
-    typeof rawSession['twoFactorVerified'] === 'boolean'
-      ? rawSession['twoFactorVerified']
-      : false;
+  const twoFactorVerified = typeof rawSession.twoFactorVerified === 'boolean' ? rawSession.twoFactorVerified : false;
 
   const mappedSession: StrictSession = {
     id: data.session.id,

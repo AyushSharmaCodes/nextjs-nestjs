@@ -8,6 +8,8 @@ import {
 } from 'nestjs-i18n';
 import * as path from 'path';
 
+import { AppConfigService } from '../config/app-config.service';
+
 /**
  * Centralized i18n module.
  * Merged locales from all services into a single locales directory.
@@ -17,22 +19,24 @@ import * as path from 'path';
 @Global()
 @Module({
   imports: [
-    I18nModule.forRoot({
-      fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, 'locales'),
-        watch: process.env.NODE_ENV !== 'production',
-      },
-      resolvers: [
-        new QueryResolver(['lang']),
-        new HeaderResolver(['x-user-lang']),
-        new CookieResolver(['lang']),
-        new AcceptLanguageResolver(),
-      ],
-      typesOutputPath:
-        process.env.NODE_ENV !== 'production'
+    I18nModule.forRootAsync({
+      useFactory: (cfg: AppConfigService) => ({
+        fallbackLanguage: 'en',
+        loaderOptions: {
+          path: path.join(__dirname, 'locales'),
+          watch: !cfg.isProduction,
+        },
+        resolvers: [
+          new QueryResolver(['lang']),
+          new HeaderResolver(['x-user-lang']),
+          new CookieResolver(['lang']),
+          new AcceptLanguageResolver(),
+        ],
+        typesOutputPath: !cfg.isProduction
           ? path.join(process.cwd(), 'src', 'generated', 'i18n.generated.ts')
           : undefined,
+      }),
+      inject: [AppConfigService],
     }),
   ],
   exports: [I18nModule],

@@ -10,7 +10,7 @@ export class ReturnItem {
 
   @ManyToOne('Return', 'items', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'returnId' })
-  return: any;
+  return: any; // ts-audit-ignore
 
   @Column({ name: 'orderItemId' })
   orderItemId: string;

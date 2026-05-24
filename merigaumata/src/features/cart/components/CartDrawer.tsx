@@ -18,8 +18,8 @@ export function CartDrawer() {
   const [couponCode, setCouponCode] = useState('');
   const lenis = useLenis();
 
-  // Load products list from caching layer for suggested offers
-  const { data } = useProducts({ sortBy: 'featured', page: 1, limit: 100 });
+  // Load products list from caching layer for suggested offers (only query when cart drawer is open)
+  const { data } = useProducts({ sortBy: 'featured', page: 1, limit: 100 }, { enabled: isOpen });
   const allProducts = data?.products || [];
 
   useEffect(() => {

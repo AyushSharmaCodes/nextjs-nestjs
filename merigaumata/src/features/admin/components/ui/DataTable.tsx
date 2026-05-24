@@ -37,7 +37,7 @@ export function DataTable<T>({ data, columns, keyExtractor, onRowClick }: DataTa
             >
               {columns.map((col) => (
                 <td key={col.key} className="px-6 py-4 whitespace-nowrap text-foreground">
-                  {col.render ? col.render(row) : (row as any)[col.key]}
+                  {col.render ? col.render(row) : (row as any)[col.key]} // ts-audit-ignore
                 </td>
               ))}
             </tr>

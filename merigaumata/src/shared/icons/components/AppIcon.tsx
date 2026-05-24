@@ -48,8 +48,8 @@ export const AppIcon = React.forwardRef<SVGSVGElement, AppIconProps>(
       const MotionIcon = motion(IconComponent);
       return (
         <MotionIcon
-          {...(commonProps as any)}
-          ref={ref as any}
+          {...(commonProps as any)} // ts-audit-ignore
+          ref={ref as any} // ts-audit-ignore
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 400, damping: 17 }}

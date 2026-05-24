@@ -21,8 +21,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import type { AuthEventName } from '../../../shared/events/auth/auth-events.constants';
 import type { AuthEventPayloadMap } from '../../../shared/events/auth/auth-event-payloads.types';
+import type { AuthEventName } from '../../../shared/events/auth/auth-events.constants';
 
 @Injectable()
 export class AuthEventEmitter {
@@ -45,10 +45,7 @@ export class AuthEventEmitter {
    * @param event   - Event name from AUTH_EVENTS constants
    * @param payload - Strictly typed payload for that event
    */
-  emit<K extends AuthEventName>(
-    event: K,
-    payload: AuthEventPayloadMap[K],
-  ): void {
+  emit<K extends AuthEventName>(event: K, payload: AuthEventPayloadMap[K]): void {
     try {
       // EventEmitter2's synchronous emit — listeners run in the same microtask
       // queue but @OnEvent({ async: true }) listeners are wrapped in setImmediate,
@@ -63,7 +60,7 @@ export class AuthEventEmitter {
           event,
           // Never log the full payload — it may contain otpCode / resetToken
           eventId: (payload as { eventId: string }).eventId,
-          userId:  (payload as { userId: string }).userId,
+          userId: (payload as { userId: string }).userId,
           requestId: (payload as { requestId: string }).requestId,
           err,
         },

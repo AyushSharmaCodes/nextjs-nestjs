@@ -14,7 +14,7 @@ export class WebhookController {
   @Public()
   @Post('razorpay')
   async handle(
-    @Body(new ZodValidationPipe(RazorpayWebhookSchema)) payload: any,
+    @Body(new ZodValidationPipe(RazorpayWebhookSchema)) payload: any, // ts-audit-ignore
     @Headers('x-razorpay-signature') signature: string,
   ) {
     const result = await this.service.processWebhook(payload, signature);

@@ -6,6 +6,22 @@ import { NotificationStatus, NotificationType } from '../types';
 import { useQueryClient } from '@tanstack/react-query';
 import { notificationKeys } from '../hooks/useNotifications';
 
+// ── Module-level interfaces ─────────────────────────────────────────────────
+// Defined here (not inside the component) so they are not re-declared on every render.
+// `labelKey` is typed as `Parameters<typeof t>[0]` inside the component where
+// `t` is in scope; here we use a generic `string` as a structural placeholder —
+// the constraint is enforced at the array-literal site inside the component below.
+
+interface StatusTab {
+  value: NotificationStatus | 'all';
+  labelKey: string;
+}
+
+interface TypeOption {
+  value: NotificationType | 'all';
+  labelKey: string;
+}
+
 export function NotificationFilters() {
   const t = useTranslations('notifications');
   const queryClient = useQueryClient();
@@ -15,14 +31,17 @@ export function NotificationFilters() {
     queryClient.invalidateQueries({ queryKey: notificationKeys.all });
   };
 
-  const statusTabs: { value: NotificationStatus | 'all'; labelKey: string }[] = [
+  // Re-typed locally so `labelKey` is validated against the actual translation keys.
+  type TKey = Parameters<typeof t>[0];
+
+  const statusTabs: { value: NotificationStatus | 'all'; labelKey: TKey }[] = [
     { value: 'all', labelKey: 'all' },
     { value: 'unread', labelKey: 'unreadLabel' },
     { value: 'read', labelKey: 'readLabel' },
     { value: 'archived', labelKey: 'archivedLabel' },
   ];
 
-  const types: { value: NotificationType | 'all'; labelKey: string }[] = [
+  const types: { value: NotificationType | 'all'; labelKey: TKey }[] = [
     { value: 'all', labelKey: 'all' },
     { value: 'order', labelKey: 'typeOrder' },
     { value: 'system', labelKey: 'typeSystem' },
@@ -57,7 +76,7 @@ export function NotificationFilters() {
             >
               {types.map((tp) => (
                 <option key={tp.value} value={tp.value}>
-                  {t(tp.labelKey as any)}
+                  {t(tp.labelKey)}
                 </option>
               ))}
             </select>
@@ -70,7 +89,7 @@ export function NotificationFilters() {
           >
             <AppIcon name="refresh" className="w-4 h-4" />
           </button>
-          
+
           <button
             onClick={resetFilters}
             className="px-4 py-2.5 rounded-[12px] text-xs font-extrabold text-foreground/60 hover:text-foreground hover:bg-earth-100 dark:hover:bg-earth-900/60 active:scale-95 transition-all outline-none"
@@ -94,7 +113,7 @@ export function NotificationFilters() {
                   : 'text-foreground/70 dark:text-foreground/60 bg-earth-50 dark:bg-earth-950 hover:bg-earth-100 dark:hover:bg-earth-900 border border-earth-200/30 dark:border-transparent'
               }`}
             >
-              {t(tab.labelKey as any)}
+              {t(tab.labelKey)}
             </button>
           );
         })}

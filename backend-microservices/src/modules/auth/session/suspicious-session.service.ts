@@ -25,33 +25,33 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
+import type { SuspiciousSessionPayload } from '../../../shared/events/auth/auth-event-payloads.types';
 import { AUTH_EVENTS } from '../../../shared/events/auth/auth-events.constants';
-import { DeviceParserService } from './device-parser.service';
-import { GeoIpService } from './geo-ip/geo-ip.service';
-import { RiskAssessmentService } from './risk-assessment.service';
-import { DeviceSessionRepository } from './device-session.repository';
-import { SESSION_RISK_RULES } from './constants/session-risk-rules.constant';
-import { AuthEventEmitter } from '../events/auth-event.emitter';
 import type {
   DeviceSessionEntity,
-  SignInContext,
-  SessionRiskAssessment,
   GeoLocation,
   ParsedDevice,
+  SessionRiskAssessment,
+  SignInContext,
 } from '../../../shared/types/device.types';
-import type { SuspiciousSessionPayload } from '../../../shared/events/auth/auth-event-payloads.types';
+import { AuthEventEmitter } from '../events/auth-event.emitter';
+import { SESSION_RISK_RULES } from './constants/session-risk-rules.constant';
+import { DeviceParserService } from './device-parser.service';
+import { DeviceSessionRepository } from './device-session.repository';
+import { GeoIpService } from './geo-ip/geo-ip.service';
+import { RiskAssessmentService } from './risk-assessment.service';
 
 @Injectable()
 export class SuspiciousSessionService {
   private readonly logger = new Logger(SuspiciousSessionService.name);
 
   constructor(
-    private readonly prisma:         PrismaService,
-    private readonly deviceParser:   DeviceParserService,
-    private readonly geoIpService:   GeoIpService,
+    private readonly prisma: PrismaService,
+    private readonly deviceParser: DeviceParserService,
+    private readonly geoIpService: GeoIpService,
     private readonly riskAssessment: RiskAssessmentService,
-    private readonly sessionRepo:    DeviceSessionRepository,
-    private readonly eventEmitter:   AuthEventEmitter,
+    private readonly sessionRepo: DeviceSessionRepository,
+    private readonly eventEmitter: AuthEventEmitter,
   ) {}
 
   /**
@@ -110,21 +110,21 @@ export class SuspiciousSessionService {
     // ── Step 4: Pure risk assessment ─────────────────────────────────────────
     const assessment = this.riskAssessment.assess(
       {
-        ipAddress:   context.ipAddress,
+        ipAddress: context.ipAddress,
         device,
         geoLocation,
-        createdAt:   signedInAt,
+        createdAt: signedInAt,
       },
       history,
     );
 
     this.logger.log(
       {
-        userId:    context.userId,
+        userId: context.userId,
         riskLevel: assessment.riskLevel,
-        reasons:   assessment.suspicionReasons,
-        country:   geoLocation.country,
-        ip:        context.ipAddress,
+        reasons: assessment.suspicionReasons,
+        country: geoLocation.country,
+        ip: context.ipAddress,
       },
       `SuspiciousSessionService: risk=${assessment.riskLevel}`,
     );
@@ -136,30 +136,27 @@ export class SuspiciousSessionService {
     let deviceSession: DeviceSessionEntity;
     try {
       deviceSession = await this.sessionRepo.create({
-        userId:              context.userId,
+        userId: context.userId,
         betterAuthSessionId: context.betterAuthSessionId,
-        sessionId:           context.sessionId,
-        ipAddress:           context.ipAddress,
+        sessionId: context.sessionId,
+        ipAddress: context.ipAddress,
         geoLocation: {
-          city:      geoLocation.city,
-          region:    geoLocation.region,
-          country:   geoLocation.country,
-          latitude:  geoLocation.latitude,
+          city: geoLocation.city,
+          region: geoLocation.region,
+          country: geoLocation.country,
+          latitude: geoLocation.latitude,
           longitude: geoLocation.longitude,
-          isp:       geoLocation.isp,
+          isp: geoLocation.isp,
         },
-        device:           deviceData,
-        riskLevel:        assessment.riskLevel,
+        device: deviceData,
+        riskLevel: assessment.riskLevel,
         suspicionReasons: assessment.suspicionReasons,
       });
     } catch (err: unknown) {
       // If persist fails, still try to emit and revoke — security takes precedence.
       const reason = err instanceof Error ? err.message : String(err);
-      this.logger.error(
-        { userId: context.userId, reason },
-        'SuspiciousSessionService: DeviceSession.create failed',
-      );
-      return;  // Cannot proceed without a persisted record
+      this.logger.error({ userId: context.userId, reason }, 'SuspiciousSessionService: DeviceSession.create failed');
+      return; // Cannot proceed without a persisted record
     }
 
     // ── Step 6: Fire-and-forget suspicious event → email ─────────────────────
@@ -187,14 +184,11 @@ export class SuspiciousSessionService {
     // it deletes the session record. We do an update (expiresAt = epoch) instead
     // of delete to preserve the row for our FK in DeviceSession (betterAuthSessionId).
     //
-    if (
-      assessment.riskLevel === 'HIGH_RISK' &&
-      SESSION_RISK_RULES.HIGH_RISK_AUTO_REVOKE
-    ) {
+    if (assessment.riskLevel === 'HIGH_RISK' && SESSION_RISK_RULES.HIGH_RISK_AUTO_REVOKE) {
       try {
         await this.prisma.session.update({
           where: { id: context.betterAuthSessionId },
-          data:  { expiresAt: new Date(0) },  // instantly expired
+          data: { expiresAt: new Date(0) }, // instantly expired
         });
         this.logger.warn(
           { userId: context.userId, betterAuthSessionId: context.betterAuthSessionId, sessionId: context.sessionId },
@@ -220,35 +214,35 @@ export class SuspiciousSessionService {
    * Wrapped in try-catch — event bus failure MUST NOT affect sign-in or detection flow.
    */
   private emitSuspiciousEvent(
-    context:    SignInContext,
-    session:    DeviceSessionEntity,
+    context: SignInContext,
+    session: DeviceSessionEntity,
     assessment: SessionRiskAssessment,
-    geo:        GeoLocation,
-    device:     ParsedDevice,
+    geo: GeoLocation,
+    device: ParsedDevice,
     signedInAt: string,
   ): void {
     try {
       const payload: SuspiciousSessionPayload = {
-        eventId:          crypto.randomUUID(),
-        userId:           context.userId,
-        email:            context.email,
-        locale:           context.locale,
-        triggeredAt:      new Date().toISOString(),
-        requestId:        context.requestId,
-        sessionId:        context.sessionId,
-        ipAddress:        geo.ip,
-        city:             geo.city    ?? 'Unknown',
-        region:           geo.region  ?? 'Unknown',
-        country:          geo.country,
-        latitude:         geo.latitude,
-        longitude:        geo.longitude,
-        deviceType:       device.deviceType,
-        os:               device.os,
-        osVersion:        device.osVersion,
-        browser:          device.browser,
-        browserVersion:   device.browserVersion,
-        fingerprint:      device.fingerprint,
-        riskLevel:        assessment.riskLevel,
+        eventId: crypto.randomUUID(),
+        userId: context.userId,
+        email: context.email,
+        locale: context.locale,
+        triggeredAt: new Date().toISOString(),
+        requestId: context.requestId,
+        sessionId: context.sessionId,
+        ipAddress: geo.ip,
+        city: geo.city ?? 'Unknown',
+        region: geo.region ?? 'Unknown',
+        country: geo.country,
+        latitude: geo.latitude,
+        longitude: geo.longitude,
+        deviceType: device.deviceType,
+        os: device.os,
+        osVersion: device.osVersion,
+        browser: device.browser,
+        browserVersion: device.browserVersion,
+        fingerprint: device.fingerprint,
+        riskLevel: assessment.riskLevel,
         suspicionReasons: assessment.suspicionReasons,
         signedInAt,
       };

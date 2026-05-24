@@ -13,7 +13,7 @@ interface CategoryFormProps {
   categoryType: CategoryType;
   initialData?: Category | null;
   allCategories: Category[];
-  onSave: (data: any) => Promise<void>;
+  onSave: (data: Record<string, unknown>) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -270,7 +270,7 @@ export function CategoryForm({
     try {
       await onSave(finalData);
       setIsDirty(false);
-    } catch (err) {
+    } catch (err: unknown) {
       logger.error('{error}', { error: String(err) });
     } finally {
       setIsSaving(false);
@@ -360,7 +360,7 @@ export function CategoryForm({
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'general' | 'media' | 'advanced' | 'seo')}
                   className={clsx(
                     "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-semibold rounded-xl transition-all",
                     activeTab === tab.id 
@@ -396,7 +396,7 @@ export function CategoryForm({
                     <button
                       key={locale.code}
                       type="button"
-                      onClick={() => setActiveLocale(locale.code as any)}
+                      onClick={() => setActiveLocale(locale.code as 'en' | 'hi' | 'ta' | 'te')}
                       className={clsx(
                         "flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl border transition-all",
                         activeLocale === locale.code 
@@ -404,7 +404,7 @@ export function CategoryForm({
                           : "bg-background border-earth-200 text-foreground/60 hover:bg-earth-100/50"
                       )}
                     >
-                      {getLanguageProgressBadge(locale.code as any)}
+                      {getLanguageProgressBadge(locale.code as 'en' | 'hi' | 'ta' | 'te')}
                       {locale.label}
                     </button>
                   ))}
@@ -584,7 +584,7 @@ export function CategoryForm({
                       </label>
                       <select
                         value={inventoryBehavior}
-                        onChange={(e) => { setInventoryBehavior(e.target.value as any); setIsDirty(true); }}
+                        onChange={(e) => { setInventoryBehavior(e.target.value as 'track' | 'ignore' | 'preorder'); setIsDirty(true); }}
                         className="w-full px-4 py-2.5 rounded-xl border border-earth-200 bg-background text-xs transition-all"
                       >
                         <option value="track">Track Inventory & Stop Sales on Stockout</option>
@@ -657,7 +657,7 @@ export function CategoryForm({
                       </label>
                       <select
                         value={eventType}
-                        onChange={(e) => { setEventType(e.target.value as any); setIsDirty(true); }}
+                        onChange={(e) => { setEventType(e.target.value as 'conference' | 'webinar' | 'satsang' | 'festival' | 'workshop'); setIsDirty(true); }}
                         className="w-full px-4 py-2.5 rounded-xl border border-earth-200 bg-background text-xs transition-all"
                       >
                         <option value="satsang">Satsang & Vedic Discourses</option>
@@ -707,7 +707,7 @@ export function CategoryForm({
                       </label>
                       <select
                         value={audienceType}
-                        onChange={(e) => { setAudienceType(e.target.value as any); setIsDirty(true); }}
+                        onChange={(e) => { setAudienceType(e.target.value as 'all' | 'professionals' | 'kids' | 'seniors'); setIsDirty(true); }}
                         className="w-full px-4 py-2.5 rounded-xl border border-earth-200 bg-background text-xs"
                       >
                         <option value="all">General Public (All Ages)</option>
@@ -724,7 +724,7 @@ export function CategoryForm({
                       </label>
                       <select
                         value={setupType}
-                        onChange={(e) => { setSetupType(e.target.value as any); setIsDirty(true); }}
+                        onChange={(e) => { setSetupType(e.target.value as 'online' | 'in-person' | 'hybrid'); setIsDirty(true); }}
                         className="w-full px-4 py-2.5 rounded-xl border border-earth-200 bg-background text-xs"
                       >
                         <option value="hybrid">Hybrid (Both Online & On-site)</option>
@@ -740,7 +740,7 @@ export function CategoryForm({
                       </label>
                       <select
                         value={recurrence}
-                        onChange={(e) => { setRecurrence(e.target.value as any); setIsDirty(true); }}
+                        onChange={(e) => { setRecurrence(e.target.value as 'none' | 'daily' | 'weekly' | 'monthly'); setIsDirty(true); }}
                         className="w-full px-4 py-2.5 rounded-xl border border-earth-200 bg-background text-xs"
                       >
                         <option value="none">One-Time Special Gathering</option>
@@ -902,7 +902,7 @@ export function CategoryForm({
                     </label>
                     <select
                       value={faqAudience}
-                      onChange={(e) => { setFaqAudience(e.target.value as any); setIsDirty(true); }}
+                      onChange={(e) => { setFaqAudience(e.target.value as 'all' | 'registered' | 'premium'); setIsDirty(true); }}
                       className="w-full px-4 py-2.5 rounded-xl border border-earth-200 bg-background text-xs"
                     >
                       <option value="all">Anonymous (Visible to Guest Public)</option>
@@ -980,7 +980,7 @@ export function CategoryForm({
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 bg-card rounded-lg border border-earth-200/80 flex items-center justify-center text-primary-600 shadow-sm">
                     <AppIcon 
-                      name={(ICON_POOL.find((i: any) => i.name === icon)?.icon) || 'sliders'} 
+                      name={(ICON_POOL.find((i: { name: string; icon: string }) => i.name === icon)?.icon) || 'sliders'} 
                       className="h-4.5 w-4.5" 
                     />
                   </div>

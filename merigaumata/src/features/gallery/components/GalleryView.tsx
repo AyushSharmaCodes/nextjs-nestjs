@@ -123,7 +123,7 @@ export function GalleryView({ initialGalleries }: GalleryViewProps) {
                   autoFocus
                 />
               </div>
-              <div className="max-h-60 overflow-y-auto p-1">
+              <div className="max-h-60 overflow-y-auto p-1" data-lenis-prevent>
                 {filteredGalleries.length > 0 ? filteredGalleries.map(g => (
                   <button 
                     key={g.id} 

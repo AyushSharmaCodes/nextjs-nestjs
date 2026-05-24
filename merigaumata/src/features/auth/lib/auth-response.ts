@@ -59,10 +59,10 @@ function coerceAuthResponseData(value: unknown): AuthResponseData | null {
   };
 }
 
-export function extractAuthResponseData(payload: unknown): AuthResponseData | null {
-  if (isEnvelope<AuthResponseData>(payload)) {
-    return coerceAuthResponseData(payload.data);
+export function extractAuthResponseData(value: unknown): AuthResponseData | null {
+  if (isEnvelope<AuthResponseData>(value)) {
+    return coerceAuthResponseData(value.data);
   }
 
-  return coerceAuthResponseData(payload);
+  return coerceAuthResponseData(value);
 }

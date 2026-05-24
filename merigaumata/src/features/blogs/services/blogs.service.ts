@@ -11,7 +11,7 @@ export const blogsService = {
         return MOCK_BLOGS as BlogPost[];
       }
       return await blogsApi.getAll();
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API connection failed, falling back to mock blogs: {error}', {
         error: e instanceof Error ? e.message : String(e),
       });
@@ -25,7 +25,7 @@ export const blogsService = {
         return (MOCK_BLOGS as BlogPost[]).filter(b => b.featured);
       }
       return await blogsApi.getFeatured();
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API connection failed, falling back to mock featured blogs: {error}', {
         error: e instanceof Error ? e.message : String(e),
       });
@@ -40,7 +40,7 @@ export const blogsService = {
         return (MOCK_BLOGS as BlogPost[]).find(b => b.id === idNum);
       }
       return await blogsApi.getById(id);
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API connection failed for blog post {id}, falling back to mock detail: {error}', {
         id,
         error: e instanceof Error ? e.message : String(e),

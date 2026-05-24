@@ -135,7 +135,7 @@ export default function GlobalNavigationLoadingProvider({
         // Start premium loading feedback instantly (no startTransition delay)
         const loadingMsg = getRouteMessage(url.pathname);
         startLoading(loadingMsg);
-      } catch (err) {
+      } catch (err: unknown) {
         // Fallback for relative or parse errors
         logger.warn('URL parsing error in navigation handler: {error}', {
           error: err instanceof Error ? err.message : String(err),

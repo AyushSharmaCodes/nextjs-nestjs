@@ -95,9 +95,10 @@ export class BetterAuthGuard implements CanActivate {
     }
 
     // Enforce 2FA: if the user has 2FA enabled, the session must be verified
-    const userObj = session.user as Record<string, unknown>;
+    // We double cast through unknown because Better Auth's standard user object is less structured than our custom SessionUser.
+    const userObj = session.user as unknown as Partial<SessionUser>;
     const sessionObj = session.session as { twoFactorVerified?: boolean | null };
-    const twoFactorEnabled = userObj['twoFactorEnabled'] === true;
+    const twoFactorEnabled = userObj.twoFactorEnabled === true;
 
     if (twoFactorEnabled && !sessionObj.twoFactorVerified) {
       // Return 401 with the typed TOKEN_INVALID code so the frontend can
@@ -107,24 +108,25 @@ export class BetterAuthGuard implements CanActivate {
 
     // Populate request.user and request.session for downstream handlers
     const fName =
-      typeof userObj['firstName'] === 'string'
-        ? userObj['firstName']
+      typeof userObj.firstName === 'string'
+        ? userObj.firstName
         : typeof session.user.name === 'string'
           ? session.user.name
           : null;
     const lName =
-      typeof userObj['lastName'] === 'string' ? userObj['lastName'] : null;
+      typeof userObj.lastName === 'string' ? userObj.lastName : null;
     const role =
-      typeof userObj['role'] === 'string' ? userObj['role'] : 'CUSTOMER';
+      typeof userObj.role === 'string' ? userObj.role : 'CUSTOMER';
     const createdAt =
-      typeof userObj['createdAt'] === 'string'
-        ? userObj['createdAt']
+      typeof userObj.createdAt === 'string'
+        ? userObj.createdAt
         : new Date().toISOString();
     const lastLoginAt =
-      typeof userObj['lastLoginAt'] === 'string'
-        ? userObj['lastLoginAt']
+      typeof userObj.lastLoginAt === 'string'
+        ? userObj.lastLoginAt
         : null;
 
+    // We double cast through unknown to safely attach the strongly-typed authenticated user context to the incoming NestJS request object.
     (request as unknown as AuthenticatedRequest).user = {
       id: session.user.id,
       email: session.user.email,
@@ -138,6 +140,7 @@ export class BetterAuthGuard implements CanActivate {
       lastLoginAt,
     };
 
+    // We double cast through unknown to safely attach the strongly-typed session context to the incoming NestJS request object.
     (request as unknown as AuthenticatedRequest).session = {
       id:                session.session.id,
       expiresAt:         session.session.expiresAt,

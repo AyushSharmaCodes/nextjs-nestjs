@@ -6,10 +6,10 @@ import { loginSchema } from '../schemas/auth.schema';
 import { normalizeError } from '@/shared/lib/errors/api-error';
 
 export function usePasswordSignIn(
-  locale: string, 
+  locale: string,
   acceptedTerms: boolean,
   externalEmail?: string,
-  externalSetEmail?: (val: string) => void
+  externalSetEmail?: (val: string) => void,
 ) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -51,7 +51,10 @@ export function usePasswordSignIn(
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);
-      const errorKey = apiError.code && apiError.code !== 'UNKNOWN' && apiError.code !== 'AUTH_ERROR' ? apiError.code : apiError.message;
+      const errorKey =
+        apiError.code && apiError.code !== 'UNKNOWN' && apiError.code !== 'AUTH_ERROR'
+          ? apiError.code
+          : apiError.message;
       setError(errorKey);
       toast.error('Sign In Failed', { description: apiError.message });
     } finally {

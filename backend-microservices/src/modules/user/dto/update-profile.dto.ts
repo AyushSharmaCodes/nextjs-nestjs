@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MaxLength, IsEnum } from 'class-validator';
+import { IsString, IsOptional, MaxLength, IsInt, IsBoolean } from 'class-validator';
 
 export class UpdateProfileDto {
   @IsOptional()
@@ -13,7 +13,7 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsString()
-  gender?: string;
+  genderId?: string;
 
   @IsOptional()
   @IsString()
@@ -21,7 +21,28 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsString()
-  nationality?: string;
+  nationalityCountryCode?: string;
+
+  @IsOptional()
+  @IsString()
+  preferredCurrency?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  emailNotification?: boolean;
+
+  /**
+   * The `countries.id` integer FK that identifies which country's dial prefix
+   * (`phonecode`) applies to this phone number.
+   * Replaces the old free-text `phoneCode` string field.
+   */
+  @IsOptional()
+  @IsInt()
+  phoneCountryId?: number;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
 
   @IsOptional()
   @IsString()

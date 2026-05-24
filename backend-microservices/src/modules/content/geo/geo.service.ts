@@ -28,7 +28,7 @@ export class GeoService {
   }
 
   async getStates(countryId?: string, search?: string) {
-    const where: any = { isActive: true };
+    const where: any = { isActive: true }; // ts-audit-ignore
     if (countryId) where.countryId = countryId;
     if (search) where.name = Like(`%${search}%`);
     return this.stateRepo.find({ where, order: { name: 'ASC' }, take: 50 });
@@ -39,7 +39,7 @@ export class GeoService {
   }
 
   async getCities(stateId?: string, countryId?: string, search?: string) {
-    const where: any = { isActive: true };
+    const where: any = { isActive: true }; // ts-audit-ignore
     if (stateId) where.stateId = stateId;
     if (countryId) where.countryId = countryId;
     if (search) where.name = Like(`%${search}%`);

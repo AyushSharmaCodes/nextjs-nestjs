@@ -2,6 +2,9 @@
   "title": "Account Settings",
   "saveChanges": "Save Changes",
   "saving": "Saving...",
+  "cancel": "Cancel",
+  "edit": "Edit",
+  "processing": "Processing...",
   "personalDetails": {
     "title": "Personal Details",
     "desc": "Update your personal information and how we can reach you.",
@@ -40,5 +43,148 @@
       "defaultAddress": "Sector 45, Gurugram - India",
       "defaultTimeZone": "GMT+5:30 (India Standard Time)"
     }
+  },
+  "sidebar": {
+    "title": "My Account",
+    "details": "Profile Details",
+    "orders": "My Orders",
+    "events": "Event Bookings",
+    "welfare": "Cow Support",
+    "admin": {
+      "title": "Administrative",
+      "adminWorkspace": "Admin Workspace",
+      "managerWorkspace": "Manager Workspace",
+      "adminDesc": "Full sanctuary dashboard, manage products, events and set up manager accesses.",
+      "managerDesc": "View assigned administrative boards and cow sanctuary operations."
+    },
+    "signOut": "Sign Out",
+    "signingOut": "Signing out…"
+  },
+  "breadcrumb": {
+    "myAccount": "My Account",
+    "profile": "Profile"
+  },
+  "cover": {
+    "remove": "Remove cover",
+    "uploading": "Uploading...",
+    "change": "Change Cover",
+    "add": "Add Cover"
+  },
+  "avatar": {
+    "uploading": "Uploading...",
+    "defaultUser": "User"
+  },
+  "dangerZone": {
+    "title": "Delete Your Account",
+    "desc": "We will check if your account can be deleted",
+    "warning": "WARNING: THIS ACTION IS PERMANENT",
+    "profileDetails": "Personal profile and login details",
+    "addresses": "Saved addresses and payment methods",
+    "cart": "Shopping cart and wishlist items",
+    "btn": "Delete my account",
+    "confirmTitle": "Confirm Deletion",
+    "confirmDesc": "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+    "phraseLabel": "To verify, type {phrase} below:",
+    "phrasePlaceholder": "Type the phrase to confirm",
+    "passwordLabel": "Confirm Password",
+    "passwordPlaceholder": "Enter your password",
+    "permanentlyDelete": "Permanently Delete",
+    "alertInitiated": "Account deletion sequence initiated."
+  },
+  "personalForm": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "selectGender": "Select Gender",
+    "nationality": "Nationality",
+    "selectNationality": "Select Nationality",
+    "searchCountry": "Search country...",
+    "noCountries": "No countries found",
+    "address": "Address",
+    "phone": "Phone",
+    "selectCode": "Select Code",
+    "phonePlaceholder": "Subscriber number",
+    "changeEmail": "Change Email"
+  },
+  "accountForm": {
+    "created": "Account Created:",
+    "lastLogin": "Last Login:",
+    "verification": "Account Verification:",
+    "verified": "Verified",
+    "notVerified": "Not verified",
+    "timeZone": "Time Zone:"
+  },
+  "security": {
+    "title": "Security & Access",
+    "verified": "✓ Verified",
+    "notVerified": "⚠ Not Verified",
+    "sending": "Sending…",
+    "sendEmail": "Send Verification Email",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "updatePassword": "Update Password",
+    "setPassword": "Set Password",
+    "password": "Password:",
+    "noPassword": "No password set",
+    "changePassword": "Change Password",
+    "twoFactor": "Two-Factor Authentication:",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "setPasswordFirst": "Set a password first to enable 2FA",
+    "manage2fa": "Manage / Disable 2FA",
+    "enable2fa": "Enable 2FA"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "emailNotifications": "Email Notifications:",
+    "subscribed": "Subscribed",
+    "unsubscribed": "Unsubscribed",
+    "preferredCurrency": "Preferred Currency:"
+  },
+  "emailModal": {
+    "title": "Update Email Address",
+    "desc": "To change your email address, you must verify ownership of the new address.",
+    "newEmail": "New Email Address",
+    "newEmailPlaceholder": "name@example.com",
+    "confirmPassword": "Confirm Current Password",
+    "confirmPasswordPlaceholder": "••••••••",
+    "codeLabel": "Two-Factor Authenticator Code",
+    "codePlaceholder": "6-digit code",
+    "btn": "Update Email"
+  },
+  "toasts": {
+    "emailSuccess": "Email updated successfully!",
+    "emailSuccessDesc": "Your email address has been successfully updated.",
+    "signOutSuccess": "Signed out successfully",
+    "signOutSuccessDesc": "See you next time!",
+    "signOutFailed": "Sign out failed",
+    "signOutFailedDesc": "Please try again.",
+    "avatarSuccess": "Avatar updated successfully",
+    "avatarFailed": "Failed to update avatar",
+    "avatarRemoved": "Avatar removed",
+    "coverSuccess": "Cover photo updated successfully",
+    "coverFailed": "Failed to update cover photo",
+    "coverRemoved": "Cover photo removed",
+    "emailSubscribed": "Subscribed to email notifications",
+    "emailUnsubscribed": "Unsubscribed from email notifications",
+    "emailPrefFailed": "Failed to update email preferences",
+    "passwordsMismatch": "Passwords do not match",
+    "passwordFailed": "Password update failed",
+    "passwordFailedDesc": "Password update failed: {desc}",
+    "passwordSuccess": "Password updated",
+    "passwordSuccessDesc": "Your password has been changed successfully.",
+    "passwordSetSuccess": "Password set!",
+    "passwordSetSuccessDesc": "You can now enable Two-Factor Authentication.",
+    "verifyFailed": "Failed to send verification email",
+    "verifySuccess": "Verification email sent!",
+    "verifySuccessDesc": "Check your inbox at {email}",
+    "emailChangeVerifySuccess": "Verification email sent!",
+    "emailChangeVerifySuccessDesc": "We sent a link to {email} to verify ownership.",
+    "emailChangeIncorrectPassword": "Incorrect current password.",
+    "emailChange2faRequired": "2FA passcode is required.",
+    "emailChange2faInvalid": "Invalid 2FA passcode.",
+    "emailChangeFailed": "Failed to initiate email change."
   }
 }

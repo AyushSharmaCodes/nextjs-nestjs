@@ -116,7 +116,7 @@ export function NotificationDropdown() {
             </div>
 
             {/* List Body */}
-            <div className="max-h-[360px] overflow-y-auto divide-y divide-earth-100 dark:divide-earth-800/60 scrollbar-thin">
+            <div className="max-h-[360px] overflow-y-auto divide-y divide-earth-100 dark:divide-earth-800/60 scrollbar-thin" data-lenis-prevent>
               {isLoading ? (
                 <>
                   <NotificationItemSkeleton />

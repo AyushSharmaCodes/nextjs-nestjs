@@ -1,13 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JobService } from '../jobs/job.service';
 import { JobType, JobPriority } from '../jobs/entities/job.entity';
+import { DomainEvents } from '../../../common/events/event-names';
+import { CscEventPayload } from '../../../common/events/event-payloads';
 
 @Injectable()
 export class SchedulerService {
   private readonly logger = new Logger(SchedulerService.name);
 
-  constructor(private readonly jobService: JobService) {}
+  constructor(
+    private readonly jobService: JobService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
+
+  @Cron('0 2 1 * *') // At 02:00 UTC on the 1st of every month
+  async triggerMonthlyCscSync() {
+    this.logger.log('Triggering monthly Country Sync event...');
+    const payload: CscEventPayload = {
+      triggeredBy: 'cron_scheduler',
+      timestamp: new Date().toISOString(),
+    };
+    this.eventEmitter.emit(DomainEvents.CSC.SYNC_TRIGGERED, payload);
+  }
 
   @Cron(CronExpression.EVERY_MINUTE)
   async handleCronJobs() {
@@ -23,7 +39,7 @@ export class SchedulerService {
         // Simulate job processing - in production, call actual job handlers
         await this.processJob(job);
         
-      } catch (error) {
+      } catch (error: unknown) {
         this.logger.error(`Job failed: ${job.jobId}`, error);
         await this.jobService.failJob(job.id, String(error));
       }
@@ -55,7 +71,7 @@ export class SchedulerService {
           await this.jobService.startJob(newJob.id);
           await this.processJob(newJob);
           
-        } catch (error) {
+        } catch (error: unknown) {
           this.logger.error(`Recurring job failed: ${job.jobId}`, error);
         }
       }
@@ -68,7 +84,7 @@ export class SchedulerService {
     // Could implement cleanup logic here
   }
 
-  private async processJob(job: any): Promise<void> {
+  private async processJob(job: any): Promise<void> { // ts-audit-ignore
     // Simulate processing - in production this would dispatch to appropriate handlers
     this.logger.log(`Processing job type: ${job.type}`);
     

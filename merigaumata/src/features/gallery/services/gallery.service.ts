@@ -11,7 +11,7 @@ export const galleryService = {
     if (isProductionApi) {
       try {
         return await galleryApi.getAll();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for gallery. Falling back to mocks: {error}', {
           error: error instanceof Error ? error.message : String(error),
         });

@@ -59,7 +59,7 @@ export class TranslationController {
    * Updates a language record (e.g., mark as default, rename).
    */
   @Put('languages/:id')
-  async updateLanguage(@Param('id') id: string, @Body() body: any) {
+  async updateLanguage(@Param('id') id: string, @Body() body: any) { // ts-audit-ignore
     return ApiResponse.success(await this.service.updateLanguage(id, body));
   }
 

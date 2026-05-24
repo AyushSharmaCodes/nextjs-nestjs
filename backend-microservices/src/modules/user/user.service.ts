@@ -47,6 +47,10 @@ export class UserService {
     return this.getProfileQuery.execute(userId);
   }
 
+  async getGenders() {
+    return this.repository.findGenders();
+  }
+
   async listUsers(query: PaginationQueryDto) {
     return this.listUsersQuery.execute(query);
   }
@@ -104,7 +108,7 @@ export class UserService {
 
   async uploadAvatar(userId: string, file: { buffer: Buffer; mimetype: string }) {
     const profile = await this.getProfile(userId);
-    const ext = file.mimetype.split('/')[1];
+    const ext = file.mimetype.split('/')[1] || 'png';
     
     // Call storage service
     const path = await this.storage.uploadAvatar(userId, file.buffer, file.mimetype, ext);
@@ -129,7 +133,7 @@ export class UserService {
 
   async uploadCover(userId: string, file: { buffer: Buffer; mimetype: string }) {
     const profile = await this.getProfile(userId);
-    const ext = file.mimetype.split('/')[1];
+    const ext = file.mimetype.split('/')[1] || 'png';
     const path = await this.storage.uploadCover(userId, file.buffer, file.mimetype, ext);
     return this.repository.updateCoverPath(profile.id, path);
   }

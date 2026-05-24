@@ -282,7 +282,7 @@ const loadState = (): Category[] => {
   
   try {
     return JSON.parse(saved);
-  } catch (err) {
+  } catch (err: unknown) {
     logger.error(`Failed to parse categories store, falling back to seed data:: {error}`, { error: String(err) });
     return SEED_CATEGORIES;
   }

@@ -59,12 +59,12 @@ export class EmailAuditRepository {
     try {
       const raw = await this.prisma.emailAudit.create({
         data: {
-          id:        dto.id,
-          eventId:   dto.eventId,
+          id: dto.id,
+          eventId: dto.eventId,
           eventName: dto.eventName,
-          userId:    dto.userId,
-          toEmail:   dto.toEmail,
-          status:    dto.status,
+          userId: dto.userId,
+          toEmail: dto.toEmail,
+          status: dto.status,
           requestId: dto.requestId,
         },
       });
@@ -85,11 +85,11 @@ export class EmailAuditRepository {
       await this.prisma.emailAudit.update({
         where: { id },
         data: {
-          status:            dto.status,
+          status: dto.status,
           providerMessageId: dto.providerMessageId ?? undefined,
-          failReason:        dto.failReason ?? undefined,
-          sentAt:            dto.sentAt ? new Date(dto.sentAt) : undefined,
-          failedAt:          dto.failedAt ? new Date(dto.failedAt) : undefined,
+          failReason: dto.failReason ?? undefined,
+          sentAt: dto.sentAt ? new Date(dto.sentAt) : undefined,
+          failedAt: dto.failedAt ? new Date(dto.failedAt) : undefined,
         },
       });
     } catch (err: unknown) {
@@ -118,7 +118,7 @@ export class EmailAuditRepository {
   async findFailedSince(since: string): Promise<EmailAuditEntity[]> {
     const records = await this.prisma.emailAudit.findMany({
       where: {
-        status:    'FAILED',
+        status: 'FAILED',
         createdAt: { gte: new Date(since) },
       },
       orderBy: { createdAt: 'asc' },

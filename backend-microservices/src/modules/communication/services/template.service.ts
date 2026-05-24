@@ -21,33 +21,32 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as Handlebars from 'handlebars';
 import { ConfigService } from '@nestjs/config';
-import type { EmailTemplateName, TemplateContext, TemplateRenderResult } from '../types/email.types';
+import * as fs from 'fs';
+import * as Handlebars from 'handlebars';
+import * as path from 'path';
 import { COMM_ERROR_CODES } from '../constants/comm-error-codes.constant';
+import type { EmailTemplateName, TemplateContext, TemplateRenderResult } from '../types/email.types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Subject line map — English only
 // ─────────────────────────────────────────────────────────────────────────────
 
 const EMAIL_SUBJECTS: Record<EmailTemplateName, string> = {
-  'welcome':                    'Welcome to MeriGauMata!',
-  'email-verification':         'Verify Your MeriGauMata Email Address',
-  'password-reset':             'Reset Your MeriGauMata Password',
-  'otp':                        'Your MeriGauMata Verification Code',
-  'magic-link':                 'Your MeriGauMata Sign-In Link',
-  '2fa-code':                   'Your MeriGauMata Two-Factor Code',
-  '2fa-enabled':                'Two-Factor Authentication Enabled — MeriGauMata',
-  'google-linked':              'Google Account Linked to MeriGauMata',
-  'account-locked':             '⚠️ Your MeriGauMata Account Has Been Locked',
-  'account-unlocked':           'Your MeriGauMata Account Has Been Unlocked',
-  'suspicious-login':           '🔐 New Sign-In Detected on Your MeriGauMata Account',
+  welcome: 'Welcome to MeriGauMata!',
+  'email-verification': 'Verify Your MeriGauMata Email Address',
+  'password-reset': 'Reset Your MeriGauMata Password',
+  otp: 'Your MeriGauMata Verification Code',
+  'magic-link': 'Your MeriGauMata Sign-In Link',
+  '2fa-code': 'Your MeriGauMata Two-Factor Code',
+  '2fa-enabled': 'Two-Factor Authentication Enabled — MeriGauMata',
+  'google-linked': 'Google Account Linked to MeriGauMata',
+  'account-locked': '⚠️ Your MeriGauMata Account Has Been Locked',
+  'account-unlocked': 'Your MeriGauMata Account Has Been Unlocked',
+  'suspicious-login': '🔐 New Sign-In Detected on Your MeriGauMata Account',
   'suspicious-login-high-risk': '🚨 High-Risk Sign-In — Your MeriGauMata Session Was Revoked',
-  'email-change':               'Verify Your New Email Address — MeriGauMata',
+  'email-change': 'Verify Your New Email Address — MeriGauMata',
 };
-
 
 // Handlebars compiled template function type
 type HbsTemplate = (context: Record<string, unknown>) => string;
@@ -71,24 +70,16 @@ export class TemplateService {
    * @param _locale  - Accepted but unused; reserved for future multi-locale support
    * @param context  - Strictly typed template variables
    */
-  async render(
-    template: EmailTemplateName,
-    locale:   string,
-    context:  TemplateContext,
-  ): Promise<TemplateRenderResult> {
+  async render(template: EmailTemplateName, locale: string, context: TemplateContext): Promise<TemplateRenderResult> {
     const subject = EMAIL_SUBJECTS[template];
-    const html    = await this.renderHtml(template, locale, context);
-    const text    = this.htmlToPlainText(html);
+    const html = await this.renderHtml(template, locale, context);
+    const text = this.htmlToPlainText(html);
     return { subject, html, text };
   }
 
   // ── Private helpers ────────────────────────────────────────────────────────
 
-  private async renderHtml(
-    template: EmailTemplateName,
-    locale:   string,
-    context:  TemplateContext,
-  ): Promise<string> {
+  private async renderHtml(template: EmailTemplateName, locale: string, context: TemplateContext): Promise<string> {
     const compiledTemplate = await this.loadTemplate(template);
 
     if (!compiledTemplate) {
@@ -96,9 +87,7 @@ export class TemplateService {
         { commErrorCode: COMM_ERROR_CODES.TEMPLATE_NOT_FOUND.code, template },
         `TemplateService: ${COMM_ERROR_CODES.TEMPLATE_NOT_FOUND.message}`,
       );
-      throw new Error(
-        `${COMM_ERROR_CODES.TEMPLATE_NOT_FOUND.code}: template '${template}' not found`,
-      );
+      throw new Error(`${COMM_ERROR_CODES.TEMPLATE_NOT_FOUND.code}: template '${template}' not found`);
     }
 
     try {
@@ -109,15 +98,11 @@ export class TemplateService {
         `/${normalizedLocale}/auth/reset-password`,
         context.resetToken,
       );
-      const fallbackVerifyUrl = this.buildAuthUrl(
-        frontendUrl,
-        `/${normalizedLocale}/auth/verify`,
-        context.verifyToken,
-      );
+      const fallbackVerifyUrl = this.buildAuthUrl(frontendUrl, `/${normalizedLocale}/auth/verify`, context.verifyToken);
 
       return compiledTemplate({
         ...context,
-        year:        new Date().getFullYear(),
+        year: new Date().getFullYear(),
         frontendUrl,
         // Prefer auth-provider generated callback URLs and only fall back to local route reconstruction.
         resetUrl: context.resetUrl ?? fallbackResetUrl,
@@ -144,7 +129,7 @@ export class TemplateService {
     const filePath = path.join(this.templatesDir, `${template}.hbs`);
     if (!fs.existsSync(filePath)) return null;
 
-    const source   = await fs.promises.readFile(filePath, 'utf8');
+    const source = await fs.promises.readFile(filePath, 'utf8');
     const compiled = Handlebars.compile(source, { noEscape: false }) as HbsTemplate;
     this.templateCache.set(template, compiled);
     return compiled;

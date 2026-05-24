@@ -25,7 +25,7 @@ export default function EventCard({ event }: EventCardProps) {
     const parsedDate = new Date(startDate);
     month = format(parsedDate, 'MMM').toUpperCase();
     day = format(parsedDate, 'dd');
-  } catch (e) {
+  } catch (e: unknown) {
     // fallback
   }
 

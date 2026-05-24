@@ -24,7 +24,7 @@ export class EmailService {
     try {
       await this.mailService.sendMail({ to, subject, html, text });
       status = 'SENT';
-    } catch (e) {
+    } catch (e: unknown) {
       status = 'FAILED';
     }
 
@@ -84,7 +84,7 @@ export class EmailService {
         text: ''
       });
       status = 'SENT';
-    } catch (e) {
+    } catch (e: unknown) {
       status = 'FAILED';
     }
 
@@ -106,7 +106,7 @@ export class EmailService {
     return this.i18n.translate(key, { lang: resolvedLang, args });
   }
 
-  async createTemplate(data: any) {
+  async createTemplate(data: Partial<EmailTemplate>) {
     return this.templateRepo.save(this.templateRepo.create(data));
   }
 

@@ -27,6 +27,5 @@ export const mockDefaultProfilePersonal: PersonalDetails = {
 };
 
 export const mockDefaultProfileAccount: AccountDetails = {
-  displayName: 'MockData.profile.defaultName',
   timeZone: 'MockData.profile.defaultTimeZone'
 };

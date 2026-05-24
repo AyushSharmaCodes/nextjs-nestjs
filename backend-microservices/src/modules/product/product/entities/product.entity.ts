@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { ProductVariant } from './product-variant.entity';
 import { Category } from '../../category/entities/category.entity';
 
-@Entity('products')
+@Entity({ name: 'products', schema: 'app_product' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;

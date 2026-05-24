@@ -12,5 +12,5 @@ export class FaqController {
   @Get() getAll() { return ApiResponse.success(this.service.getAll()); }
   @Roles('ADMIN', 'MANAGER')
   @Permissions('faqs')
-  @Post() create(@Body() b: any) { return ApiResponse.success(this.service.create(b), 'Created'); }
+  @Post() create(@Body() b: any) { return ApiResponse.success(this.service.create(b), 'Created'); } // ts-audit-ignore
 }

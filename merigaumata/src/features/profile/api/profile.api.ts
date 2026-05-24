@@ -1,17 +1,34 @@
 import { apiInstance } from '@/shared/lib/api/axios';
-import { PersonalDetails, AccountDetails } from '../types/profile.types';
+import { logger } from '@/shared/lib/logger';
+import { PersonalDetails, AccountDetails, CountryOption, GenderOption } from '../types/profile.types';
 
 interface ProfileApiEnvelope<T> {
   success: boolean;
   data: T;
 }
 
+interface PhoneNumberEntry {
+  id: string;
+  /** FK into countries table — identifies which dial-code country is selected */
+  countryId: number | null;
+  number: string;
+  label: string;
+  isDefault: boolean;
+}
+
 interface BackendProfile {
   firstName?: string | null;
   lastName?: string | null;
   gender?: string | null;
+  genderId?: string | null;
   dob?: string | null;
   nationality?: string | null;
+  nationalityCountryCode?: string | null;
+  preferredCurrency?: string | null;
+  emailNotification?: boolean;
+  /** Derived convenience field returned by the mapper (JOIN on country.phonecode) */
+  phoneCode?: string | null;
+  phoneCountryId?: number | null;
   locale?: string | null;
   timezone?: string | null;
   phone?: string | null;
@@ -19,17 +36,11 @@ interface BackendProfile {
   lastLoginAt?: string | null;
   avatarUrl?: string | null;
   coverUrl?: string | null;
-  phoneNumbers?: Array<{
-    id: string;
-    number: string;
-    label: string;
-    isDefault: boolean;
-  }>;
+  phoneNumbers?: PhoneNumberEntry[];
 }
 
 function unwrapProfile<T>(payload: T | ProfileApiEnvelope<T>): T {
   if (!payload) return payload as T;
-  
   if (
     typeof payload === 'object' &&
     'success' in payload &&
@@ -41,51 +52,73 @@ function unwrapProfile<T>(payload: T | ProfileApiEnvelope<T>): T {
 }
 
 function toPersonalDetails(profile: BackendProfile): PersonalDetails {
-  console.debug('[ProfileMapper] Mapping toPersonalDetails from:', profile);
+  logger.debug('[ProfileMapper] Mapping toPersonalDetails from:', { profile });
   if (!profile) {
     return {
       firstName: '',
       lastName: '',
       dob: null,
       gender: null,
+      genderId: null,
       nationality: null,
+      nationalityCountryCode: null,
+      preferredCurrency: 'INR',
+      emailNotification: true,
+      phoneCountryId: null,
       address: '',
       phone: '',
     };
   }
 
-  const defaultPhone = profile.phoneNumbers?.find(p => p.isDefault)?.number 
-    || profile.phoneNumbers?.[0]?.number 
-    || profile.phone 
-    || '';
+  // Resolve the default phone number entry
+  const defaultPhoneEntry =
+    profile.phoneNumbers?.find(p => p.isDefault) ??
+    profile.phoneNumbers?.[0] ??
+    null;
+
+  const phoneCountryId = defaultPhoneEntry?.countryId ?? profile.phoneCountryId ?? null;
+
+  // The raw number stored in the DB may carry a country-code prefix if it was
+  // saved that way historically. Strip it using the derived phoneCode hint so we
+  // only keep the subscriber portion.
+  const rawNumber = defaultPhoneEntry?.number ?? profile.phone ?? '';
+  const phoneCodeHint = profile.phoneCode ?? ''; // e.g. "+91"
+  const codeWithoutPlus = phoneCodeHint.startsWith('+') ? phoneCodeHint.substring(1) : phoneCodeHint;
+  let cleanPhone = rawNumber;
+  if (phoneCodeHint && rawNumber.startsWith(phoneCodeHint)) {
+    cleanPhone = rawNumber.substring(phoneCodeHint.length).trim();
+  } else if (codeWithoutPlus && rawNumber.startsWith(codeWithoutPlus)) {
+    cleanPhone = rawNumber.substring(codeWithoutPlus.length).trim();
+  }
 
   return {
     firstName: profile.firstName ?? '',
     lastName: profile.lastName ?? '',
     dob: profile.dob ?? null,
     gender: profile.gender ?? null,
+    genderId: profile.genderId ?? null,
     nationality: profile.nationality ?? null,
-    address: 'Sector 45, Gurugram - India', 
-    phone: defaultPhone,
+    nationalityCountryCode: profile.nationalityCountryCode ?? null,
+    preferredCurrency: profile.preferredCurrency ?? 'INR',
+    emailNotification: profile.emailNotification ?? true,
+    phoneCountryId,
+    address: '',
+    phone: cleanPhone,
   };
 }
 
 function toAccountDetails(profile: BackendProfile): AccountDetails {
   if (!profile) {
-    return {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    };
+    return { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone };
   }
-
   return {
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     createdAt: profile.createdAt,
-    lastLogin: profile.lastLoginAt || undefined,
+    lastLogin: profile.lastLoginAt || ({} as { val?: string }).val,
   };
 }
 
 async function fetchProfile(): Promise<BackendProfile> {
-  // Backend UserController is mounted at /users — correct endpoint is /users/me
   const response = await apiInstance.get<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/users/me');
   return unwrapProfile(response.data);
 }
@@ -97,15 +130,19 @@ export const profileApi = {
   },
 
   updatePersonalDetails: async (data: PersonalDetails): Promise<PersonalDetails> => {
-    // PATCH /users/me — send fields that belong to User/Profile
     const response = await apiInstance.patch<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
       '/users/me',
       {
         firstName: data.firstName,
         lastName: data.lastName,
-        gender: data.gender,
+        genderId: data.genderId,
+        nationalityCountryCode: data.nationalityCountryCode,
+        preferredCurrency: data.preferredCurrency,
+        emailNotification: data.emailNotification,
+        // Send country FK integer instead of raw phone code string
+        phoneCountryId: data.phoneCountryId ?? ({} as { val?: number }).val,
+        phone: data.phone,
         dob: data.dob,
-        nationality: data.nationality,
       },
     );
     return toPersonalDetails(unwrapProfile(response.data));
@@ -117,13 +154,9 @@ export const profileApi = {
   },
 
   updateAccountDetails: async (data: AccountDetails): Promise<AccountDetails> => {
-    // PATCH /users/me — empty payload for now if only timezone was there, 
-    // but the backend controller might still handle other Profile fields.
     const response = await apiInstance.patch<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
       '/users/me',
-      {
-        // No fields to update for now in AccountDetails since timezone is local-only
-      },
+      {},
     );
     return toAccountDetails(unwrapProfile(response.data));
   },
@@ -142,7 +175,7 @@ export const profileApi = {
     const response = await apiInstance.post<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
       '/users/me/avatar',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+      { headers: { 'Content-Type': 'multipart/form-data' } },
     );
     return unwrapProfile(response.data);
   },
@@ -158,7 +191,7 @@ export const profileApi = {
     const response = await apiInstance.post<BackendProfile | ProfileApiEnvelope<BackendProfile>>(
       '/users/me/cover',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+      { headers: { 'Content-Type': 'multipart/form-data' } },
     );
     return unwrapProfile(response.data);
   },
@@ -167,4 +200,15 @@ export const profileApi = {
     const response = await apiInstance.delete<BackendProfile | ProfileApiEnvelope<BackendProfile>>('/users/me/cover');
     return unwrapProfile(response.data);
   },
+
+  fetchCountries: async (): Promise<CountryOption[]> => {
+    const response = await apiInstance.get<{ success: boolean; data: CountryOption[] }>('/countries');
+    return response.data.data;
+  },
+
+  fetchGenders: async (): Promise<GenderOption[]> => {
+    const response = await apiInstance.get<{ success: boolean; data: GenderOption[] }>('/users/genders');
+    return response.data.data;
+  },
 };
+

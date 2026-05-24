@@ -4,11 +4,13 @@ import { ApiResponse } from '../../../common/utils/api-response';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 
+import { ContactMessage } from '../email/entities/email.entity';
+
 @Controller('contact')
 export class ContactController {
   constructor(private readonly service: ContactService) {}
   @Public()
-  @Post() async create(@Body() body: any) { return ApiResponse.success(await this.service.createMessage(body), 'Message sent'); }
+  @Post() async create(@Body() body: Partial<ContactMessage>) { return ApiResponse.success(await this.service.createMessage(body), 'Message sent'); }
   @Roles('ADMIN')
   @Get() async get(@Body() body: { status?: string }) { return ApiResponse.success(await this.service.getMessages(body.status)); }
   @Roles('ADMIN')

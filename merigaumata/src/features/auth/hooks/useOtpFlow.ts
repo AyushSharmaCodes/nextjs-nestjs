@@ -6,10 +6,10 @@ import { otpSchema } from '../schemas/auth.schema';
 import { normalizeError } from '@/shared/lib/errors/api-error';
 
 export function useOtpFlow(
-  locale: string, 
+  locale: string,
   acceptedTerms: boolean,
   externalEmail?: string,
-  externalSetEmail?: (val: string) => void
+  externalSetEmail?: (val: string) => void,
 ) {
   const router = useRouter();
   const [localEmail, setLocalEmail] = useState('');

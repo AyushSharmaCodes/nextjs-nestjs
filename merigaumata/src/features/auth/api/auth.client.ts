@@ -18,19 +18,19 @@
  *  through this client so consumers have a single import point.
  */
 
-import { authClient } from '@/lib/auth-client';
 import { clientEnv } from '@/core/env/client';
 import { routing } from '@/i18n/routing';
+import { authClient } from '@/lib/auth-client';
+import { extractAuthResponseData } from '../lib/auth-response';
 import {
-  AuthApiError,
-  ApiSuccessResponse,
   ApiErrorResponse,
+  ApiSuccessResponse,
+  AuthApiError,
   AuthResponseData,
   UserResponseData,
   isAuthErrorCode,
   toUserId,
 } from '../types/auth.types';
-import { extractAuthResponseData } from '../lib/auth-response';
 
 // ---------------------------------------------------------------------------
 // Interface definition
@@ -47,18 +47,16 @@ export interface AuthApiClient {
   }): Promise<{ user: UserResponseData | null; requiresTwoFactor: boolean }>;
 
   /** Register a new account with email and password. */
-  register(payload: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }): Promise<void>;
+  register(payload: { email: string; password: string; firstName: string; lastName: string }): Promise<void>;
 
   /** Request a magic-link email. */
   requestMagicLink(email: string): Promise<void>;
 
   /** Request an email OTP code. */
-  requestOtp(email: string, type?: 'sign-in' | 'email-verification' | 'forget-password' | 'change-email'): Promise<void>;
+  requestOtp(
+    email: string,
+    type?: 'sign-in' | 'email-verification' | 'forget-password' | 'change-email',
+  ): Promise<void>;
 
   /** Verify an email OTP code and complete sign-in. */
   verifyOtp(payload: { email: string; otp: string }): Promise<void>;
@@ -86,10 +84,7 @@ export interface AuthApiClient {
  *  2. Parses the ApiSuccessResponse or ApiErrorResponse
  *  3. Throws AuthApiError on failures
  */
-async function apiFetch<T>(
-  path: string,
-  options?: RequestInit,
-): Promise<ApiSuccessResponse<T>> {
+async function apiFetch<T>(path: string, options?: RequestInit): Promise<ApiSuccessResponse<T>> {
   const baseUrl = clientEnv.NEXT_PUBLIC_API_URL;
   const url = `${baseUrl}${path}`;
 
@@ -102,7 +97,7 @@ async function apiFetch<T>(
     },
   });
 
-  const body = await response.json() as unknown;
+  const body = (await response.json()) as ApiSuccessResponse<T> | ApiErrorResponse;
 
   if (!response.ok) {
     const errorBody = body as ApiErrorResponse;
@@ -135,16 +130,11 @@ async function apiFetch<T>(
   };
 }
 
-/**
- * Normalize errors from the Better Auth SDK into AuthApiError.
- * Better Auth SDK returns `{ data, error }` — we extract the error.
- */
-function normalizeAuthClientError(error: unknown): never {
+function normalizeAuthClientError(error: { message?: string; code?: string; status?: number } | null): never {
   if (error && typeof error === 'object') {
-    const e = error as Record<string, unknown>;
-    const message = typeof e['message'] === 'string' ? e['message'] : 'Authentication error';
-    const code = typeof e['code'] === 'string' ? e['code'] : 'UNKNOWN';
-    const status = typeof e['status'] === 'number' ? e['status'] : 0;
+    const message = error.message || 'Authentication error';
+    const code = error.code || 'UNKNOWN';
+    const status = error.status || 0;
 
     throw new AuthApiError({
       message,
@@ -166,9 +156,7 @@ function resolveAuthRedirectUrl(path: string): string {
 
   if (typeof window !== 'undefined') {
     const [, maybeLocale] = window.location.pathname.split('/');
-    const locale = (routing.locales as readonly string[]).includes(maybeLocale)
-      ? maybeLocale
-      : null;
+    const locale = (routing.locales as readonly string[]).includes(maybeLocale) ? maybeLocale : null;
 
     return `${window.location.origin}${locale ? `/${locale}` : ''}${normalizedPath}`;
   }
@@ -176,41 +164,46 @@ function resolveAuthRedirectUrl(path: string): string {
   return `${clientEnv.NEXT_PUBLIC_APP_URL}${normalizedPath}`;
 }
 
-// ---------------------------------------------------------------------------
-// Typed auth response mapper
-// ---------------------------------------------------------------------------
+interface RawUserFields {
+  id?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  image?: string;
+  emailVerified?: boolean;
+  twoFactorEnabled?: boolean;
+  createdAt?: string;
+  lastLoginAt?: string;
+  updatedAt?: string;
+  role?: string;
+}
 
-function mapToUserResponseData(
-  rawUser: Record<string, unknown>,
-): UserResponseData {
-  const role = rawUser['role'];
-  const resolvedRole =
-    role === 'ADMIN' || role === 'MANAGER' || role === 'CUSTOMER'
-      ? role
-      : 'CUSTOMER';
+function mapToUserResponseData(rawUser: RawUserFields): UserResponseData {
+  const role = rawUser.role;
+  const resolvedRole = role === 'ADMIN' || role === 'MANAGER' || role === 'CUSTOMER' ? role : 'CUSTOMER';
 
   return {
-    userId: toUserId(String(rawUser['id'] ?? '')),
-    email: String(rawUser['email'] ?? ''),
+    userId: toUserId(String(rawUser.id ?? '')),
+    email: String(rawUser.email ?? ''),
     displayName: buildDisplayName(rawUser),
-    firstName: typeof rawUser['firstName'] === 'string' ? rawUser['firstName'] : null,
-    lastName: typeof rawUser['lastName'] === 'string' ? rawUser['lastName'] : null,
-    image: typeof rawUser['image'] === 'string' ? rawUser['image'] : null,
+    firstName: rawUser.firstName ?? null,
+    lastName: rawUser.lastName ?? null,
+    image: rawUser.image ?? null,
     role: resolvedRole,
-    emailVerified: Boolean(rawUser['emailVerified']),
-    twoFactorEnabled: Boolean(rawUser['twoFactorEnabled']),
-    createdAt: String(rawUser['createdAt'] ?? new Date().toISOString()),
-    lastLoginAt: typeof rawUser['lastLoginAt'] === 'string' ? rawUser['lastLoginAt'] : null,
-    updatedAt: String(rawUser['updatedAt'] ?? new Date().toISOString()),
+    emailVerified: Boolean(rawUser.emailVerified),
+    twoFactorEnabled: Boolean(rawUser.twoFactorEnabled),
+    createdAt: rawUser.createdAt ?? new Date().toISOString(),
+    lastLoginAt: rawUser.lastLoginAt ?? null,
+    updatedAt: rawUser.updatedAt ?? new Date().toISOString(),
   };
 }
 
-function buildDisplayName(raw: Record<string, unknown>): string {
-  const firstName = typeof raw['firstName'] === 'string' ? raw['firstName'] : '';
-  const lastName = typeof raw['lastName'] === 'string' ? raw['lastName'] : '';
+function buildDisplayName(raw: RawUserFields): string {
+  const firstName = raw.firstName || '';
+  const lastName = raw.lastName || '';
   const parts = [firstName, lastName].filter(Boolean);
   if (parts.length > 0) return parts.join(' ');
-  const email = String(raw['email'] ?? '');
+  const email = raw.email || '';
   return email.split('@')[0] ?? email;
 }
 
@@ -258,7 +251,8 @@ export const authApiClient: AuthApiClient = {
       return { user: null, requiresTwoFactor: true };
     }
 
-    const rawUser = result.data.user as Record<string, unknown>;
+    // We double cast through unknown because Better Auth returns a partial raw user object whose keys are checked at runtime.
+    const rawUser = result.data.user as unknown as RawUserFields;
     return {
       user: mapToUserResponseData(rawUser),
       requiresTwoFactor: false,
@@ -266,12 +260,7 @@ export const authApiClient: AuthApiClient = {
   },
 
   // ─── Register ────────────────────────────────────────────────────────────
-  async register(payload: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }): Promise<void> {
+  async register(payload: { email: string; password: string; firstName: string; lastName: string }): Promise<void> {
     const result = await authClient.signUp.email({
       email: payload.email,
       password: payload.password,
@@ -318,7 +307,14 @@ export const authApiClient: AuthApiClient = {
 
   // ─── Password reset ───────────────────────────────────────────────────────
   async requestPasswordReset(email: string): Promise<void> {
-    const result = await (authClient as any).forgetPassword({
+    // We double cast through unknown to access dynamic methods on Better Auth client namespace that are not exposed in standard types.
+    const client = authClient as unknown as {
+      forgetPassword: (options: { email: string; redirectTo: string }) => Promise<{
+        data: null;
+        error: { message?: string; code?: string; status?: number } | null;
+      }>;
+    };
+    const result = await client.forgetPassword({
       email,
       redirectTo: resolveAuthRedirectUrl('/auth/reset-password'),
     });
@@ -327,10 +323,7 @@ export const authApiClient: AuthApiClient = {
     }
   },
 
-  async resetPassword(payload: {
-    token: string;
-    newPassword: string;
-  }): Promise<void> {
+  async resetPassword(payload: { token: string; newPassword: string }): Promise<void> {
     const result = await authClient.resetPassword({
       newPassword: payload.newPassword,
       token: payload.token,

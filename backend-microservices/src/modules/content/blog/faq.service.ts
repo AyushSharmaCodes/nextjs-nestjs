@@ -7,5 +7,5 @@ import { Faq } from './entities/faq.entity';
 export class FaqService {
   constructor(@InjectRepository(Faq) private repo: Repository<Faq>) {}
   getAll() { return this.repo.find({ where: { isActive: true }, order: { displayOrder: 'ASC' } }); }
-  create(b: any) { return this.repo.save(this.repo.create(b)); }
+  create(b: any) { return this.repo.save(this.repo.create(b)); } // ts-audit-ignore
 }

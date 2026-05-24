@@ -16,9 +16,13 @@ model User {
   twoFactorEnabled Boolean  @default(false)
   image            String?
   role             String   @default("CUSTOMER")
-  gender           String?
+  genderId         String?  @map("gender_id")
+  genderRelation   Gender?  @relation("UserGender", fields: [genderId], references: [id], onDelete: Restrict)
   dob              DateTime?
-  nationality      String?
+  nationalityCountryCode String? @map("nationality_country_code") @db.Char(2)
+  nationalityCountry     Country? @relation("UserNationality", fields: [nationalityCountryCode], references: [iso2], onDelete: Restrict)
+  preferredCurrency String?  @map("preferred_currency") @db.VarChar(10)
+  emailNotification Boolean  @default(true) @map("email_notification")
   lastLoginAt      DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -33,7 +37,18 @@ model User {
   profile         Profile?
 
   @@index([role])
+  @@index([genderId])
+  @@index([nationalityCountryCode])
   @@map("user")
+  @@schema("app_auth")
+}
+
+model Gender {
+  id    String @id @default(uuid())
+  name  String @unique @db.VarChar(50)
+  users User[] @relation("UserGender")
+
+  @@map("genders")
   @@schema("app_auth")
 }
 
@@ -368,12 +383,15 @@ model UserPhoneNumber {
   id        String   @id @default(uuid())
   profileId String
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  countryId Int?     @map("country_id")
+  country   Country? @relation("PhoneNumberCountry", fields: [countryId], references: [id], onDelete: SetNull)
   number    String
   label     String   @default("MOBILE") // MOBILE, HOME, WORK, etc.
   isDefault Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([countryId])
   @@map("user_phone_numbers")
   @@schema("app_user")
 }
@@ -473,3 +491,36 @@ model AdminActivityLog {
   @@map("admin_activity_log")
   @@schema("app_user")
 }
+
+model Country {
+  id          Int      @id
+  iso2        String   @unique @db.Char(2)
+  iso3        String   @unique @db.Char(3)
+  name        String   @db.VarChar(100)
+  phonecode   String?  @db.VarChar(20)
+  capital     String?  @db.VarChar(100)
+  currency    String?  @db.VarChar(10)
+  native      String?  @db.VarChar(100)
+  emoji       String?  @db.VarChar(10)
+  latitude    String?  @db.VarChar(20)
+  longitude   String?  @db.VarChar(20)
+  region      String?  @db.VarChar(50)
+  regionId    Int?     @map("region_id")
+  subregion   String?  @db.VarChar(100)
+  subregionId Int?     @map("subregion_id")
+  timezones   Json?
+  syncedAt    DateTime @default(now()) @map("synced_at") @db.Timestamptz
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  nationalityUsers User[] @relation("UserNationality")
+  phoneNumbers     UserPhoneNumber[] @relation("PhoneNumberCountry")
+
+  @@index([iso2])
+  @@index([iso3])
+  @@index([region])
+  @@index([syncedAt])
+  @@map("countries")
+  @@schema("app_user")
+}
+

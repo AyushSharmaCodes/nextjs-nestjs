@@ -40,4 +40,7 @@ export const DomainEvents = {
     EMAIL_QUEUED: 'communication.email.queued',
     NOTIFICATION_SENT: 'communication.notification.sent',
   },
+  CSC: {
+    SYNC_TRIGGERED: 'csc.sync.triggered',
+  },
 } as const;

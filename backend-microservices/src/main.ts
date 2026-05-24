@@ -56,7 +56,7 @@ async function bootstrap(): Promise<void> {
   // 5. CORS
   // ═══════════════════════════════════════
   app.enableCors({
-    origin: (origin: string, callback: (err: Error | null, allow: boolean) => void) => {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow: boolean) => void) => {
       // Allow requests with no origin (like curl or direct server-to-server calls)
       if (!origin) {
         callback(null, true);
@@ -128,7 +128,7 @@ async function bootstrap(): Promise<void> {
       await app.close();
       appLogger.log('Graceful shutdown complete.');
       process.exit(0);
-    } catch (err) {
+    } catch (err: unknown) {
       appLogger.error('Failed to shut down gracefully:', err);
       process.exit(1);
     }

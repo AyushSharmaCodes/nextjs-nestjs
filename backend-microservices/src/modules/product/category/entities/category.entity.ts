@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
-@Entity('categories')
+@Entity({ name: 'categories', schema: 'app_product' })
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;

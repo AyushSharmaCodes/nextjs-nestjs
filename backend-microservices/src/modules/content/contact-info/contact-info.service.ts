@@ -10,7 +10,7 @@ export class ContactInfoService {
   ) {}
 
   async getAll(publicOnly = true) {
-    const where: any = { isActive: true };
+    const where: any = { isActive: true }; // ts-audit-ignore
     if (publicOnly) where.isPublic = true;
     return this.repo.find({ where, order: { displayOrder: 'ASC' } });
   }

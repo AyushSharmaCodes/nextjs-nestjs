@@ -21,16 +21,29 @@ import { ApiEnvelope, PaginatedResponse } from './response/api-envelope.response
 import { ProfileResponse } from './response/profile.response';
 import { AddressResponse } from './response/address.response';
 import { UserPhoneNumber } from '@prisma/client';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Users')
 @ApiBearerAuth()
 @UseFilters(UserExceptionFilter)
+
 @Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly i18n: I18nService,
   ) {}
+
+  @Public()
+  @Get('genders')
+  @ApiOperation({ summary: 'Get list of genders' })
+  async getGenders() {
+    const genders = await this.userService.getGenders();
+    return {
+      success: true,
+      data: genders,
+    };
+  }
 
   @Get('me')
   @ApiOperation({ summary: 'Get current user profile' })

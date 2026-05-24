@@ -1,7 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, QueryKey } from '@tanstack/react-query';
 import { notificationsApi } from '../api/notifications.api';
 import { GetNotificationsQuery, PaginatedNotifications, BulkActionDto, Notification, NotificationStats } from '../types';
 import { useEffect } from 'react';
+
+interface MutationContext {
+  previousQueries: [QueryKey, PaginatedNotifications | undefined][];
+  previousStats?: NotificationStats;
+}
 
 export const notificationKeys = {
   all: ['notifications'] as const,
@@ -71,9 +76,9 @@ export function useMarkNotificationsReadMutation() {
 
       return { previousQueries, previousStats };
     },
-    onError: (err, ids, context: any) => {
+    onError: (_err, _ids, context?: MutationContext) => {
       if (context?.previousQueries) {
-        context.previousQueries.forEach(([key, value]: [any, any]) => {
+        context.previousQueries.forEach(([key, value]) => {
           queryClient.setQueryData(key, value);
         });
       }
@@ -121,9 +126,9 @@ export function useMarkAllNotificationsReadMutation() {
 
       return { previousQueries, previousStats };
     },
-    onError: (err, variables, context: any) => {
+    onError: (_err, _variables, context?: MutationContext) => {
       if (context?.previousQueries) {
-        context.previousQueries.forEach(([key, value]: [any, any]) => {
+        context.previousQueries.forEach(([key, value]) => {
           queryClient.setQueryData(key, value);
         });
       }
@@ -168,9 +173,9 @@ export function useDeleteNotificationsMutation() {
 
       return { previousQueries, previousStats };
     },
-    onError: (err, ids, context: any) => {
+    onError: (_err, _ids, context?: MutationContext) => {
       if (context?.previousQueries) {
-        context.previousQueries.forEach(([key, value]: [any, any]) => {
+        context.previousQueries.forEach(([key, value]) => {
           queryClient.setQueryData(key, value);
         });
       }

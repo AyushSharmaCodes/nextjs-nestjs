@@ -15,6 +15,7 @@ import { PrismaModule } from './infrastructure/database/prisma/prisma.module';
 import { MailModule } from './infrastructure/mail/mail.module';
 
 // Domain modules
+import { AiModule } from './modules/ai/ai.module';
 import { AuthDomainModule } from './modules/auth/auth-domain.module';
 import { UserModule } from './modules/user/user.module';
 import { ProductDomainModule } from './modules/product/product-domain.module';
@@ -27,6 +28,7 @@ import { StorageDomainModule } from './modules/storage/storage-domain.module';
 import { EventDomainModule } from './modules/event/event-domain.module';
 import { AnalyticsDomainModule } from './modules/analytics/analytics-domain.module';
 import { CronDomainModule } from './modules/cron/cron-domain.module';
+import { CscModule } from './modules/csc/csc.module';
 
 // Shared providers
 import { TracingInterceptor } from './common/interceptors/tracing.interceptor';
@@ -72,6 +74,7 @@ import { ManagerPermissionsGuard } from './modules/auth/guards/manager-permissio
     // ═══════════════════════════════════════
     // DOMAIN MODULES
     // ═══════════════════════════════════════
+    AiModule,
     AuthDomainModule,
     UserModule,
     ProductDomainModule,
@@ -84,6 +87,7 @@ import { ManagerPermissionsGuard } from './modules/auth/guards/manager-permissio
     EventDomainModule,
     AnalyticsDomainModule,
     CronDomainModule,
+    CscModule,
   ],
   providers: [
     // Global throttler guard

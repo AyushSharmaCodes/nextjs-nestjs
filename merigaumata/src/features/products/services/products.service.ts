@@ -47,7 +47,7 @@ const loadState = (): Product[] => {
   
   try {
     return JSON.parse(saved);
-  } catch (err) {
+  } catch (err: unknown) {
     logger.error(`Failed to parse products store, falling back to seed mock:: {error}`, { error: String(err) });
     return MOCK_PRODUCTS;
   }
@@ -67,7 +67,7 @@ export const productsService = {
         const products = await productsApi.getProducts(query);
         return { products, total: products.length }; // Simplified for now
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API getProducts failed, falling back to mock: {error}', { error: String(e) });
     }
 
@@ -86,7 +86,7 @@ export const productsService = {
       if (env.NEXT_PUBLIC_API_URL) {
         return await productsApi.getFeaturedProducts();
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API getFeaturedProducts failed, falling back to mock: {error}', { error: String(e) });
     }
 
@@ -99,7 +99,7 @@ export const productsService = {
       if (env.NEXT_PUBLIC_API_URL) {
         return await productsApi.getProductById(id);
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API getProductById failed for {id}, falling back to mock: {error}', { id, error: String(e) });
     }
 
@@ -114,7 +114,7 @@ export const productsService = {
       if (env.NEXT_PUBLIC_API_URL) {
         return await productsApi.getProductFilters();
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API getProductFilters failed, falling back to mock: {error}', { error: String(e) });
     }
 
@@ -127,7 +127,7 @@ export const productsService = {
       if (env.NEXT_PUBLIC_API_URL) {
         return await productsApi.getProductReviews(productId, category);
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API getProductReviews failed, falling back to mock: {error}', { error: String(e) });
     }
 
@@ -140,7 +140,7 @@ export const productsService = {
       if (env.NEXT_PUBLIC_API_URL) {
         return await productsApi.createProductReview(productId, input);
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API createProductReview failed, falling back to mock: {error}', { error: String(e) });
     }
 

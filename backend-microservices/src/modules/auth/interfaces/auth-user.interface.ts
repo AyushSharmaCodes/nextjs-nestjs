@@ -33,9 +33,5 @@ export interface AuthUser {
 export function isAuthUser(value: unknown): value is AuthUser {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
-  return (
-    typeof v['id'] === 'string' &&
-    typeof v['email'] === 'string' &&
-    typeof v['emailVerified'] === 'boolean'
-  );
+  return typeof v.id === 'string' && typeof v.email === 'string' && typeof v.emailVerified === 'boolean';
 }

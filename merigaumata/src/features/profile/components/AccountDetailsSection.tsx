@@ -47,7 +47,7 @@ export function AccountDetailsSection({
             onClick={() => { setIsEditingAccount(true); setTempAccountDetails(accountDetails); }} 
             className="text-neutral-500 hover:text-foreground transition-colors flex items-center gap-1.5 text-sm font-medium focus:outline-none"
           >
-            <AppIcon name="edit2" size="xs" /> Edit
+            <AppIcon name="edit2" size="xs" /> {t('edit')}
           </button>
         )}
       </div>
@@ -59,7 +59,7 @@ export function AccountDetailsSection({
                 onClick={() => setIsEditingAccount(false)} 
                 className="px-4 py-2 text-sm font-medium text-neutral-600 hover:text-foreground transition-colors focus:outline-none"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button 
                 onClick={saveAccountDetails} 
@@ -72,9 +72,9 @@ export function AccountDetailsSection({
           </div>
         ) : (
           <>
-            <DetailRow label="Account Created:" value={accountDetails.createdAt ? new Date(accountDetails.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'}) : '—'} />
-            <DetailRow label="Last Login:" value={accountDetails.lastLogin ? new Date(accountDetails.lastLogin).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : '—'} />
-            <DetailRow label="Account Verification:" value={
+            <DetailRow label={t('accountForm.created')} value={accountDetails.createdAt ? new Date(accountDetails.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'}) : '—'} />
+            <DetailRow label={t('accountForm.lastLogin')} value={accountDetails.lastLogin ? new Date(accountDetails.lastLogin).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : '—'} />
+            <DetailRow label={t('accountForm.verification')} value={
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium border ${
                   emailVerified
@@ -82,10 +82,10 @@ export function AccountDetailsSection({
                     : 'bg-amber-50 text-amber-700 border-amber-200/50 dark:bg-amber-950/20 dark:text-amber-300 dark:border-amber-800/30'
                 }`}
               >
-                {emailVerified ? 'Verified' : 'Not verified'}
+                {emailVerified ? t('accountForm.verified') : t('accountForm.notVerified')}
               </span>
             } />
-            <DetailRow label="Time Zone:" value={accountDetails.timeZone} />
+            <DetailRow label={t('accountForm.timeZone')} value={accountDetails.timeZone} />
           </>
         )}
       </div>

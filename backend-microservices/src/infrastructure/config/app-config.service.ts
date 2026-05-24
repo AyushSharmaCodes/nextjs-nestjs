@@ -172,4 +172,42 @@ export class AppConfigService {
   get throttleAuthLimit(): number {
     return this.config.get('THROTTLE_AUTH_LIMIT', { infer: true });
   }
+
+  // ─── Country State City API ────────────────────────────────────────────────
+  get countryApiBaseUrl(): string {
+    return this.config.get('COUNTRY_API_BASE_URL', { infer: true });
+  }
+
+  get countryApiKey(): string {
+    return this.config.get('COUNTRY_API_KEY', { infer: true });
+  }
+
+  get cronSecret(): string {
+    return this.config.get('CRON_SECRET', { infer: true });
+  }
+
+  // ─── NVIDIA NIM ────────────────────────────────────────────────────────────
+  get nvidiaNimBaseUrl(): string {
+    return this.config.get('NVIDIA_NIM_BASE_URL', { infer: true });
+  }
+
+  get nvidiaNimApiKey(): string {
+    return this.config.get('NVIDIA_NIM_API_KEY', { infer: true });
+  }
+
+  get nvidiaNimDefaultModel(): string {
+    return this.config.get('NVIDIA_NIM_DEFAULT_MODEL', { infer: true });
+  }
+
+  get nvidiaNimMaxTokens(): number {
+    return this.config.get('NVIDIA_NIM_MAX_TOKENS', { infer: true });
+  }
+
+  get nvidiaNimTimeoutMs(): number {
+    return this.config.get('NVIDIA_NIM_TIMEOUT_MS', { infer: true });
+  }
+
+  get nvidiaNimTemperature(): number {
+    return this.config.get('NVIDIA_NIM_TEMPERATURE', { infer: true });
+  }
 }

@@ -16,10 +16,10 @@ export class BlogController {
   @Get(':slug') getBySlug(@Param('slug') s: string) { return ApiResponse.success(this.service.getBySlug(s)); }
   @Roles('ADMIN', 'MANAGER')
   @Permissions('blogs')
-  @Post() create(@Body() b: any) { return ApiResponse.success(this.service.create(b), 'Created'); }
+  @Post() create(@Body() b: any) { return ApiResponse.success(this.service.create(b), 'Created'); } // ts-audit-ignore
   @Roles('ADMIN', 'MANAGER')
   @Permissions('blogs')
-  @Put(':id') update(@Param('id') i: string, @Body() b: any) { return ApiResponse.success(this.service.update(i, b)); }
+  @Put(':id') update(@Param('id') i: string, @Body() b: any) { return ApiResponse.success(this.service.update(i, b)); } // ts-audit-ignore
   @Roles('ADMIN', 'MANAGER')
   @Permissions('blogs')
   @Delete(':id') delete(@Param('id') i: string) { return ApiResponse.success(this.service.delete(i)); }

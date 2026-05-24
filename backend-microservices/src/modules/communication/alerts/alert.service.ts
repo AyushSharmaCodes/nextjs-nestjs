@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { AdminAlert, AlertStatus } from './entities/alert.entity';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { AdminAlert, AlertStatus, AlertType, AlertPriority } from './entities/alert.entity';
 
 @Injectable()
 export class AlertService {
-  constructor(
-    @InjectRepository(AdminAlert) private alertRepo: Repository<AdminAlert>,
-  ) {}
+  constructor(@InjectRepository(AdminAlert) private alertRepo: Repository<AdminAlert>) {}
 
   async create(data: Partial<AdminAlert>) {
     return this.alertRepo.save(this.alertRepo.create(data));
   }
 
-  async getAll(filters?: { status?: AlertStatus; type?: string; priority?: string }) {
-    const where: any = {};
+  async getAll(filters?: { status?: AlertStatus; type?: AlertType; priority?: AlertPriority }) {
+    const where: FindOptionsWhere<AdminAlert> = {};
     if (filters?.status) where.status = filters.status;
     if (filters?.type) where.type = filters.type;
     if (filters?.priority) where.priority = filters.priority;
@@ -35,10 +33,10 @@ export class AlertService {
   }
 
   async resolve(id: string, resolvedBy: string) {
-    await this.alertRepo.update(id, { 
-      status: AlertStatus.RESOLVED, 
-      resolvedBy, 
-      resolvedAt: new Date() 
+    await this.alertRepo.update(id, {
+      status: AlertStatus.RESOLVED,
+      resolvedBy,
+      resolvedAt: new Date(),
     });
     return this.alertRepo.findOne({ where: { id } });
   }

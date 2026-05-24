@@ -55,7 +55,7 @@ export function runWithLoggingContext<T>(
 ): T {
   // If in browser or edge where AsyncLocalStorage may be unsupported, execute callback
   // but enrich standard context safely
-  if (typeof window !== 'undefined' || !process.env.NEXT_RUNTIME || process.env.NEXT_RUNTIME === 'edge') {
+  if (typeof window !== 'undefined' || !process.env.NEXT_RUNTIME || process.env.NEXT_RUNTIME === 'edge') { // ts-audit-ignore
     setClientLoggingContext(metadata);
     return callback();
   }

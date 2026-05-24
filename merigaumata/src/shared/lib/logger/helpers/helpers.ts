@@ -50,7 +50,7 @@ export function tracePerformance<T>(
 
     logResult(performance.now() - start, false);
     return result;
-  } catch (err) {
+  } catch (err: unknown) {
     logResult(performance.now() - start, true);
     throw err;
   }

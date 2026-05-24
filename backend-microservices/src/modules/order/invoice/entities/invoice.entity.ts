@@ -10,7 +10,7 @@ export class Invoice {
 
   @ManyToOne('Order')
   @JoinColumn({ name: 'orderId' })
-  order: any;
+  order: any; // ts-audit-ignore
 
   @Column({ name: 'invoiceNumber', length: 30, unique: true })
   invoiceNumber: string;

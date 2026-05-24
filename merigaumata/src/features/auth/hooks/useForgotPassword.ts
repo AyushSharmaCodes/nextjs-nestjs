@@ -5,10 +5,10 @@ import { toast } from '@/shared/lib/toast';
 import { normalizeError } from '@/shared/lib/errors/api-error';
 
 export function useForgotPassword(
-  locale: string, 
+  locale: string,
   acceptedTerms: boolean,
   externalEmail?: string,
-  externalSetEmail?: (val: string) => void
+  externalSetEmail?: (val: string) => void,
 ) {
   const [localEmail, setLocalEmail] = useState('');
   const [loading, setLoading] = useState(false);

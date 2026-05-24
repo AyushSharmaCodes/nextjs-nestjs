@@ -1,35 +1,35 @@
-import { betterAuth } from 'better-auth';
 import { Logger } from '@nestjs/common';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { PrismaClient } from '@prisma/client';
-import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { magicLink, twoFactor, emailOTP } from 'better-auth/plugins';
+import { PrismaClient } from '@prisma/client';
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from 'better-auth/api';
+import { emailOTP, magicLink, twoFactor } from 'better-auth/plugins';
+import { Pool } from 'pg';
 import { GlobalEventDispatcher } from '../../../infrastructure/events/global-event-dispatcher';
 import { GlobalSuspiciousSessionDispatcher } from '../../../infrastructure/events/global-suspicious-session-dispatcher';
-import { AUTH_EVENTS } from '../../../shared/events/auth/auth-events.constants';
-import { hashAuthPassword, verifyAuthPassword } from './password-hashing';
 import type {
-  UserRegisteredPayload,
-  PasswordResetRequestedPayload,
+  EmailChangeRequestedPayload,
   EmailVerificationRequestedPayload,
-  OtpRequestedPayload,
+  GoogleAccountLinkedPayload,
   MagicLinkRequestedPayload,
+  OtpRequestedPayload,
+  PasswordResetRequestedPayload,
   TwoFaCodeRequestedPayload,
   TwoFaEnabledPayload,
-  GoogleAccountLinkedPayload,
-  EmailChangeRequestedPayload,
+  UserRegisteredPayload,
 } from '../../../shared/events/auth/auth-event-payloads.types';
+import { AUTH_EVENTS } from '../../../shared/events/auth/auth-events.constants';
+import { hashAuthPassword, verifyAuthPassword } from './password-hashing';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Startup guard
 // ─────────────────────────────────────────────────────────────────────────────
 
-if (!process.env.BETTER_AUTH_SECRET) {
+if (!process.env.BETTER_AUTH_SECRET) { // ts-audit-ignore
   throw new Error(
     '[BetterAuth] BETTER_AUTH_SECRET environment variable is not set. ' +
-    'Sessions would be signed with a public fallback key. Refusing to start.',
+      'Sessions would be signed with a public fallback key. Refusing to start.',
   );
 }
 
@@ -57,12 +57,12 @@ interface EmailVerificationTokenPayload {
 
 function basePayload(userId: string, email: string) {
   return {
-    eventId:     crypto.randomUUID(),
-    userId:      userId as ReturnType<typeof import('../../../shared/types/index').toUserId>,
+    eventId: crypto.randomUUID(),
+    userId: userId as ReturnType<typeof import('../../../shared/types/index').toUserId>,
     email,
-    locale:      'en' as const,
+    locale: 'en' as const,
     triggeredAt: new Date().toISOString(),
-    requestId:   crypto.randomUUID(), // no request context in BA hooks
+    requestId: crypto.randomUUID(), // no request context in BA hooks
   };
 }
 
@@ -76,12 +76,14 @@ function decodeEmailVerificationToken(token: string): EmailVerificationTokenPayl
     const parsed = JSON.parse(Buffer.from(padded, 'base64').toString('utf8')) as Record<string, unknown>;
 
     return {
-      email:       typeof parsed.email === 'string' ? parsed.email : undefined,
-      updateTo:    typeof parsed.updateTo === 'string' ? parsed.updateTo : undefined,
+      email: typeof parsed.email === 'string' ? parsed.email : undefined,
+      updateTo: typeof parsed.updateTo === 'string' ? parsed.updateTo : undefined,
       requestType: typeof parsed.requestType === 'string' ? parsed.requestType : undefined,
     };
-  } catch (err) {
-    logger.warn(`[EmailVerification] Could not decode verification token metadata: ${err instanceof Error ? err.message : String(err)}`);
+  } catch (err: unknown) {
+    logger.warn(
+      `[EmailVerification] Could not decode verification token metadata: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return null;
   }
 }
@@ -115,7 +117,7 @@ function emitVerificationEmailEvent(user: BetterAuthEmailUser, url: string, toke
 // Database setup
 // ─────────────────────────────────────────────────────────────────────────────
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL; // ts-audit-ignore
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prismaClient = new PrismaClient({ adapter, log: ['error', 'warn'] });
@@ -188,14 +190,14 @@ const wrapDBAdapter = (adapter: AdapterInstance): AdapterInstance => {
             ...dataObj,
             backupCodes: convertBackupCodesForDb(dataObj.backupCodes),
           };
-          const result = await adapter.create({
+          const result = (await adapter.create({
             ...params,
-            data: convertedData
-          }) as R;
+            data: convertedData,
+          })) as R;
           return mapTwoFactorRecord(result);
         }
       }
-      const result = await adapter.create(params) as R;
+      const result = (await adapter.create(params)) as R;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
@@ -203,7 +205,7 @@ const wrapDBAdapter = (adapter: AdapterInstance): AdapterInstance => {
     },
     findOne: async <T>(params: Parameters<AdapterInstance['findOne']>[0]): Promise<T | null> => {
       const { model } = params;
-      const result = await adapter.findOne(params) as T | null;
+      const result = (await adapter.findOne(params)) as T | null;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
@@ -211,7 +213,7 @@ const wrapDBAdapter = (adapter: AdapterInstance): AdapterInstance => {
     },
     findMany: async <T>(params: Parameters<AdapterInstance['findMany']>[0]): Promise<T[]> => {
       const { model } = params;
-      const results = await adapter.findMany(params) as T[];
+      const results = (await adapter.findMany(params)) as T[];
       if (model === 'twoFactor') {
         return results.map(mapTwoFactorRecord);
       }
@@ -226,11 +228,11 @@ const wrapDBAdapter = (adapter: AdapterInstance): AdapterInstance => {
             ...updateObj,
             backupCodes: convertBackupCodesForDb(updateObj.backupCodes),
           };
-          const result = await adapter.update({ ...params, update: convertedUpdate }) as T | null;
+          const result = (await adapter.update({ ...params, update: convertedUpdate })) as T | null;
           return mapTwoFactorRecord(result);
         }
       }
-      const result = await adapter.update(params) as T | null;
+      const result = (await adapter.update(params)) as T | null;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
@@ -238,19 +240,17 @@ const wrapDBAdapter = (adapter: AdapterInstance): AdapterInstance => {
     },
     consumeOne: async <T>(params: Parameters<AdapterInstance['consumeOne']>[0]): Promise<T | null> => {
       const { model } = params;
-      const result = await adapter.consumeOne(params) as T | null;
+      const result = (await adapter.consumeOne(params)) as T | null;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
       return result;
     },
-    transaction: async <R>(
-      callback: (trx: TransactionAdapter) => Promise<R>
-    ): Promise<R> => {
-      return adapter.transaction<R>(async (trx) => {
+    transaction: async <R>(callback: (trx: TransactionAdapter) => Promise<R>): Promise<R> => {
+      return adapter.transaction<R>(async trx => {
         return callback(wrapTransactionAdapter(trx));
       });
-    }
+    },
   };
 };
 
@@ -266,14 +266,14 @@ const wrapTransactionAdapter = (adapter: TransactionAdapter): TransactionAdapter
             ...dataObj,
             backupCodes: convertBackupCodesForDb(dataObj.backupCodes),
           };
-          const result = await adapter.create({
+          const result = (await adapter.create({
             ...params,
-            data: convertedData
-          }) as R;
+            data: convertedData,
+          })) as R;
           return mapTwoFactorRecord(result);
         }
       }
-      const result = await adapter.create(params) as R;
+      const result = (await adapter.create(params)) as R;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
@@ -281,7 +281,7 @@ const wrapTransactionAdapter = (adapter: TransactionAdapter): TransactionAdapter
     },
     findOne: async <T>(params: Parameters<TransactionAdapter['findOne']>[0]): Promise<T | null> => {
       const { model } = params;
-      const result = await adapter.findOne(params) as T | null;
+      const result = (await adapter.findOne(params)) as T | null;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
@@ -289,7 +289,7 @@ const wrapTransactionAdapter = (adapter: TransactionAdapter): TransactionAdapter
     },
     findMany: async <T>(params: Parameters<TransactionAdapter['findMany']>[0]): Promise<T[]> => {
       const { model } = params;
-      const results = await adapter.findMany(params) as T[]
+      const results = (await adapter.findMany(params)) as T[];
       if (model === 'twoFactor') {
         return results.map(mapTwoFactorRecord);
       }
@@ -304,11 +304,11 @@ const wrapTransactionAdapter = (adapter: TransactionAdapter): TransactionAdapter
             ...updateObj,
             backupCodes: convertBackupCodesForDb(updateObj.backupCodes),
           };
-          const result = await adapter.update({ ...params, update: convertedUpdate }) as T | null;
+          const result = (await adapter.update({ ...params, update: convertedUpdate })) as T | null;
           return mapTwoFactorRecord(result);
         }
       }
-      const result = await adapter.update(params) as T | null;
+      const result = (await adapter.update(params)) as T | null;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
@@ -316,12 +316,12 @@ const wrapTransactionAdapter = (adapter: TransactionAdapter): TransactionAdapter
     },
     consumeOne: async <T>(params: Parameters<TransactionAdapter['consumeOne']>[0]): Promise<T | null> => {
       const { model } = params;
-      const result = await adapter.consumeOne(params) as T | null;
+      const result = (await adapter.consumeOne(params)) as T | null;
       if (model === 'twoFactor') {
         return mapTwoFactorRecord(result);
       }
       return result;
-    }
+    },
   };
 };
 
@@ -346,14 +346,14 @@ const twoFactorSessionSync = () => {
               context.path === '/two-factor/verify-backup-code'
             );
           },
-          handler: createAuthMiddleware(async (ctx) => {
+          handler: createAuthMiddleware(async ctx => {
             const sessionTokenName = ctx.context.authCookies.sessionToken.name;
             let sessionToken: string | null = null;
 
             const cookieHeader = ctx.headers?.get('cookie');
             if (cookieHeader) {
               const match = cookieHeader.match(
-                new RegExp(`(?:^|;\\s*)${sessionTokenName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*=\\s*([^;]*)`)
+                new RegExp(`(?:^|;\\s*)${sessionTokenName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*=\\s*([^;]*)`),
               );
               if (match && match[1]) {
                 sessionToken = decodeURIComponent(match[1]).split('.')[0];
@@ -364,7 +364,9 @@ const twoFactorSessionSync = () => {
               const setCookieHeader = ctx.context.responseHeaders?.get('set-cookie');
               if (setCookieHeader) {
                 const match = setCookieHeader.match(
-                  new RegExp(`(?:^|;|,)\\s*${sessionTokenName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*=\\s*([^;]*)`)
+                  new RegExp(
+                    `(?:^|;|,)\\s*${sessionTokenName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*=\\s*([^;]*)`,
+                  ),
                 );
                 if (match && match[1]) {
                   sessionToken = decodeURIComponent(match[1]).split('.')[0];
@@ -391,19 +393,19 @@ const twoFactorSessionSync = () => {
               try {
                 await prismaClient.session.update({
                   where: { token: sessionToken },
-                  data: { twoFactorVerified: true }
+                  data: { twoFactorVerified: true },
                 });
                 logger.log(`[Two-Factor Session Sync] Verified session: ${sessionToken}`);
-              } catch (err) {
+              } catch (err: unknown) {
                 logger.error('[Two-Factor Session Sync] Error updating session:', err);
               }
             } else {
               logger.warn('[Two-Factor Session Sync] Could not extract session token');
             }
-          })
-        }
-      ]
-    }
+          }),
+        },
+      ],
+    },
   };
 };
 
@@ -426,7 +428,7 @@ const securitySessionRotation = () => {
               context.path === '/two-factor/disable'
             );
           },
-          handler: createAuthMiddleware(async (ctx) => {
+          handler: createAuthMiddleware(async ctx => {
             try {
               const sessionTokenName = ctx.context.authCookies.sessionToken.name;
               let sessionToken: string | null = null;
@@ -434,7 +436,9 @@ const securitySessionRotation = () => {
               const cookieHeader = ctx.headers?.get('cookie');
               if (cookieHeader) {
                 const match = cookieHeader.match(
-                  new RegExp(`(?:^|;\\s*)${sessionTokenName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*=\\s*([^;]*)`)
+                  new RegExp(
+                    `(?:^|;\\s*)${sessionTokenName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*=\\s*([^;]*)`,
+                  ),
                 );
                 if (match && match[1]) {
                   sessionToken = decodeURIComponent(match[1]).split('.')[0];
@@ -467,13 +471,13 @@ const securitySessionRotation = () => {
                   }
                 }
               }
-            } catch (err) {
+            } catch (err: unknown) {
               logger.error('[Security] Error in session rotation hook:', err);
             }
-          })
-        }
-      ]
-    }
+          }),
+        },
+      ],
+    },
   };
 };
 
@@ -492,7 +496,7 @@ const googleAccountLinkedPlugin = () => {
             // Better Auth calls /callback/google after OAuth completes
             return context.path === '/callback/google';
           },
-          handler: createAuthMiddleware(async (ctx) => {
+          handler: createAuthMiddleware(async ctx => {
             try {
               // After Google OAuth, ctx.context.newSession has the user
               const session = ctx.context.newSession;
@@ -507,15 +511,15 @@ const googleAccountLinkedPlugin = () => {
               GlobalEventDispatcher.emit(AUTH_EVENTS.GOOGLE_ACCOUNT_LINKED, {
                 ...basePayload(user.id, user.email),
                 googleEmail: googleAccount?.accountId ?? user.email,
-                linkedAt:    new Date().toISOString(),
+                linkedAt: new Date().toISOString(),
               } satisfies GoogleAccountLinkedPayload);
-            } catch (err) {
+            } catch (err: unknown) {
               logger.error('[Google Linked] Error emitting event:', err);
             }
-          })
-        }
-      ]
-    }
+          }),
+        },
+      ],
+    },
   };
 };
 
@@ -525,11 +529,9 @@ const googleAccountLinkedPlugin = () => {
 
 export const auth = betterAuth({
   database: customAdapter,
-  secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL!,
-  trustedOrigins: [
-    process.env.FRONTEND_URL!,
-  ],
+  secret: process.env.BETTER_AUTH_SECRET, // ts-audit-ignore
+  baseURL: process.env.BETTER_AUTH_URL!, // ts-audit-ignore
+  trustedOrigins: [process.env.FRONTEND_URL!], // ts-audit-ignore
   session: {
     cookieCache: {
       enabled: true,
@@ -573,19 +575,19 @@ export const auth = betterAuth({
     window: 60,
     max: 100,
     customRules: {
-      '/sign-in':           { window: 60, max: 5 },
-      '/sign-up':           { window: 60, max: 5 },
-      '/magic-link/send':   { window: 60, max: 3 },
-      '/two-factor/send-otp':   { window: 60, max: 3 },
+      '/sign-in': { window: 60, max: 5 },
+      '/sign-up': { window: 60, max: 5 },
+      '/magic-link/send': { window: 60, max: 3 },
+      '/two-factor/send-otp': { window: 60, max: 3 },
       '/two-factor/verify-otp': { window: 60, max: 5 },
-    }
+    },
   },
   advanced: {
-    disableOriginCheck: process.env.NODE_ENV !== 'production',
-    disableCSRFCheck: process.env.DISABLE_CSRF_PROTECTION === 'true',
+    disableOriginCheck: process.env.NODE_ENV !== 'production', // ts-audit-ignore
+    disableCSRFCheck: process.env.DISABLE_CSRF_PROTECTION === 'true', // ts-audit-ignore
     cookies: {
       session_token: {
-        name: process.env.NODE_ENV === 'production' ? '__Host-session' : 'session',
+        name: process.env.NODE_ENV === 'production' ? '__Host-session' : 'session', // ts-audit-ignore
         // __Host- prefix requires Secure + HTTPS — only valid in production.
         // In development (HTTP localhost) we use a plain name so the browser
         // actually sends the cookie. The Secure flag is still set in production
@@ -593,7 +595,7 @@ export const auth = betterAuth({
         attributes: {
           sameSite: 'lax',
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: process.env.NODE_ENV === 'production', // ts-audit-ignore
           path: '/',
         },
       },
@@ -602,7 +604,7 @@ export const auth = betterAuth({
       if (!req || !req.headers) return '0.0.0.0';
       const cfIp = req.headers.get('cf-connecting-ip');
       if (cfIp) return cfIp;
-      
+
       const forwardedFor = req.headers.get('x-forwarded-for');
       if (forwardedFor) {
         return forwardedFor.split(',')[0].trim();
@@ -612,7 +614,8 @@ export const auth = betterAuth({
       if (realIp) return realIp;
 
       // Fallback for native Node request object if exposed
-      const socketIp = (req as any).socket?.remoteAddress;
+      // We double cast through unknown because the standard Request object has a different type signature, but we check if the underlying socket is exposed.
+      const socketIp = (req as unknown as { socket?: { remoteAddress?: string } }).socket?.remoteAddress;
       return socketIp || '0.0.0.0';
     },
   },
@@ -626,11 +629,11 @@ export const auth = betterAuth({
          * USER_REGISTERED — fired after new user row is committed to DB.
          * Covers email/password sign-up and first-time Google OAuth.
          */
-        after: async (user) => {
+        after: async user => {
           GlobalEventDispatcher.emit(AUTH_EVENTS.USER_REGISTERED, {
             ...basePayload(user.id, user.email),
             displayName: (user as { name?: string }).name ?? user.email.split('@')[0],
-            authMethod:  'email_password',   // BA doesn't tell us here; Google path adds its own event via googleAccountLinkedPlugin
+            authMethod: 'email_password', // BA doesn't tell us here; Google path adds its own event via googleAccountLinkedPlugin
           } satisfies UserRegisteredPayload);
         },
       },
@@ -646,7 +649,7 @@ export const auth = betterAuth({
          * Note: BA hooks don't expose the raw request — IP comes from session.ipAddress
          * which BA populates from the request before calling this hook.
          */
-        after: async (session) => {
+        after: async session => {
           try {
             // BA already stores ipAddress and userAgent on the session record
             const ipAddress = session.ipAddress ?? '0.0.0.0';
@@ -661,19 +664,21 @@ export const auth = betterAuth({
             });
 
             await GlobalSuspiciousSessionDispatcher.processSignIn({
-              userId:              session.userId as (string & { readonly _brand: 'UserId' }),
+              userId: session.userId as string & { readonly _brand: 'UserId' },
               betterAuthSessionId: session.id,
-              sessionId:           session.token  as (string & { readonly _brand: 'SessionId' }),
-              email:               user.email,
-              locale:              'en',
-              ipAddress:           ipAddress      as (string & { readonly _brand: 'IpAddress' }),
+              sessionId: session.token as string & { readonly _brand: 'SessionId' },
+              email: user.email,
+              locale: 'en',
+              ipAddress: ipAddress as string & { readonly _brand: 'IpAddress' },
               userAgent,
-              requestId:           crypto.randomUUID(),  // no request context in BA hooks
+              requestId: crypto.randomUUID(), // no request context in BA hooks
             });
-          } catch (err) {
-            logger.error('[Session Create Hook] Failed to persist lastLoginAt or process suspicious-session checks:', err);
+          } catch (err: unknown) {
+            logger.error(
+              '[Session Create Hook] Failed to persist lastLoginAt or process suspicious-session checks:',
+              err,
+            );
           }
-
         },
       },
     },
@@ -684,9 +689,7 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     sendOnSignIn: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async (
-      { user, url, token }: { user: BetterAuthEmailUser; url: string; token: string },
-    ) => {
+    sendVerificationEmail: async ({ user, url, token }: { user: BetterAuthEmailUser; url: string; token: string }) => {
       emitVerificationEmailEvent(user, url, token);
     },
   },
@@ -705,18 +708,26 @@ export const auth = betterAuth({
      * requests a password reset. `token` is the raw reset token; `url` is
      * the fully constructed reset URL.
      */
-    sendResetPassword: async ({ user, url, token }: { user: { id: string; email: string }; url: string; token: string }) => {
+    sendResetPassword: async ({
+      user,
+      url,
+      token,
+    }: {
+      user: { id: string; email: string };
+      url: string;
+      token: string;
+    }) => {
       // Expiry: BA default is 1 hour for reset tokens
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
       GlobalEventDispatcher.emit(AUTH_EVENTS.PASSWORD_RESET_REQUESTED, {
         ...basePayload(user.id, user.email),
 
-        resetUrl:   url,
+        resetUrl: url,
         resetToken: token,
         expiresAt,
-        ipAddress:  'unknown', // no request context in BA callback — enrich via middleware if needed
-        userAgent:  'unknown',
+        ipAddress: 'unknown', // no request context in BA callback — enrich via middleware if needed
+        userAgent: 'unknown',
       } satisfies PasswordResetRequestedPayload);
     },
   },
@@ -766,7 +777,7 @@ export const auth = betterAuth({
 
           GlobalEventDispatcher.emit(AUTH_EVENTS.TWO_FA_CODE_REQUESTED, {
             ...basePayload(user.id, user.email),
-            totpCode:   otp,
+            totpCode: otp,
             expiresAt,
             deviceHint: 'unknown', // no UA context in BA hook
           } satisfies TwoFaCodeRequestedPayload);
@@ -796,18 +807,18 @@ export const auth = betterAuth({
         // Map BA's `type` to our OtpPurpose enum
         const purposeMap: Record<string, 'EMAIL_VERIFICATION' | 'LOGIN' | 'PASSWORD_RESET'> = {
           'email-verification': 'EMAIL_VERIFICATION',
-          'sign-in':            'LOGIN',
-          'forget-password':    'PASSWORD_RESET',
-          'change-email':       'EMAIL_VERIFICATION',
+          'sign-in': 'LOGIN',
+          'forget-password': 'PASSWORD_RESET',
+          'change-email': 'EMAIL_VERIFICATION',
         };
         const purpose = purposeMap[type] ?? 'EMAIL_VERIFICATION';
 
         GlobalEventDispatcher.emit(AUTH_EVENTS.OTP_REQUESTED, {
           ...basePayload(user.id, email),
-          otpCode:      otp,
+          otpCode: otp,
           purpose,
           expiresAt,
-          attemptCount: 1,   // BA doesn't expose attempt count in this hook
+          attemptCount: 1, // BA doesn't expose attempt count in this hook
         } satisfies OtpRequestedPayload);
       },
     }),

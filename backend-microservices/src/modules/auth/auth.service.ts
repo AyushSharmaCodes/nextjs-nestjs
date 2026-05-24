@@ -108,7 +108,7 @@ export class AuthService {
   async revokeSession(sessionToken: string): Promise<void> {
     try {
       await this.authRepository.revokeSessionByToken(sessionToken);
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof DbWriteFailedException) throw err;
       this.logger.error({ err }, 'revokeSession failed');
       throw new DbWriteFailedException();
@@ -125,7 +125,7 @@ export class AuthService {
   ): Promise<void> {
     try {
       await this.authRepository.revokeOtherSessions(userId, currentToken);
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof DbWriteFailedException) throw err;
       this.logger.error({ err, userId }, 'revokeOtherSessions failed');
       throw new DbWriteFailedException();

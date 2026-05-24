@@ -31,7 +31,7 @@ export enum JobType {
 }
 
 @Index(['status', 'scheduledAt'])
-@Entity({ name: 'cronJobs', schema: 'cron' })
+@Entity({ name: 'cronJobs', schema: 'app_cron' })
 export class CronJob {
   @PrimaryGeneratedColumn('uuid') id: string;
 
@@ -83,7 +83,7 @@ export class CronJob {
 }
 
 @Index(['status', 'createdAt'])
-@Entity({ name: 'jobRuns', schema: 'cron' })
+@Entity({ name: 'jobRuns', schema: 'app_cron' })
 export class JobRun {
   @PrimaryGeneratedColumn('uuid') id: string;
 

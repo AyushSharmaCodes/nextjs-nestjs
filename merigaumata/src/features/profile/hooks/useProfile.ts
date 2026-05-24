@@ -16,10 +16,9 @@ export function useProfile() {
   const isAuthenticated = authState.status === 'authenticated';
   const userRole = authState.user?.role || 'CUSTOMER';
 
-  const { data: media = { avatarUrl: null, coverUrl: null } } = useQuery({
+  const { data: media = { avatarUrl: null, coverUrl: null }, isPending: isMediaPending } = useQuery({
     queryKey: profileKeys.media(),
     queryFn: profileService.getMedia,
-    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
     refetchInterval: 60000,
   });
@@ -29,21 +28,24 @@ export function useProfile() {
     lastName: '',
     dob: null,
     gender: null,
+    genderId: null,
     nationality: null,
+    nationalityCountryCode: null,
+    preferredCurrency: 'INR',
+    emailNotification: true,
+    phoneCountryId: null,
     address: '',
     phone: '',
-  } } = useQuery<PersonalDetails>({
+  }, isPending: isPersonalPending } = useQuery<PersonalDetails>({
     queryKey: profileKeys.personal(),
     queryFn: profileService.getPersonalDetails,
-    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
     refetchInterval: 30000, // Refetch every 30 seconds for "realtime" feel
   });
 
-  const { data: accountDetails = {} } = useQuery<AccountDetails>({
+  const { data: accountDetails = { timeZone: 'UTC' }, isPending: isAccountPending } = useQuery<AccountDetails>({
     queryKey: profileKeys.account(),
     queryFn: profileService.getAccountDetails,
-    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
     refetchInterval: 30000, // Refetch every 30 seconds for "realtime" feel
   });
@@ -170,6 +172,23 @@ export function useProfile() {
     isEditingPersonal,
     setIsEditingPersonal,
     savePersonalDetails: () => savePersonalMutation.mutate(tempPersonalDetails),
+    saveCurrency: (currency: string) => savePersonalMutation.mutate({
+      ...personalDetails,
+      preferredCurrency: currency
+    }),
+    saveEmailNotification: (subscribed: boolean) => {
+      savePersonalMutation.mutate({
+        ...personalDetails,
+        emailNotification: subscribed
+      }, {
+        onSuccess: () => {
+          toast.success(subscribed ? 'Subscribed to email notifications' : 'Unsubscribed from email notifications');
+        },
+        onError: () => {
+          toast.error('Failed to update email preferences');
+        }
+      });
+    },
     hasPersonalChanges,
     accountDetails,
     tempAccountDetails,
@@ -178,5 +197,8 @@ export function useProfile() {
     setIsEditingAccount,
     saveAccountDetails: () => saveAccountMutation.mutate(tempAccountDetails),
     hasAccountChanges,
+    isPersonalPending,
+    isAccountPending,
+    isMediaPending,
   };
 }

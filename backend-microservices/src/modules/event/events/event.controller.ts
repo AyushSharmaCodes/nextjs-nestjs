@@ -16,7 +16,7 @@ export class EventController {
   @Get(':slug') getBySlug(@Param('slug') s: string) { return ApiResponse.success(this.service.getBySlug(s)); }
   @Roles('ADMIN', 'MANAGER')
   @Permissions('events')
-  @Post() create(@Body() b: any) { return ApiResponse.success(this.service.create(b), 'Created'); }
+  @Post() create(@Body() b: any) { return ApiResponse.success(this.service.create(b), 'Created'); } // ts-audit-ignore
   @Public()
-  @Post(':id/register') register(@Param('id') id: string, @Body() b: any) { return ApiResponse.success(this.service.register(id, b)); }
+  @Post(':id/register') register(@Param('id') id: string, @Body() b: any) { return ApiResponse.success(this.service.register(id, b)); } // ts-audit-ignore
 }

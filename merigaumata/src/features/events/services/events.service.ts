@@ -11,7 +11,7 @@ export const eventsService = {
         return MOCK_EVENTS as Event[];
       }
       return await eventsApi.getAll();
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API connection failed, falling back to mock events: {error}', {
         error: e instanceof Error ? e.message : String(e),
       });
@@ -25,7 +25,7 @@ export const eventsService = {
         return (MOCK_EVENTS as Event[]).filter(e => e.featured);
       }
       return await eventsApi.getFeatured();
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API connection failed, falling back to mock featured events: {error}', {
         error: e instanceof Error ? e.message : String(e),
       });
@@ -39,7 +39,7 @@ export const eventsService = {
         return (MOCK_EVENTS as Event[]).find(e => e.id === id);
       }
       return await eventsApi.getById(id);
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API connection failed for event id {id}, falling back to mock detail: {error}', {
         id,
         error: e instanceof Error ? e.message : String(e),
@@ -55,7 +55,7 @@ export const eventsService = {
         return { success: true, bookingId: `REG-${Math.floor(100000 + Math.random() * 900000)}` };
       }
       return await eventsApi.register(eventId, input);
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('API registration failed for event {eventId}, simulating local registration: {error}', {
         eventId,
         error: e instanceof Error ? e.message : String(e),

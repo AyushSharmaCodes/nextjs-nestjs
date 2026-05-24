@@ -13,26 +13,22 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import type { IGeoIpProvider } from './geo-ip-provider.interface';
-import type {
-  GeoLocation,
-  IpAddress,
-  CountryCode,
-} from '../../../../shared/types/device.types';
+import type { CountryCode, GeoLocation, IpAddress } from '../../../../shared/types/device.types';
 import { toCountryCode, toIpAddress } from '../../../../shared/types/device.types';
+import type { IGeoIpProvider } from './geo-ip-provider.interface';
 
 /** Shape of the ip-api.com JSON response (fields= param selects these). */
 interface IpApiResponse {
-  readonly status:      'success' | 'fail';
-  readonly message?:    string;  // present on fail
-  readonly country:     string;
+  readonly status: 'success' | 'fail';
+  readonly message?: string; // present on fail
+  readonly country: string;
   readonly countryCode: string;
-  readonly regionName:  string;
-  readonly city:        string;
-  readonly lat:         number;
-  readonly lon:         number;
-  readonly isp:         string;
-  readonly query:       string;
+  readonly regionName: string;
+  readonly city: string;
+  readonly lat: number;
+  readonly lon: number;
+  readonly isp: string;
+  readonly query: string;
 }
 
 const PRIVATE_IP_PATTERNS = [
@@ -59,7 +55,7 @@ export class IpApiProvider implements IGeoIpProvider {
 
     try {
       const response = await fetch(url, {
-        signal: AbortSignal.timeout(3000),  // 3s timeout — never block sign-in
+        signal: AbortSignal.timeout(3000), // 3s timeout — never block sign-in
       });
 
       if (!response.ok) {
@@ -67,7 +63,7 @@ export class IpApiProvider implements IGeoIpProvider {
         return this.unknownLocation(ip);
       }
 
-      const data = await response.json() as IpApiResponse;
+      const data = (await response.json()) as IpApiResponse;
 
       if (data.status === 'fail') {
         this.logger.warn(`IpApiProvider: API fail for ${ip}: ${data.message ?? 'unknown'}`);
@@ -75,13 +71,13 @@ export class IpApiProvider implements IGeoIpProvider {
       }
 
       return {
-        ip:        toIpAddress(data.query || ip),
-        city:      data.city      || null,
-        region:    data.regionName || null,
-        country:   toCountryCode(data.countryCode || 'XX'),
-        latitude:  typeof data.lat === 'number' ? data.lat : null,
+        ip: toIpAddress(data.query || ip),
+        city: data.city || null,
+        region: data.regionName || null,
+        country: toCountryCode(data.countryCode || 'XX'),
+        latitude: typeof data.lat === 'number' ? data.lat : null,
         longitude: typeof data.lon === 'number' ? data.lon : null,
-        isp:       data.isp || null,
+        isp: data.isp || null,
       };
     } catch (err: unknown) {
       const reason = err instanceof Error ? err.message : String(err);
@@ -99,12 +95,12 @@ export class IpApiProvider implements IGeoIpProvider {
   private unknownLocation(ip: IpAddress): GeoLocation {
     return {
       ip,
-      city:      null,
-      region:    null,
-      country:   'XX' as CountryCode,
-      latitude:  null,
+      city: null,
+      region: null,
+      country: 'XX' as CountryCode,
+      latitude: null,
       longitude: null,
-      isp:       null,
+      isp: null,
     };
   }
 }

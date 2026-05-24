@@ -47,7 +47,7 @@ export default function Setup2FAForm() {
         } else {
           setHasPassword(false);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         authLogger.error('Error listing accounts', { error: err });
         setHasPassword(false);
       } finally {
@@ -213,18 +213,24 @@ export default function Setup2FAForm() {
       <div className="bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-150 dark:border-white/5 rounded-3xl p-6 mb-8 text-left">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-black uppercase tracking-wider text-neutral-400">{t('currentStatus')}</span>
-          <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
-            isEnabled 
-              ? 'bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-200/30 text-emerald-600 dark:text-emerald-400' 
-              : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
-          }`}>
+          <span
+            className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
+              isEnabled
+                ? 'bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-200/30 text-emerald-600 dark:text-emerald-400'
+                : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
+            }`}
+          >
             {isEnabled ? t('protectedActive') : t('inactive')}
           </span>
         </div>
 
         <div className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400 font-light">
           {isEnabled ? (
-            <span>{t('profileFullySecurePrefix')}<span className="font-semibold text-foreground">{user.email}</span>{t('profileFullySecureSuffix')}</span>
+            <span>
+              {t('profileFullySecurePrefix')}
+              <span className="font-semibold text-foreground">{user.email}</span>
+              {t('profileFullySecureSuffix')}
+            </span>
           ) : (
             <span>{t('profileInsecureDesc')}</span>
           )}
@@ -240,7 +246,7 @@ export default function Setup2FAForm() {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             placeholder={t('passwordPlaceholder')}
             className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-150 dark:border-white/5 rounded-2xl text-xs focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all text-neutral-800 dark:text-neutral-200 placeholder-neutral-450 dark:placeholder-neutral-550 font-sans"
           />
@@ -250,9 +256,7 @@ export default function Setup2FAForm() {
       {!accountsLoading && !hasPassword && (
         <div className="mb-6 text-left bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-150 dark:border-white/5 rounded-2xl p-4 text-xs text-neutral-500 dark:text-neutral-400 flex items-start gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
           <span>ℹ️</span>
-          <div className="flex-1 font-light leading-relaxed">
-            {t('passwordlessInfo')}
-          </div>
+          <div className="flex-1 font-light leading-relaxed">{t('passwordlessInfo')}</div>
         </div>
       )}
 
@@ -306,7 +310,10 @@ export default function Setup2FAForm() {
             </p>
             <div className="grid grid-cols-2 gap-2 bg-neutral-50 dark:bg-neutral-950 p-4 rounded-2xl border border-neutral-150 dark:border-neutral-800 font-mono text-[11px] tracking-wider text-center">
               {backupCodes.map((code, idx) => (
-                <div key={idx} className="p-2 border border-neutral-200/30 rounded-lg bg-white dark:bg-neutral-900 shadow-sm text-foreground">
+                <div
+                  key={idx}
+                  className="p-2 border border-neutral-200/30 rounded-lg bg-white dark:bg-neutral-900 shadow-sm text-foreground"
+                >
                   {code}
                 </div>
               ))}

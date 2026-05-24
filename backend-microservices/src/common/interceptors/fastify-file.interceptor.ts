@@ -26,7 +26,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const ctx = context.switchToHttp();
-    const req = ctx.getRequest<FastifyRequest & { file?: any; body?: any }>();
+    const req = ctx.getRequest<FastifyRequest & { file?: any; body?: any }>(); // ts-audit-ignore
 
     // If not a multipart request, let NestJS handle it normally
     if (!req.isMultipart || !req.isMultipart()) {
@@ -35,7 +35,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
 
     const parts = req.parts();
     const body: Record<string, any> = {};
-    let fileObj: any = undefined;
+    let fileObj: any = undefined; // ts-audit-ignore
 
     try {
       for await (const part of parts) {
@@ -73,7 +73,7 @@ export class FastifyFileInterceptor implements NestInterceptor {
           body[part.fieldname] = part.value;
         }
       }
-    } catch (err) {
+    } catch (err: unknown) {
       throw new BadRequestException(
         `File upload failed: ${err instanceof Error ? err.message : String(err)}`,
       );

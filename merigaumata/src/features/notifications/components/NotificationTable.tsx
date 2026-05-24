@@ -1,33 +1,23 @@
-import React, { useMemo } from 'react';
-import { useTranslations } from 'next-intl';
-import { motion, AnimatePresence } from 'motion/react';
 import { AppIcon } from '@/shared/icons';
-import { Notification, PaginationMeta, NotificationStatus } from '../types';
-import { useNotificationStore } from '../store/useNotificationStore';
-import { NotificationAvatar, NotificationBadge } from './NotificationPrimitives';
 import { formatDistanceToNow } from 'date-fns';
-import {
-  useMarkNotificationsReadMutation,
-  useDeleteNotificationsMutation,
-} from '../hooks/useNotifications';
+import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
+import { useDeleteNotificationsMutation, useMarkNotificationsReadMutation } from '../hooks/useNotifications';
+import { useNotificationStore } from '../store/useNotificationStore';
+import { Notification, NotificationStats, PaginationMeta } from '../types';
+import { NotificationAvatar, NotificationBadge } from './NotificationPrimitives';
 
 interface NotificationTableProps {
   notifications: Notification[];
   meta: PaginationMeta;
-  stats: any;
+  stats: NotificationStats;
 }
 
 export function NotificationTable({ notifications, meta, stats }: NotificationTableProps) {
   const t = useTranslations('notifications');
-  const {
-    selectedIds,
-    filters,
-    setSelectedIds,
-    toggleSelectId,
-    clearSelection,
-    setPage,
-    setLimit,
-  } = useNotificationStore();
+  const { selectedIds, filters, setSelectedIds, toggleSelectId, clearSelection, setPage, setLimit } =
+    useNotificationStore();
 
   const markReadMutation = useMarkNotificationsReadMutation();
   const deleteMutation = useDeleteNotificationsMutation();
@@ -35,17 +25,17 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
   // Compute selection bounds
   const isAllSelected = useMemo(() => {
     if (notifications.length === 0) return false;
-    return notifications.every((n) => selectedIds.includes(n.id));
+    return notifications.every(n => selectedIds.includes(n.id));
   }, [notifications, selectedIds]);
 
   const handleSelectAllToggle = () => {
     if (isAllSelected) {
       // Uncheck all items on current page
-      const currentIds = notifications.map((n) => n.id);
-      setSelectedIds(selectedIds.filter((id) => !currentIds.includes(id)));
+      const currentIds = notifications.map(n => n.id);
+      setSelectedIds(selectedIds.filter(id => !currentIds.includes(id)));
     } else {
       // Check all items on current page
-      const currentIds = notifications.map((n) => n.id);
+      const currentIds = notifications.map(n => n.id);
       const uniqueIds = Array.from(new Set([...selectedIds, ...currentIds]));
       setSelectedIds(uniqueIds);
     }
@@ -82,7 +72,7 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                 {selectedIds.length} notifications selected
               </span>
             </div>
-            
+
             <div className="flex items-center gap-2.5">
               <button
                 onClick={handleBulkMarkRead}
@@ -134,22 +124,18 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                     )}
                   </button>
                 </th>
-                <th className="py-4.5 px-4 text-xs font-extrabold text-foreground/45 tracking-wider">
-                  {t('status')}
-                </th>
+                <th className="py-4.5 px-4 text-xs font-extrabold text-foreground/45 tracking-wider">{t('status')}</th>
                 <th className="py-4.5 px-4 text-xs font-extrabold text-foreground/45 tracking-wider">
                   {t('notification')}
                 </th>
-                <th className="py-4.5 px-4 text-xs font-extrabold text-foreground/45 tracking-wider">
-                  {t('date')}
-                </th>
+                <th className="py-4.5 px-4 text-xs font-extrabold text-foreground/45 tracking-wider">{t('date')}</th>
                 <th className="py-4.5 px-5 w-24 text-right text-xs font-extrabold text-foreground/45 tracking-wider">
                   {t('actions')}
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-earth-100 dark:divide-earth-900/30">
-              {notifications.map((n) => {
+              {notifications.map(n => {
                 const isSelected = selectedIds.includes(n.id);
                 return (
                   <tr
@@ -179,8 +165,8 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                           n.status === 'unread'
                             ? 'bg-rose-50 text-rose-600 border-rose-200/50 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20'
                             : n.status === 'read'
-                            ? 'bg-earth-50 text-foreground/60 border-earth-200 dark:bg-earth-800/40 dark:text-foreground/60 dark:border-transparent'
-                            : 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400'
+                              ? 'bg-earth-50 text-foreground/60 border-earth-200 dark:bg-earth-800/40 dark:text-foreground/60 dark:border-transparent'
+                              : 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400'
                         }`}
                       >
                         {n.status === 'unread' ? t('unreadLabel') : t('readLabel')}
@@ -191,9 +177,9 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                     <td className="py-4 px-4">
                       <div className="flex items-start gap-3.5 max-w-xl">
                         <NotificationAvatar
-                           type={n.type}
-                           customerName={n.metadata?.customerName}
-                           customerAvatar={n.metadata?.customerAvatar}
+                          type={n.type}
+                          customerName={n.metadata?.customerName}
+                          customerAvatar={n.metadata?.customerAvatar}
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -230,7 +216,7 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
                             <AppIcon name="checkCircle" className="w-4.5 h-4.5" />
                           </button>
                         )}
-                        
+
                         <button
                           onClick={() => deleteMutation.mutate([n.id])}
                           disabled={deleteMutation.isPending}
@@ -263,10 +249,10 @@ export function NotificationTable({ notifications, meta, stats }: NotificationTa
               </span>
               <select
                 value={filters.limit}
-                onChange={(e) => setLimit(Number(e.target.value))}
+                onChange={e => setLimit(Number(e.target.value))}
                 className="px-2 py-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-950 border border-earth-200/50 dark:border-transparent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/10 text-xs font-bold outline-none cursor-pointer transition-all"
               >
-                {[10, 20, 50].map((size) => (
+                {[10, 20, 50].map(size => (
                   <option key={size} value={size}>
                     {size}
                   </option>

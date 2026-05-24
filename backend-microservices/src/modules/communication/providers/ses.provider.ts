@@ -21,12 +21,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { MailService } from '../../../infrastructure/mail/mail.service';
-import type {
-  IEmailProvider,
-  EmailPayload,
-  EmailSendResult,
-} from './email-provider.interface';
 import { COMM_ERROR_CODES } from '../constants/comm-error-codes.constant';
+import type { EmailPayload, EmailSendResult, IEmailProvider } from './email-provider.interface';
 
 @Injectable()
 export class SesEmailProvider implements IEmailProvider {
@@ -37,10 +33,10 @@ export class SesEmailProvider implements IEmailProvider {
   async send(payload: EmailPayload): Promise<EmailSendResult> {
     try {
       await this.mailService.sendMail({
-        to:      payload.to,
+        to: payload.to,
         subject: payload.subject,
-        html:    payload.html,
-        text:    payload.text,
+        html: payload.html,
+        text: payload.text,
       });
 
       return {
@@ -54,8 +50,8 @@ export class SesEmailProvider implements IEmailProvider {
       this.logger.error(
         {
           commErrorCode: COMM_ERROR_CODES.PROVIDER_REJECTED.code,
-          messageId:     payload.messageId,
-          to:            payload.to,
+          messageId: payload.messageId,
+          to: payload.to,
           reason,
         },
         `SesEmailProvider: send failed — ${reason}`,

@@ -107,7 +107,7 @@ export function ProductSearch({ value, onChange, suggestions = [] }: ProductSear
 
       {/* Suggestion Dropdown */}
       {showSuggest && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 mt-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-850 rounded-xl shadow-lg max-h-56 overflow-y-auto overflow-x-hidden p-1.5">
+        <div className="absolute left-0 right-0 mt-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-850 rounded-xl shadow-lg max-h-56 overflow-y-auto overflow-x-hidden p-1.5" data-lenis-prevent>
           <div className="px-2.5 py-1 text-[10px] uppercase font-bold tracking-wider text-stone-400 dark:text-stone-500 border-b border-stone-100 dark:border-stone-850 mb-1">
             Suggestions Matches
           </div>

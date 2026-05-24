@@ -15,25 +15,14 @@
  *  - The AuthExceptionFilter on the module handles all error formatting.
  */
 
-import {
-  All,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Logger,
-  Req,
-  Res,
-  UseFilters,
-} from '@nestjs/common';
+import { All, Controller, Get, HttpCode, HttpStatus, Logger, Req, Res, UseFilters } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { AuthService } from './auth.service';
 import { auth } from './bootstrap/better-auth.config';
 import { Public } from './decorators/public.decorator';
-import { AuthService } from './auth.service';
-import { AuthExceptionFilter } from './exceptions/auth-exception.filter';
-import { toUserId } from './types/auth.types';
 import type { AuthResponseDto } from './dto/response/auth.response.dto';
+import { AuthExceptionFilter } from './exceptions/auth-exception.filter';
 import { TokenInvalidException } from './exceptions/auth.exceptions';
 import type { SessionUser } from './guards/better-auth.guard';
 
@@ -68,9 +57,7 @@ export class AuthController {
    */
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  async getMe(
-    @Req() req: AuthenticatedFastifyRequest,
-  ): Promise<AuthResponseDto> {
+  async getMe(@Req() req: AuthenticatedFastifyRequest): Promise<AuthResponseDto> {
     if (!req.user?.id || !req.session?.id) {
       throw new TokenInvalidException();
     }
@@ -86,9 +73,7 @@ export class AuthController {
       twoFactorEnabled: req.user.twoFactorEnabled,
       sessionId: req.session.id,
       tokenExpiresAt: req.session.expiresAt,
-      twoFactorVerified: req.user.twoFactorEnabled
-        ? req.session.twoFactorVerified ?? false
-        : true,
+      twoFactorVerified: req.user.twoFactorEnabled ? (req.session.twoFactorVerified ?? false) : true,
       createdAt: req.user.createdAt,
       lastLoginAt: req.user.lastLoginAt,
     });
@@ -110,17 +95,11 @@ export class AuthController {
   @SkipThrottle()
   @Public()
   @All('*')
-  catchAll(
-    @Req() req: FastifyRequest,
-    @Res() res: FastifyReply,
-  ): Promise<void> {
+  catchAll(@Req() req: FastifyRequest, @Res() res: FastifyReply): Promise<void> {
     return this.forwardToBetterAuth(req, res);
   }
 
-  private async forwardToBetterAuth(
-    req: FastifyRequest,
-    res: FastifyReply,
-  ): Promise<void> {
+  private async forwardToBetterAuth(req: FastifyRequest, res: FastifyReply): Promise<void> {
     try {
       const request = this.toWebRequest(req);
       const response = await auth.handler(request);
@@ -180,10 +159,7 @@ export class AuthController {
       return body;
     }
     if (Buffer.isBuffer(body)) {
-      return body.buffer.slice(
-        body.byteOffset,
-        body.byteOffset + body.byteLength,
-      ) as ArrayBuffer;
+      return body.buffer.slice(body.byteOffset, body.byteOffset + body.byteLength) as ArrayBuffer;
     }
     return JSON.stringify(body);
   }

@@ -1,47 +1,23 @@
 -- ================================================================
--- MODULE: AUTH & RBAC BASELINE MIGRATION
--- Version: 1.1.0
--- Date: 2026-05-19
+-- SCHEMA: APP_AUTH (IDENTITIES, SESSIONS & SECURITY AUDITING)
 -- ================================================================
 
-CREATE SCHEMA IF NOT EXISTS app_auth;
+-- 1. SECURITY SECURITY ENUMS
+DO $$ BEGIN
+    CREATE TYPE "app_auth"."EmailStatus" AS ENUM ('PENDING', 'SENT', 'FAILED', 'SKIPPED');
+    CREATE TYPE "app_auth"."DeviceType" AS ENUM ('DESKTOP', 'MOBILE', 'TABLET', 'BOT', 'UNKNOWN');
+    CREATE TYPE "app_auth"."SessionRiskLevel" AS ENUM ('NORMAL', 'SUSPICIOUS', 'HIGH_RISK');
+    CREATE TYPE "app_auth"."AuditResolution" AS ENUM ('CONFIRMED_BY_USER', 'REVOKED_BY_USER', 'AUTO_REVOKED', 'EXPIRED');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- ================================================================
--- 0. SHARED UTILITIES (Self-contained)
--- ================================================================
+-- 2. GENDERS MASTER TABLE
+CREATE TABLE IF NOT EXISTS app_auth.genders (
+  id          TEXT          PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  name        VARCHAR(50)   NOT NULL UNIQUE
+);
+INSERT INTO app_auth.genders (name) VALUES ('Male'), ('Female'), ('Other') ON CONFLICT DO NOTHING;
 
--- 0.1 uid(): Resolves current user ID from Supabase context
-CREATE OR REPLACE FUNCTION public.uid()
-RETURNS UUID LANGUAGE plpgsql STABLE AS $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM pg_proc p JOIN pg_namespace n ON p.pronamespace = n.oid WHERE n.nspname = 'auth' AND p.proname = 'uid') THEN
-    RETURN auth.uid();
-  ELSE
-    RETURN NULL::UUID;
-  END IF;
-END; $$;
-
--- 0.2 Shared updatedAt trigger
-CREATE OR REPLACE FUNCTION public.set_updated_at()
-RETURNS TRIGGER LANGUAGE plpgsql SET search_path = public AS $$
-BEGIN NEW."updatedAt" = NOW(); RETURN NEW; END; $$;
-
-CREATE OR REPLACE FUNCTION public.create_updated_at_trigger(p_schema TEXT, p_table TEXT)
-RETURNS VOID LANGUAGE plpgsql AS $$
-BEGIN
-  EXECUTE format(
-    'DROP TRIGGER IF EXISTS trg_updated_at ON %I.%I;
-     CREATE TRIGGER trg_updated_at BEFORE UPDATE ON %I.%I
-     FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();',
-    p_schema, p_table, p_schema, p_table
-  );
-END; $$;
-
--- ================================================================
--- 1. ROLE-BASED ACCESS CONTROL (RBAC)
--- ================================================================
-
--- 1.1 Roles: Defines system and custom roles (ADMIN, CUSTOMER, etc.)
+-- 3. ROLE-BASED ACCESS CONTROL (RBAC)
 CREATE TABLE IF NOT EXISTS app_auth.roles (
     id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     name        TEXT NOT NULL UNIQUE,
@@ -56,7 +32,6 @@ INSERT INTO app_auth.roles (name, description, "isSystem") VALUES
     ('CUSTOMER', 'Standard customer access', true)
 ON CONFLICT (name) DO NOTHING;
 
--- 1.2 Permissions: Atomic actions that can be performed on resources
 CREATE TABLE IF NOT EXISTS app_auth.permissions (
     id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     action      TEXT NOT NULL,
@@ -67,7 +42,6 @@ CREATE TABLE IF NOT EXISTS app_auth.permissions (
     UNIQUE (action, resource)
 );
 
--- 1.3 Role Permissions: Mapping between roles and their allowed actions
 CREATE TABLE IF NOT EXISTS app_auth.role_permissions (
     id            TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "roleId"       TEXT NOT NULL REFERENCES app_auth.roles(id) ON DELETE CASCADE,
@@ -76,16 +50,7 @@ CREATE TABLE IF NOT EXISTS app_auth.role_permissions (
     UNIQUE ("roleId", "permissionId")
 );
 
--- RBAC RLS
-ALTER TABLE app_auth.roles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "service_role_roles" ON app_auth.roles FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "authenticated_read_roles" ON app_auth.roles FOR SELECT TO authenticated USING (true);
-
--- ================================================================
--- 2. BETTER-AUTH CORE MODELS
--- ================================================================
-
--- 2.1 User: Primary identity record
+-- 4. USER ACCOUNTS & CREDENTIALS
 CREATE TABLE IF NOT EXISTS app_auth."user" (
     id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "firstName"      TEXT,
@@ -95,16 +60,19 @@ CREATE TABLE IF NOT EXISTS app_auth."user" (
     "twoFactorEnabled" BOOLEAN NOT NULL DEFAULT false,
     image            TEXT,
     role             TEXT NOT NULL DEFAULT 'CUSTOMER' REFERENCES app_auth.roles(name),
-    gender           TEXT,
-    dob              TIMESTAMP(3),
-    nationality      TEXT,
+    gender_id        TEXT REFERENCES app_auth.genders(id) ON DELETE RESTRICT,
+    nationality_country_code CHAR(2), -- Foreign key added as alter statement at end of compilation
+    preferred_currency VARCHAR(10) DEFAULT 'INR',
+    email_notification BOOLEAN DEFAULT TRUE,
     "lastLoginAt"      TIMESTAMP(3),
     "createdAt"       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updatedAt"       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_user_email ON app_auth."user"(lower(email));
+CREATE INDEX IF NOT EXISTS idx_user_gender_id ON app_auth.user(gender_id);
+CREATE INDEX IF NOT EXISTS idx_user_nationality_country_code ON app_auth.user(nationality_country_code);
 
--- 2.2 Session: Active login sessions
+-- 5. SESSIONS
 CREATE TABLE IF NOT EXISTS app_auth.session (
     id        TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "expiresAt"  TIMESTAMPTZ NOT NULL,
@@ -119,7 +87,7 @@ CREATE TABLE IF NOT EXISTS app_auth.session (
 CREATE INDEX IF NOT EXISTS idx_session_userId ON app_auth.session("userId");
 CREATE INDEX IF NOT EXISTS idx_session_createdAt ON app_auth.session("createdAt" DESC);
 
--- 2.3 Account: OAuth provider links (Google, etc.)
+-- 6. OAUTH LINKAGE
 CREATE TABLE IF NOT EXISTS app_auth.account (
     id                    TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "accountId"               TEXT NOT NULL,
@@ -138,7 +106,7 @@ CREATE TABLE IF NOT EXISTS app_auth.account (
 );
 CREATE INDEX IF NOT EXISTS idx_account_userId ON app_auth.account("userId");
 
--- 2.4 Verification: Email and password reset tokens
+-- 7. VERIFICATIONS
 CREATE TABLE IF NOT EXISTS app_auth.verification (
     id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     identifier TEXT NOT NULL,
@@ -149,7 +117,7 @@ CREATE TABLE IF NOT EXISTS app_auth.verification (
 );
 CREATE INDEX IF NOT EXISTS idx_verification_identifier ON app_auth.verification(identifier);
 
--- 2.5 Two Factors: TOTP/Backup code secrets
+-- 8. TOTP SECRETS
 CREATE TABLE IF NOT EXISTS app_auth.two_factors (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "userId"       TEXT NOT NULL REFERENCES app_auth."user"(id) ON DELETE CASCADE,
@@ -161,19 +129,7 @@ CREATE TABLE IF NOT EXISTS app_auth.two_factors (
     UNIQUE ("userId")
 );
 
--- ================================================================
--- 3. CUSTOM SECURITY & AUDIT
--- ================================================================
-
--- 3.1 Security Enums
-DO $$ BEGIN
-    CREATE TYPE "app_auth"."EmailStatus" AS ENUM ('PENDING', 'SENT', 'FAILED', 'SKIPPED');
-    CREATE TYPE "app_auth"."DeviceType" AS ENUM ('DESKTOP', 'MOBILE', 'TABLET', 'BOT', 'UNKNOWN');
-    CREATE TYPE "app_auth"."SessionRiskLevel" AS ENUM ('NORMAL', 'SUSPICIOUS', 'HIGH_RISK');
-    CREATE TYPE "app_auth"."AuditResolution" AS ENUM ('CONFIRMED_BY_USER', 'REVOKED_BY_USER', 'AUTO_REVOKED', 'EXPIRED');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
--- 3.2 Device Sessions: Enriched session data for tracking devices and geolocation
+-- 9. DEVICE DETAILED SESSIONS
 CREATE TABLE IF NOT EXISTS app_auth.device_sessions (
     id                    TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "userId"              TEXT NOT NULL REFERENCES app_auth."user"(id) ON DELETE CASCADE,
@@ -203,7 +159,7 @@ CREATE INDEX IF NOT EXISTS idx_device_sessions_userId ON app_auth.device_session
 CREATE INDEX IF NOT EXISTS idx_device_sessions_fingerprint ON app_auth.device_sessions("userId", "fingerprint");
 CREATE INDEX IF NOT EXISTS idx_device_sessions_createdAt ON app_auth.device_sessions("createdAt" DESC);
 
--- 3.3 Suspicious Session Audits: Tracking and resolution of flagged login attempts
+-- 10. SUSPICIOUS LOGINS AUDITING
 CREATE TABLE IF NOT EXISTS app_auth.suspicious_session_audits (
     id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "deviceSessionId" TEXT NOT NULL REFERENCES app_auth.device_sessions(id) ON DELETE CASCADE,
@@ -224,7 +180,7 @@ CREATE TABLE IF NOT EXISTS app_auth.suspicious_session_audits (
 CREATE INDEX IF NOT EXISTS idx_suspicious_audits_userId ON app_auth.suspicious_session_audits("userId", "createdAt" DESC);
 CREATE INDEX IF NOT EXISTS idx_suspicious_audits_deviceSessionId ON app_auth.suspicious_session_audits("deviceSessionId");
 
--- 3.4 Email Audit: Logs all auth-related emails sent (verification, reset, security alerts)
+-- 11. EMAILS AUDIT LOG
 CREATE TABLE IF NOT EXISTS app_auth.email_audit (
     id                 TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     "eventId"           TEXT NOT NULL UNIQUE,
@@ -244,9 +200,10 @@ CREATE INDEX IF NOT EXISTS idx_email_audit_userId ON app_auth.email_audit("userI
 CREATE INDEX IF NOT EXISTS idx_email_audit_status ON app_auth.email_audit("status", "createdAt" DESC);
 CREATE INDEX IF NOT EXISTS idx_email_audit_eventName ON app_auth.email_audit("eventName", "createdAt" DESC);
 
--- ================================================================
--- 4. RLS & TRIGGERS
--- ================================================================
+-- 12. ROW LEVEL SECURITY (RLS)
+ALTER TABLE app_auth.roles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "service_role_roles" ON app_auth.roles FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "authenticated_read_roles" ON app_auth.roles FOR SELECT TO authenticated USING (true);
 
 ALTER TABLE app_auth."user" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "service_role_user" ON app_auth."user" FOR ALL TO service_role USING (true) WITH CHECK (true);
@@ -266,14 +223,3 @@ CREATE POLICY "authenticated_suspicious_session_audits_access" ON app_auth.suspi
 
 ALTER TABLE app_auth.email_audit ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "service_role_email_audit" ON app_auth.email_audit FOR ALL TO service_role USING (true) WITH CHECK (true);
-
--- Utility triggers for updatedAt
-SELECT public.create_updated_at_trigger('app_auth', 'roles');
-SELECT public.create_updated_at_trigger('app_auth', 'permissions');
-SELECT public.create_updated_at_trigger('app_auth', 'user');
-SELECT public.create_updated_at_trigger('app_auth', 'session');
-SELECT public.create_updated_at_trigger('app_auth', 'account');
-SELECT public.create_updated_at_trigger('app_auth', 'verification');
-SELECT public.create_updated_at_trigger('app_auth', 'two_factors');
-SELECT public.create_updated_at_trigger('app_auth', 'device_sessions');
-SELECT public.create_updated_at_trigger('app_auth', 'email_audit');

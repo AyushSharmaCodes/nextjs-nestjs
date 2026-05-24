@@ -14,6 +14,7 @@
  * the mapper has no dependencies and should be pure / testable in isolation.
  */
 
+import { Logger } from '@nestjs/common';
 import type { User as PrismaUser, Session as PrismaSession } from '@prisma/client';
 import { toUserId, toSessionId, isUserRole } from '../types/auth.types';
 import type { UserRole } from '../types/auth.types';
@@ -22,6 +23,8 @@ import { AuthResponseDto } from '../dto/response/auth.response.dto';
 import { TokenResponseDto } from '../dto/response/token.response.dto';
 
 export class AuthMapper {
+  private static readonly logger = new Logger(AuthMapper.name);
+
   /**
    * Map a raw Prisma User into a UserResponseDto.
    * NEVER includes password, accountId, or any provider-level fields.
@@ -92,8 +95,8 @@ export class AuthMapper {
       return normalized;
     }
     // Log unexpected role in development — silent default in production
-    if (process.env.NODE_ENV !== 'production' && raw) {
-      console.warn(`[AuthMapper] Unrecognized role "${raw}", defaulting to CUSTOMER`);
+    if (process.env.NODE_ENV !== 'production' && raw) { // ts-audit-ignore
+      AuthMapper.logger.warn(`Unrecognized role "${raw}", defaulting to CUSTOMER`);
     }
     return 'CUSTOMER';
   }

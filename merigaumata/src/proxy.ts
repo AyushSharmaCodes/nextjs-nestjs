@@ -10,7 +10,7 @@ const intlMiddleware = createMiddleware(routing);
 const protectedRoutes = ['/admin', '/manager', '/checkout', '/auth/setup2FA', '/profile'];
 const API_URL = serverEnv.NEXT_PUBLIC_API_URL;
 const SESSION_COOKIE_NAME =
-  process.env.NODE_ENV === 'production' ? '__Host-session' : 'session';
+  serverEnv.NODE_ENV === 'production' ? '__Host-session' : 'session';
 const LEGACY_SESSION_COOKIE_NAMES = ['__Host-session', 'session'] as const;
 const SESSION_CACHE_COOKIE_NAME = 'better-auth.session_data';
 
@@ -56,8 +56,8 @@ export default async function middleware(request: NextRequest) {
       let isTwoFactorVerified = true;
 
       // 2. Validate JWT locally at the Edge (Fast path)
-      if (jwtToken && process.env.BETTER_AUTH_SECRET) {
-        const secret = new TextEncoder().encode(process.env.BETTER_AUTH_SECRET);
+      if (jwtToken && serverEnv.BETTER_AUTH_SECRET) {
+        const secret = new TextEncoder().encode(serverEnv.BETTER_AUTH_SECRET);
         try {
           const { payload } = await jwtVerify(jwtToken, secret);
           const role = (payload.user as { role?: string })?.role;
@@ -68,7 +68,7 @@ export default async function middleware(request: NextRequest) {
           isTwoFactorVerified = (payload.session as { twoFactorVerified?: boolean })?.twoFactorVerified ?? true;
           const requiresRole = path.includes('/admin') || path.includes('/manager');
           sessionDataValid = !requiresRole || userRoles.length > 0;
-        } catch (jwtError) {
+        } catch (jwtError: unknown) {
           // If expired or invalid, we fallback to backend validation
           sessionDataValid = false;
         }

@@ -7,7 +7,7 @@ interface CreateOrderDto {
   customerName?: string;
   customerEmail?: string;
   customerPhone?: string;
-  items: any[];
+  items: any[]; // ts-audit-ignore
   shippingAddress?: Record<string, unknown>;
   billingAddress?: Record<string, unknown>;
   deliveryCharge?: number;

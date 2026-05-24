@@ -68,7 +68,7 @@ export function ProductReviewsSection({
         setIsWriteOpen(false);
         setSubmissionSuccess(false);
       }, 3000);
-    } catch (err) {
+    } catch (err: unknown) {
       logError(err, { component: 'ProductReviewsSection', action: 'submit' });
     }
   };

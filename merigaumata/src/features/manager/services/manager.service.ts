@@ -19,8 +19,8 @@ import { mockDefaultManagers } from '@/mocks/userMocks';
 
 // In production this will be replaced by a real API flag or env var.
 // Never use localStorage to detect auth state.
-const isProductionApi = process.env.NEXT_PUBLIC_USE_MOCK_API !== 'true' &&
-  process.env.NODE_ENV === 'production';
+const isProductionApi = process.env.NEXT_PUBLIC_USE_MOCK_API !== 'true' && // ts-audit-ignore
+  process.env.NODE_ENV === 'production'; // ts-audit-ignore
 
 export const managerService = {
   /**

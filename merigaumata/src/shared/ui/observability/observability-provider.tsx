@@ -23,14 +23,14 @@ class ClientErrorBoundary extends React.Component<
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     logError(error, {
       component: 'ClientErrorBoundary',
       errorInfo: errorInfo.componentStack,
     });
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center bg-background text-foreground border border-red-500/20 rounded-2xl m-4">

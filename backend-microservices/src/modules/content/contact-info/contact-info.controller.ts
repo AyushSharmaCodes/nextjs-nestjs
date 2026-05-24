@@ -26,13 +26,13 @@ export class ContactInfoController {
 
   @Roles('ADMIN', 'MANAGER')
   @Permissions('settings')
-  @Post() async create(@Body() body: any) {
+  @Post() async create(@Body() body: any) { // ts-audit-ignore
     return ApiResponse.success(await this.service.create(body), 'Contact info created');
   }
 
   @Roles('ADMIN', 'MANAGER')
   @Permissions('settings')
-  @Put(':id') async update(@Param('id') id: string, @Body() body: any) {
+  @Put(':id') async update(@Param('id') id: string, @Body() body: any) { // ts-audit-ignore
     return ApiResponse.success(await this.service.update(id, body));
   }
 

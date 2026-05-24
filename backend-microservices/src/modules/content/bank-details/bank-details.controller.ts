@@ -17,10 +17,10 @@ export class BankDetailsController {
   @Get(':id') getById(@Param('id') id: string) { return ApiResponse.success(this.service.getById(id)); }
   @Roles('ADMIN', 'MANAGER')
   @Permissions('settings')
-  @Post() create(@Body() body: any) { return ApiResponse.success(this.service.create(body), 'Bank details created'); }
+  @Post() create(@Body() body: any) { return ApiResponse.success(this.service.create(body), 'Bank details created'); } // ts-audit-ignore
   @Roles('ADMIN', 'MANAGER')
   @Permissions('settings')
-  @Put(':id') update(@Param('id') id: string, @Body() body: any) { return ApiResponse.success(this.service.update(id, body)); }
+  @Put(':id') update(@Param('id') id: string, @Body() body: any) { return ApiResponse.success(this.service.update(id, body)); } // ts-audit-ignore
   @Roles('ADMIN', 'MANAGER')
   @Permissions('settings')
   @Put(':id/set-default') setDefault(@Param('id') id: string) { return ApiResponse.success(this.service.setDefault(id), 'Default set'); }

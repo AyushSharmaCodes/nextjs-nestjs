@@ -144,6 +144,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
             {activeDropdown === 'date' && (
               <div
                 className="absolute left-0 mt-2 w-52 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-xl py-2 z-50 overflow-y-auto max-h-60 ring-1 ring-black/5 transition-all duration-200"
+                data-lenis-prevent
               >
                 {dateOptions.map((opt) => (
                   <button
@@ -182,6 +183,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
             {activeDropdown === 'location' && (
               <div
                 className="absolute left-0 mt-2 w-60 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-xl py-2 z-50 overflow-y-auto max-h-60 ring-1 ring-black/5 transition-all duration-200"
+                data-lenis-prevent
               >
                 <button
                   type="button"
@@ -230,6 +232,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
             {activeDropdown === 'type' && (
               <div
                 className="absolute left-0 mt-2 w-52 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-xl py-2 z-50 overflow-y-auto max-h-60 ring-1 ring-black/5 transition-all duration-200"
+                data-lenis-prevent
               >
                 <button
                   type="button"

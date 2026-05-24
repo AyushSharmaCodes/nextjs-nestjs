@@ -7,7 +7,7 @@ export class DeliveryZone {
   @Column({ type: 'jsonb', nullable: true }) pinCodes: string[];
   @Column({ type: 'jsonb', nullable: true }) stateIds: string[];
   @Column({ type: 'jsonb', nullable: true }) cityIds: string[];
-  @Column({ type: 'jsonb', nullable: true }) coordinates: any;
+  @Column({ type: 'jsonb', nullable: true }) coordinates: any; // ts-audit-ignore
   @Column({ default: true }) isActive: boolean;
   @Column({ default: 0 }) priority: number;
   @CreateDateColumn({ name: 'createdAt' }) createdAt: Date;

@@ -14,7 +14,7 @@ export const contactService = {
     if (isProductionApi) {
       try {
         return await contactApi.getContactFaqs();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for contact FAQs. Falling back to mocks: {error}', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -28,7 +28,7 @@ export const contactService = {
     if (isProductionApi) {
       try {
         return await contactApi.getGeneralFaqs();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for general FAQs. Falling back to mocks: {error}', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -42,7 +42,7 @@ export const contactService = {
     if (isProductionApi) {
       try {
         return await contactApi.submitContactForm(input);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Axios call failed for submitting contact form. Falling back to mock simulation: {error}', {
           error: error instanceof Error ? error.message : String(error),
         });

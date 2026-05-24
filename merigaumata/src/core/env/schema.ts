@@ -15,6 +15,9 @@ export const serverSchema = z.object({
   SENTRY_PROJECT: z.string().optional(),
   SENTRY_AUTH_TOKEN: z.string().optional(),
 
+  // Auth
+  BETTER_AUTH_SECRET: z.string().min(32, 'BETTER_AUTH_SECRET must be at least 32 characters'),
+
   // Logging
   LOG_FILE_PATH: z.string().optional(),
 });

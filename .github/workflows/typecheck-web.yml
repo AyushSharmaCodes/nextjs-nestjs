@@ -1,0 +1,53 @@
+# .github/workflows/typecheck-web.yml
+# Runs independently for the Next.js app (merigaumata).
+# Triggered only when files inside merigaumata/ change.
+
+name: TypeScript Safety — Next.js (merigaumata)
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'merigaumata/**'
+      - '.github/workflows/typecheck-web.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'merigaumata/**'
+      - '.github/workflows/typecheck-web.yml'
+
+jobs:
+  typecheck:
+    name: Typecheck & Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: merigaumata
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: merigaumata/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript compile check
+        run: npm run typecheck
+
+      - name: ESLint check
+        run: npm run lint
+
+      - name: Static safety audit
+        run: npm run ts-audit
+
+  safety-gate:
+    name: Safety Gate
+    needs: [typecheck]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "✅  merigaumata type-safety checks passed."

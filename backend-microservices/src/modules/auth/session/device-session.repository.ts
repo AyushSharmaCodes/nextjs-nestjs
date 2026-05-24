@@ -22,14 +22,14 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { DeviceSessionMapper } from './device-session.mapper';
-import { SESSION_RISK_RULES } from './constants/session-risk-rules.constant';
 import type {
-  DeviceSessionEntity,
   CreateDeviceSessionDto,
+  DeviceSessionEntity,
   FindRecentOptions,
 } from '../../../shared/types/device.types';
-import type { UserId, SessionId } from '../../../shared/types/index';
+import type { SessionId, UserId } from '../../../shared/types/index';
+import { SESSION_RISK_RULES } from './constants/session-risk-rules.constant';
+import { DeviceSessionMapper } from './device-session.mapper';
 
 @Injectable()
 export class DeviceSessionRepository {
@@ -42,24 +42,24 @@ export class DeviceSessionRepository {
     try {
       const raw = await this.prisma.deviceSession.create({
         data: {
-          userId:              dto.userId,
+          userId: dto.userId,
           betterAuthSessionId: dto.betterAuthSessionId,
-          sessionId:           dto.sessionId,
-          ipAddress:           dto.ipAddress,
-          city:                dto.geoLocation.city ?? undefined,
-          region:              dto.geoLocation.region ?? undefined,
-          country:             dto.geoLocation.country,
-          latitude:            dto.geoLocation.latitude ?? undefined,
-          longitude:           dto.geoLocation.longitude ?? undefined,
-          isp:                 dto.geoLocation.isp ?? undefined,
-          deviceType:          dto.device.deviceType,
-          os:                  dto.device.os,
-          osVersion:           dto.device.osVersion,
-          browser:             dto.device.browser,
-          browserVersion:      dto.device.browserVersion,
-          fingerprint:         dto.device.fingerprint,
-          riskLevel:           dto.riskLevel,
-          suspicionReasons:    [...dto.suspicionReasons],
+          sessionId: dto.sessionId,
+          ipAddress: dto.ipAddress,
+          city: dto.geoLocation.city ?? undefined,
+          region: dto.geoLocation.region ?? undefined,
+          country: dto.geoLocation.country,
+          latitude: dto.geoLocation.latitude ?? undefined,
+          longitude: dto.geoLocation.longitude ?? undefined,
+          isp: dto.geoLocation.isp ?? undefined,
+          deviceType: dto.device.deviceType,
+          os: dto.device.os,
+          osVersion: dto.device.osVersion,
+          browser: dto.device.browser,
+          browserVersion: dto.device.browserVersion,
+          fingerprint: dto.device.fingerprint,
+          riskLevel: dto.riskLevel,
+          suspicionReasons: [...dto.suspicionReasons],
         },
       });
       return DeviceSessionMapper.toDomain(raw);
@@ -77,15 +77,12 @@ export class DeviceSessionRepository {
    * This is the primary read path — called at every sign-in.
    * Result is passed to RiskAssessmentService.assess() as the history parameter.
    */
-  async findRecentByUserId(
-    userId:  UserId,
-    options: FindRecentOptions,
-  ): Promise<ReadonlyArray<DeviceSessionEntity>> {
+  async findRecentByUserId(userId: UserId, options: FindRecentOptions): Promise<ReadonlyArray<DeviceSessionEntity>> {
     try {
       const raws = await this.prisma.deviceSession.findMany({
-        where:   { userId },
+        where: { userId },
         orderBy: { createdAt: 'desc' },
-        take:    Math.min(options.limit, SESSION_RISK_RULES.MAX_HISTORY_FETCH),
+        take: Math.min(options.limit, SESSION_RISK_RULES.MAX_HISTORY_FETCH),
       });
       return DeviceSessionMapper.toDomainArray(raws);
     } catch (err: unknown) {
@@ -102,7 +99,7 @@ export class DeviceSessionRepository {
   async findAllByUserId(userId: UserId): Promise<ReadonlyArray<DeviceSessionEntity>> {
     try {
       const raws = await this.prisma.deviceSession.findMany({
-        where:   { userId },
+        where: { userId },
         orderBy: { createdAt: 'desc' },
       });
       return DeviceSessionMapper.toDomainArray(raws);
@@ -146,7 +143,7 @@ export class DeviceSessionRepository {
     try {
       const raw = await this.prisma.deviceSession.update({
         where: { id },
-        data:  { isTrusted: true, trustGrantedAt: new Date() },
+        data: { isTrusted: true, trustGrantedAt: new Date() },
       });
       return DeviceSessionMapper.toDomain(raw);
     } catch (err: unknown) {

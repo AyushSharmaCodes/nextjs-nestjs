@@ -24,13 +24,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
-import type { IGeoIpProvider } from './geo-ip-provider.interface';
-import type {
-  GeoLocation,
-  IpAddress,
-  CountryCode,
-} from '../../../../shared/types/device.types';
+import type { CountryCode, GeoLocation, IpAddress } from '../../../../shared/types/device.types';
 import { toCountryCode, toIpAddress } from '../../../../shared/types/device.types';
+import type { IGeoIpProvider } from './geo-ip-provider.interface';
 
 // Dynamic import to make @maxmind/geoip2-node optional at compile time.
 // If the package is not installed, MaxMindProvider will throw on first use.
@@ -41,11 +37,11 @@ type WebServiceClient = {
 };
 
 interface MaxMindCityResponse {
-  city?:    { names?: { en?: string } };
+  city?: { names?: { en?: string } };
   subdivisions?: Array<{ names?: { en?: string } }>;
   country?: { isoCode?: string; names?: { en?: string } };
   location?: { latitude?: number; longitude?: number };
-  traits?:  { isp?: string; ipAddress?: string };
+  traits?: { isp?: string; ipAddress?: string };
 }
 
 @Injectable()
@@ -62,18 +58,18 @@ export class MaxMindProvider implements IGeoIpProvider {
       const response = await reader.city(ip);
 
       const country = response.country?.isoCode;
-      const city    = response.city?.names?.en ?? null;
-      const region  = response.subdivisions?.[0]?.names?.en ?? null;
-      const lat     = response.location?.latitude ?? null;
-      const lon     = response.location?.longitude ?? null;
-      const isp     = response.traits?.isp ?? null;
+      const city = response.city?.names?.en ?? null;
+      const region = response.subdivisions?.[0]?.names?.en ?? null;
+      const lat = response.location?.latitude ?? null;
+      const lon = response.location?.longitude ?? null;
+      const isp = response.traits?.isp ?? null;
 
       return {
-        ip:        toIpAddress(response.traits?.ipAddress ?? ip),
+        ip: toIpAddress(response.traits?.ipAddress ?? ip),
         city,
         region,
-        country:   country ? toCountryCode(country) : ('XX' as CountryCode),
-        latitude:  typeof lat === 'number' ? lat : null,
+        country: country ? toCountryCode(country) : ('XX' as CountryCode),
+        latitude: typeof lat === 'number' ? lat : null,
         longitude: typeof lon === 'number' ? lon : null,
         isp,
       };
@@ -92,8 +88,7 @@ export class MaxMindProvider implements IGeoIpProvider {
     const dbPath = this.config.get<string>('MAXMIND_DB_PATH');
     if (!dbPath) {
       throw new Error(
-        'MaxMindProvider: MAXMIND_DB_PATH env var is not set. ' +
-        'Download GeoLite2-City.mmdb and set the path.',
+        'MaxMindProvider: MAXMIND_DB_PATH env var is not set. ' + 'Download GeoLite2-City.mmdb and set the path.',
       );
     }
 
@@ -102,7 +97,7 @@ export class MaxMindProvider implements IGeoIpProvider {
       // The 'as string' cast bypasses the compile-time module resolution check.
       // Install with: npm install @maxmind/geoip2-node
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { Reader } = await import('@maxmind/geoip2-node' as string) as {
+      const { Reader } = (await import('@maxmind/geoip2-node' as string)) as {
         Reader: { open: (p: string) => Promise<WebServiceClient> };
       };
       this.reader = await Reader.open(path.resolve(dbPath));
@@ -110,8 +105,7 @@ export class MaxMindProvider implements IGeoIpProvider {
     } catch (err: unknown) {
       const reason = err instanceof Error ? err.message : String(err);
       throw new Error(
-        `MaxMindProvider: failed to open DB at ${dbPath}: ${reason}. ` +
-        'Run: npm install @maxmind/geoip2-node',
+        `MaxMindProvider: failed to open DB at ${dbPath}: ${reason}. ` + 'Run: npm install @maxmind/geoip2-node',
       );
     }
   }

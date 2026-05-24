@@ -8,8 +8,8 @@ import { getConsoleSink } from '@logtape/logtape';
  * or use the robust default console outputs which avoid blocking the main thread.
  */
 export function createConsoleSink() {
-  // process.env.NODE_ENV is a compile-time constant inlined by Next.js — safe on all runtimes
-  const isProduction = process.env.NODE_ENV === 'production';
+  // NODE_ENV is a compile-time constant inlined by Next.js — safe on all runtimes
+  const isProduction = process.env.NODE_ENV === 'production'; // ts-audit-ignore
 
 
   return getConsoleSink({

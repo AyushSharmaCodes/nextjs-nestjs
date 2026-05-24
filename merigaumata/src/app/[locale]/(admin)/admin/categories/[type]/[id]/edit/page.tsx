@@ -38,7 +38,7 @@ export default function EditCategoryPage() {
 
         setCategory(targetNode);
         setAllCategories(references);
-      } catch (err) {
+      } catch (err: unknown) {
         logger.error(`Failed loading categories details:: {error}`, { error: String(err) });
       } finally {
         setLoading(false);
@@ -50,12 +50,12 @@ export default function EditCategoryPage() {
     }
   }, [categoryId, categoryType]);
 
-  const handleSave = async (formData: any) => {
+  const handleSave = async (formData: Record<string, unknown>) => {
     try {
       await mockCategoriesApi.updateCategory(categoryId, formData);
       alert(t('successUpdate'));
       router.push('/admin/categories');
-    } catch (err) {
+    } catch (err: unknown) {
       logger.error(`Update failed:: {error}`, { error: String(err) });
       alert('Failed updating category node. Please verify validations.');
     }

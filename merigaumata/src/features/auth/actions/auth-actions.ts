@@ -13,7 +13,7 @@ const API_URL = serverEnv.NEXT_PUBLIC_API_URL;
 //   production  → '__Host-session' (requires HTTPS + Secure flag)
 //   development → 'session'        (__Host- prefix is rejected on HTTP localhost)
 const SESSION_COOKIE_NAME =
-  process.env.NODE_ENV === 'production' ? '__Host-session' : 'session';
+  serverEnv.NODE_ENV === 'production' ? '__Host-session' : 'session';
 
 /**
  * Server Action that resolves the authenticated user profile server-side.

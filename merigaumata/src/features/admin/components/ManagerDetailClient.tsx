@@ -7,6 +7,8 @@ import { StatusBadge } from './ui/StatusBadge';
 import { ConfirmDialog } from './ui/ConfirmDialog';
 import { ArrowLeft, Save, Trash2, ShieldAlert } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/shared/lib/logger';
+
 
 export function ManagerDetailClient({ managerId }: { managerId: string }) {
   const router = useRouter();
@@ -115,7 +117,7 @@ export function ManagerDetailClient({ managerId }: { managerId: string }) {
       <ConfirmDialog
         isOpen={isRevokeDialogOpen}
         onClose={() => setRevokeDialogOpen(false)}
-        onConfirm={() => console.log('Manager Suspended')}
+        onConfirm={() => logger.info('Manager Suspended')}
         title="Suspend Manager Account"
         description={`Are you sure you want to suspend ${manager.name}? They will immediately lose access to the admin portal and all associated permissions.`}
         confirmText="Yes, Suspend"

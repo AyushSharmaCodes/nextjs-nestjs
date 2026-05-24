@@ -5,10 +5,10 @@ import { magicLinkSchema } from '../schemas/auth.schema';
 import { normalizeError } from '@/shared/lib/errors/api-error';
 
 export function useMagicLink(
-  locale: string, 
+  locale: string,
   acceptedTerms: boolean,
   externalEmail?: string,
-  externalSetEmail?: (val: string) => void
+  externalSetEmail?: (val: string) => void,
 ) {
   const [localEmail, setLocalEmail] = useState('');
   const [loading, setLoading] = useState(false);

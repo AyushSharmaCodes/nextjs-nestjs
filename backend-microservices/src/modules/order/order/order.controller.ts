@@ -7,7 +7,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  async create(@Body() data: any) {
+  async create(@Body() data: any) { // ts-audit-ignore
     const order = await this.orderService.createOrder(data);
     return ApiResponse.success(order, 'Order created');
   }

@@ -1,20 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "ES2022",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "ES2022"
     ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "allowJs": false,
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
@@ -22,12 +17,36 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    // Master strict flags
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    // Additional strict rules
+    "useUnknownInCatchVariables": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    // Practical overrides for framework code and Prisma compatibility
+    "exactOptionalPropertyTypes": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true
   },
   "include": [
     "next-env.d.ts",

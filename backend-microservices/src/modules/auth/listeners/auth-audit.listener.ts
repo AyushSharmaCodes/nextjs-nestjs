@@ -68,7 +68,7 @@ export class AuthAuditListener {
         },
       });
       this.logger.debug(`Auth audit logged for ${email}: "${subject}"`);
-    } catch (err) {
+    } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       this.logger.error(`Auth audit write failed for ${email}: ${msg}`);
     }

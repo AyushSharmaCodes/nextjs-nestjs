@@ -169,7 +169,7 @@ export default function VerifyForm() {
         }
       }, 1000);
 
-    } catch (err) {
+    } catch (err: unknown) {
       setOtpError(err instanceof Error ? err.message : t('otpVerifyFailed'));
     } finally {
       setVerifyingOtp(false);
@@ -188,7 +188,7 @@ export default function VerifyForm() {
         setResendSuccess(true);
         setTimeout(() => setResendSuccess(false), 5000);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       setOtpError(err instanceof Error ? err.message : t('resendFailed'));
     } finally {
       setResendingOtp(false);

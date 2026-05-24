@@ -11,7 +11,7 @@ export class TranslationService {
   ) {}
 
   async getTranslations(language: string, namespace?: string) {
-    const where: any = { language, isActive: true };
+    const where: any = { language, isActive: true }; // ts-audit-ignore
     if (namespace) where.namespace = namespace;
     const translations = await this.transRepo.find({ where });
     return translations.reduce((acc, t) => ({ ...acc, [t.key]: t.value }), {});

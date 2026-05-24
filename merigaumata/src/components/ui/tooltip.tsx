@@ -16,10 +16,10 @@ export function Tooltip({ children }: { children: React.ReactNode }) {
   // Distribute visibility state to children triggers & contents
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
-      const typeDisplayName = (child.type as any).displayName;
+      const typeDisplayName = (child.type as { displayName?: string }).displayName;
       // If it's the trigger, pass standard hover handlers
       if (typeDisplayName === 'TooltipTrigger') {
-        return React.cloneElement(child as React.ReactElement<any>, {
+        return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
           onMouseEnter: () => setIsVisible(true),
           onMouseLeave: () => setIsVisible(false),
           onFocus: () => setIsVisible(true),
@@ -28,7 +28,7 @@ export function Tooltip({ children }: { children: React.ReactNode }) {
       }
       // If it's the content, pass active status
       if (typeDisplayName === 'TooltipContent') {
-        return React.cloneElement(child as React.ReactElement<any>, {
+        return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
           isVisible,
         });
       }
@@ -43,44 +43,52 @@ export interface TooltipTriggerProps extends React.HTMLAttributes<HTMLDivElement
   asChild?: boolean;
 }
 
+interface TooltipChildProps {
+  onMouseEnter?: React.MouseEventHandler;
+  onMouseLeave?: React.MouseEventHandler;
+  onFocus?: React.FocusEventHandler;
+  onBlur?: React.FocusEventHandler;
+  onClick?: React.MouseEventHandler;
+}
+
 export const TooltipTrigger = React.forwardRef<HTMLDivElement, TooltipTriggerProps>(
   ({ children, asChild, ...props }, ref) => {
     const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
       props.onMouseEnter?.(e);
       if (asChild && React.isValidElement(children)) {
-        (children.props as any).onMouseEnter?.(e);
+        (children.props as TooltipChildProps).onMouseEnter?.(e);
       }
     };
 
     const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
       props.onMouseLeave?.(e);
       if (asChild && React.isValidElement(children)) {
-        (children.props as any).onMouseLeave?.(e);
+        (children.props as TooltipChildProps).onMouseLeave?.(e);
       }
     };
 
     const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
       props.onFocus?.(e);
       if (asChild && React.isValidElement(children)) {
-        (children.props as any).onFocus?.(e);
+        (children.props as TooltipChildProps).onFocus?.(e);
       }
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
       props.onBlur?.(e);
       if (asChild && React.isValidElement(children)) {
-        (children.props as any).onBlur?.(e);
+        (children.props as TooltipChildProps).onBlur?.(e);
       }
     };
 
     if (asChild && React.isValidElement(children)) {
-      return React.cloneElement(children as React.ReactElement<any>, {
+      return React.cloneElement(children as React.ReactElement<TooltipChildProps>, {
         onMouseEnter: handleMouseEnter,
         onMouseLeave: handleMouseLeave,
         onFocus: handleFocus,
         onBlur: handleBlur,
         onClick: (e: React.MouseEvent) => {
-          (children.props as any).onClick?.(e);
+          (children.props as TooltipChildProps).onClick?.(e);
         }
       });
     }
@@ -100,7 +108,7 @@ export const TooltipTrigger = React.forwardRef<HTMLDivElement, TooltipTriggerPro
     );
   }
 );
-(TooltipTrigger as any).displayName = 'TooltipTrigger';
+TooltipTrigger.displayName = 'TooltipTrigger';
 
 export interface TooltipContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -131,4 +139,4 @@ export function TooltipContent({
     </div>
   );
 }
-(TooltipContent as any).displayName = 'TooltipContent';
+(TooltipContent as { displayName?: string }).displayName = 'TooltipContent';

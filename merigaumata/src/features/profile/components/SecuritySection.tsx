@@ -6,6 +6,7 @@ import { authClient } from '@/lib/auth-client';
 import { useRouter, Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { toast } from '@/shared/lib/toast';
+import { useTranslations } from 'next-intl';
 
 const DetailRow = ({ label, value }: { label: string, value: string | React.ReactNode }) => (
   <div className="flex flex-col sm:flex-row sm:items-center py-4 border-b border-neutral-100 dark:border-neutral-800/60 gap-1 sm:gap-4 group last:border-0 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors px-6">
@@ -15,6 +16,7 @@ const DetailRow = ({ label, value }: { label: string, value: string | React.Reac
 );
 
 export function SecuritySection() {
+  const t = useTranslations('profile');
   const authState = useStrictAuth();
   const router = useRouter();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -41,7 +43,7 @@ export function SecuritySection() {
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.new !== passwordForm.confirm) {
-      setErrorMsg('Passwords do not match');
+      setErrorMsg(t('toasts.passwordsMismatch'));
       return;
     }
     setIsLoading(true);
@@ -53,17 +55,17 @@ export function SecuritySection() {
         revokeOtherSessions: true,
       });
       if (res.error) {
-        setErrorMsg(res.error.message || 'Failed to change password');
-        toast.error('Password update failed', { description: res.error.message });
+        setErrorMsg(res.error.message || t('toasts.emailChangeFailed'));
+        toast.error(t('toasts.passwordFailed'), { description: res.error.message });
       } else {
-        toast.success('Password updated', { description: 'Your password has been changed successfully.' });
+        toast.success(t('toasts.passwordSuccess'), { description: t('toasts.passwordSuccessDesc') });
         setIsChangingPassword(false);
         setPasswordForm({ current: '', new: '', confirm: '' });
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'An error occurred';
+      const msg = err instanceof Error ? err.message : t('toasts.emailChangeFailed');
       setErrorMsg(msg);
-      toast.error('Password update failed', { description: msg });
+      toast.error(t('toasts.passwordFailed'), { description: msg });
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +74,7 @@ export function SecuritySection() {
   const handleSetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.new !== passwordForm.confirm) {
-      setErrorMsg('Passwords do not match');
+      setErrorMsg(t('toasts.passwordsMismatch'));
       return;
     }
     setIsLoading(true);
@@ -81,18 +83,18 @@ export function SecuritySection() {
       // For OAuth/Magic Link users, we attempt changePassword with empty currentPassword
       const res = await authClient.changePassword({ newPassword: passwordForm.new, currentPassword: '', revokeOtherSessions: true });
       if (res?.error) {
-        setErrorMsg(res.error.message || 'Failed to set password');
-        toast.error('Failed to set password', { description: res.error.message });
+        setErrorMsg(res.error.message || t('toasts.emailChangeFailed'));
+        toast.error(t('toasts.passwordFailed'), { description: res.error.message });
       } else {
-        toast.success('Password set!', { description: 'You can now enable Two-Factor Authentication.' });
+        toast.success(t('toasts.passwordSetSuccess'), { description: t('toasts.passwordSetSuccessDesc') });
         setIsChangingPassword(false);
         setPasswordForm({ current: '', new: '', confirm: '' });
         setHasPassword(true);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'An error occurred';
+      const msg = err instanceof Error ? err.message : t('toasts.emailChangeFailed');
       setErrorMsg(msg);
-      toast.error('Failed to set password', { description: msg });
+      toast.error(t('toasts.passwordFailed'), { description: msg });
     } finally {
       setIsLoading(false);
     }
@@ -110,12 +112,12 @@ export function SecuritySection() {
 
       const res = await authClient.sendVerificationEmail({ email: user.email, callbackURL });
       if (res?.error) {
-        toast.error('Failed to send verification email', { description: res.error.message });
+        toast.error(t('toasts.verifyFailed'), { description: res.error.message });
       } else {
-        toast.success('Verification email sent!', { description: `Check your inbox at ${user.email}` });
+        toast.success(t('toasts.verifySuccess'), { description: t('toasts.verifySuccessDesc', { email: user.email }) });
       }
     } catch (err: unknown) {
-      toast.error('Failed to send verification email');
+      toast.error(t('toasts.verifyFailed'));
     } finally {
       setIsSendingVerification(false);
     }
@@ -124,19 +126,19 @@ export function SecuritySection() {
   return (
     <div id="security" className="bg-card rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden flex flex-col h-max scroll-mt-24">
       <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
-        <h3 className="font-semibold text-foreground">Security & Access</h3>
+        <h3 className="font-semibold text-foreground">{t('security.title')}</h3>
       </div>
       <div className="flex flex-col py-1">
 
         {/* Email Verification Row */}
-        <DetailRow label="Email Verified:" value={
+        <DetailRow label={`${t('security.verified')}:`} value={
           <div className="flex items-center justify-between w-full">
             <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[12px] font-medium ${
               emailVerified
                 ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/50 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/30'
                 : 'bg-amber-50 text-amber-600 border border-amber-200/50 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30'
             }`}>
-              {emailVerified ? '✓ Verified' : '⚠ Not Verified'}
+              {emailVerified ? t('security.verified') : t('security.notVerified')}
             </span>
             {!emailVerified && (
               <button
@@ -144,7 +146,7 @@ export function SecuritySection() {
                 disabled={isSendingVerification}
                 className="text-[13px] font-semibold text-foreground hover:underline decoration-1 underline-offset-2 focus:outline-none disabled:opacity-50"
               >
-                {isSendingVerification ? 'Sending…' : 'Send Verification Email'}
+                {isSendingVerification ? t('security.sending') : t('security.sendEmail')}
               </button>
             )}
           </div>
@@ -156,7 +158,7 @@ export function SecuritySection() {
              <form onSubmit={hasPassword ? handlePasswordChange : handleSetPassword} className="grid grid-cols-1 gap-4 max-w-sm">
                {hasPassword && (
                  <div className="space-y-1.5">
-                   <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">Current Password</label>
+                   <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">{t('security.currentPassword')}</label>
                    <input
                      type="password"
                      required
@@ -167,7 +169,7 @@ export function SecuritySection() {
                  </div>
                )}
                <div className="space-y-1.5">
-                 <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">New Password</label>
+                 <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">{t('security.newPassword')}</label>
                  <input
                    type="password"
                    required
@@ -178,7 +180,7 @@ export function SecuritySection() {
                  />
                </div>
                <div className="space-y-1.5">
-                 <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">Confirm Password</label>
+                 <label className="text-[13px] font-semibold text-foreground dark:text-neutral-300">{t('security.confirmPassword')}</label>
                  <input
                    type="password"
                    required
@@ -197,7 +199,7 @@ export function SecuritySection() {
                     disabled={isLoading}
                     className="px-4 py-2 text-sm font-bold bg-neutral-900 text-white dark:bg-white dark:text-black rounded-xl shadow-sm hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors focus:outline-none disabled:opacity-50"
                   >
-                    {isLoading ? 'Saving…' : hasPassword ? 'Update Password' : 'Set Password'}
+                    {isLoading ? t('saving') : hasPassword ? t('security.updatePassword') : t('security.setPassword')}
                   </button>
                   <button
                     type="button"
@@ -205,41 +207,41 @@ export function SecuritySection() {
                     onClick={() => { setIsChangingPassword(false); setErrorMsg(''); }}
                     className="px-4 py-2 text-sm font-medium text-neutral-600 hover:text-foreground transition-colors focus:outline-none disabled:opacity-50"
                   >
-                    Cancel
+                    {t('cancel')}
                   </button>
                </div>
              </form>
            </div>
         ) : (
-          <DetailRow label="Password:" value={
+          <DetailRow label={`${t('security.password')}`} value={
             <div className="flex items-center justify-between w-full">
-              <span>{hasPassword ? '••••••••' : <span className="text-neutral-400 text-[13px] font-normal italic">No password set</span>}</span>
+              <span>{hasPassword ? '••••••••' : <span className="text-neutral-400 text-[13px] font-normal italic">{t('security.noPassword')}</span>}</span>
               <button
                 onClick={() => setIsChangingPassword(true)}
                 className="text-[13px] font-semibold text-foreground hover:underline decoration-1 underline-offset-2 focus:outline-none"
               >
-                {hasPassword ? 'Change Password' : 'Set Password'}
+                {hasPassword ? t('security.changePassword') : t('security.setPassword')}
               </button>
             </div>
           } />
         )}
 
         {/* 2FA Row */}
-        <DetailRow label="Two-Factor Authentication:" value={
+        <DetailRow label={t('security.twoFactor')} value={
           <div className="flex items-center justify-between w-full">
             <span className={`inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium ${twoFactorEnabled ? 'bg-purple-50 text-purple-600 border border-purple-200/50 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/30' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700'}`}>
-              {twoFactorEnabled ? 'Enabled' : 'Disabled'}
+              {twoFactorEnabled ? t('security.enabled') : t('security.disabled')}
             </span>
             {hasPassword === false && !twoFactorEnabled ? (
               <span className="text-[12px] text-amber-600 dark:text-amber-400 font-medium">
-                Set a password first to enable 2FA
+                {t('security.setPasswordFirst')}
               </span>
             ) : (
               <Link
                 href="/auth/setup2FA"
                 className="text-[13px] font-semibold text-foreground hover:underline decoration-1 underline-offset-2 focus:outline-none"
               >
-                {twoFactorEnabled ? 'Manage / Disable 2FA' : 'Enable 2FA'}
+                {twoFactorEnabled ? t('security.manage2fa') : t('security.enable2fa')}
               </Link>
             )}
           </div>
@@ -248,3 +250,4 @@ export function SecuritySection() {
     </div>
   );
 }
+

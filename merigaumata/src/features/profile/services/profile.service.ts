@@ -1,5 +1,5 @@
 import { profileApi } from '../api/profile.api';
-import { PersonalDetails, AccountDetails } from '../types/profile.types';
+import { PersonalDetails, AccountDetails, CountryOption, GenderOption } from '../types/profile.types';
 
 export const profileService = {
   getPersonalDetails: async (): Promise<PersonalDetails> => {
@@ -36,5 +36,13 @@ export const profileService = {
 
   removeCover: async () => {
     return await profileApi.removeCover();
-  }
+  },
+
+  getCountries: async (): Promise<CountryOption[]> => {
+    return await profileApi.fetchCountries();
+  },
+
+  getGenders: async (): Promise<GenderOption[]> => {
+    return await profileApi.fetchGenders();
+  },
 };

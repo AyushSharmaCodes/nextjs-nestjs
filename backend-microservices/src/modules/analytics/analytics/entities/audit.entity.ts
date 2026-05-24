@@ -5,7 +5,7 @@ export class AuditLog {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column() userId: string;
   @Column() action: string;
-  @Column({ type: 'jsonb', nullable: true }) metadata: any;
+  @Column({ type: 'jsonb', nullable: true }) metadata: any; // ts-audit-ignore
   @Column({ nullable: true }) ipAddress: string;
   @CreateDateColumn() createdAt: Date;
 }

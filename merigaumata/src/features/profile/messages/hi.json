@@ -2,6 +2,9 @@
   "title": "खाता सेटिंग्स",
   "saveChanges": "बदलाव सहेजें",
   "saving": "सहेज रहा है...",
+  "cancel": "रद्द करें",
+  "edit": "संपादित करें",
+  "processing": "प्रक्रिया जारी है...",
   "personalDetails": {
     "title": "व्यक्तिगत विवरण",
     "desc": "अपनी व्यक्तिगत जानकारी अपडेट करें और हम आप तक कैसे पहुँच सकते हैं।",
@@ -40,5 +43,148 @@
       "defaultAddress": "सेक्टर 45, गुरुग्राम - भारत",
       "defaultTimeZone": "जीएमटी+5:30 (भारतीय मानक समय)"
     }
+  },
+  "sidebar": {
+    "title": "मेरा खाता",
+    "details": "प्रोफ़ाइल विवरण",
+    "orders": "मेरे ऑर्डर",
+    "events": "इवेंट बुकिंग",
+    "welfare": "गौ सेवा",
+    "admin": {
+      "title": "प्रशासनिक",
+      "adminWorkspace": "एडमिन कार्यक्षेत्र",
+      "managerWorkspace": "मैनेजर कार्यक्षेत्र",
+      "adminDesc": "पूर्ण गौशाला डैशबोर्ड, उत्पादों और इवेंट्स का प्रबंधन और मैनेजर एक्सेस सेट करना।",
+      "managerDesc": "सौंपे गए प्रशासनिक बोर्ड और गौशाला संचालन देखें।"
+    },
+    "signOut": "साइन आउट",
+    "signingOut": "साइन आउट हो रहा है…"
+  },
+  "breadcrumb": {
+    "myAccount": "मेरा खाता",
+    "profile": "प्रोफ़ाइल"
+  },
+  "cover": {
+    "remove": "कवर हटाएं",
+    "uploading": "अपलोड हो रहा है...",
+    "change": "कवर बदलें",
+    "add": "कवर जोड़ें"
+  },
+  "avatar": {
+    "uploading": "अपलोड हो रहा है...",
+    "defaultUser": "उपयोगकर्ता"
+  },
+  "dangerZone": {
+    "title": "अपना खाता हटाएं",
+    "desc": "हम जांच करेंगे कि क्या आपका खाता हटाया जा सकता है",
+    "warning": "चेतावनी: यह क्रिया स्थायी है",
+    "profileDetails": "व्यक्तिगत प्रोफ़ाइल और लॉगिन विवरण",
+    "addresses": "सहेजे गए पते और भुगतान विधियां",
+    "cart": "शॉपिंग कार्ट और विशलिस्ट आइटम",
+    "btn": "मेरा खाता हटाएं",
+    "confirmTitle": "हटाने की पुष्टि करें",
+    "confirmDesc": "यह क्रिया पूर्ववत नहीं की जा सकती। इससे आपका खाता स्थायी रूप से हटा दिया जाएगा और हमारे सर्वर से आपका डेटा हटा दिया जाएगा।",
+    "phraseLabel": "सत्यापित करने के लिए, नीचे {phrase} टाइप करें:",
+    "phrasePlaceholder": "पुष्टि करने के लिए वाक्यांश टाइप करें",
+    "passwordLabel": "पासवर्ड की पुष्टि करें",
+    "passwordPlaceholder": "अपना पासवर्ड दर्ज करें",
+    "permanentlyDelete": "स्थायी रूप से हटाएं",
+    "alertInitiated": "खाता हटाने की प्रक्रिया शुरू की गई।"
+  },
+  "personalForm": {
+    "firstName": "पहला नाम",
+    "lastName": "अंतिम नाम",
+    "dateOfBirth": "जन्म तिथि",
+    "gender": "लिंग",
+    "selectGender": "लिंग चुनें",
+    "nationality": "राष्ट्रीयता",
+    "selectNationality": "राष्ट्रीयता चुनें",
+    "searchCountry": "देश खोजें...",
+    "noCountries": "कोई देश नहीं मिला",
+    "address": "पता",
+    "phone": "फ़ोन",
+    "selectCode": "कोड चुनें",
+    "phonePlaceholder": "ग्राहक संख्या",
+    "changeEmail": "ईमेल बदलें"
+  },
+  "accountForm": {
+    "created": "खाता बनाया गया:",
+    "lastLogin": "अंतिम लॉगिन:",
+    "verification": "खाता सत्यापन:",
+    "verified": "सत्यापित",
+    "notVerified": "सत्यापित नहीं",
+    "timeZone": "समय क्षेत्र:"
+  },
+  "security": {
+    "title": "सुरक्षा और एक्सेस",
+    "verified": "✓ सत्यापित",
+    "notVerified": "⚠ सत्यापित नहीं",
+    "sending": "भेजा जा रहा है…",
+    "sendEmail": "सत्यापन ईमेल भेजें",
+    "currentPassword": "वर्तमान पासवर्ड",
+    "newPassword": "नया पासवर्ड",
+    "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "updatePassword": "पासवर्ड अपडेट करें",
+    "setPassword": "पासवर्ड सेट करें",
+    "password": "पासवर्ड:",
+    "noPassword": "कोई पासवर्ड सेट नहीं है",
+    "changePassword": "पासवर्ड बदलें",
+    "twoFactor": "द्वि-कारक प्रमाणीकरण:",
+    "enabled": "सक्षम",
+    "disabled": "अक्षम",
+    "setPasswordFirst": "2FA सक्षम करने के लिए पहले एक पासवर्ड सेट करें",
+    "manage2fa": "2FA प्रबंधित करें / अक्षम करें",
+    "enable2fa": "2FA सक्षम करें"
+  },
+  "preferences": {
+    "title": "प्राथमिकताएं",
+    "emailNotifications": "ईमेल सूचनाएं:",
+    "subscribed": "सदस्यता ली",
+    "unsubscribed": "सदस्यता समाप्त की",
+    "preferredCurrency": "पसंदीदा मुद्रा:"
+  },
+  "emailModal": {
+    "title": "ईमेल पता अपडेट करें",
+    "desc": "अपना ईमेल पता बदलने के लिए, आपको नए पते के स्वामित्व को सत्यापित करना होगा।",
+    "newEmail": "नया ईमेल पता",
+    "newEmailPlaceholder": "name@example.com",
+    "confirmPassword": "वर्तमान पासवर्ड की पुष्टि करें",
+    "confirmPasswordPlaceholder": "••••••••",
+    "codeLabel": "द्वि-कारक प्रमाणक कोड",
+    "codePlaceholder": "6-अंकों का कोड",
+    "btn": "ईमेल अपडेट करें"
+  },
+  "toasts": {
+    "emailSuccess": "ईमेल सफलतापूर्वक अपडेट किया गया!",
+    "emailSuccessDesc": "आपका ईमेल पता सफलतापूर्वक अपडेट कर दिया गया है।",
+    "signOutSuccess": "सफलतापूर्वक साइन आउट किया गया",
+    "signOutSuccessDesc": "फिर मिलते हैं!",
+    "signOutFailed": "साइन आउट विफल रहा",
+    "signOutFailedDesc": "कृपया पुनः प्रयास करें।",
+    "avatarSuccess": "अवतार सफलतापूर्वक अपडेट किया गया",
+    "avatarFailed": "अवतार अपडेट करने में विफल",
+    "avatarRemoved": "अवतार हटा दिया गया",
+    "coverSuccess": "कवर फ़ोटो सफलतापूर्वक अपडेट की गई",
+    "coverFailed": "कवर फ़ोटो अपडेट करने में विफल",
+    "coverRemoved": "कवर फ़ोटो हटा दी गई",
+    "emailSubscribed": "ईमेल सूचनाओं की सदस्यता ली गई",
+    "emailUnsubscribed": "ईमेल सूचनाओं की सदस्यता समाप्त की गई",
+    "emailPrefFailed": "ईमेल प्राथमिकताएं अपडेट करने में विफल",
+    "passwordsMismatch": "पासवर्ड मेल नहीं खाते",
+    "passwordFailed": "पासवर्ड अपडेट विफल रहा",
+    "passwordFailedDesc": "पासवर्ड अपडेट विफल: {desc}",
+    "passwordSuccess": "पासवर्ड अपडेट किया गया",
+    "passwordSuccessDesc": "आपका पासवर्ड सफलतापूर्वक बदल दिया गया है।",
+    "passwordSetSuccess": "पासवर्ड सेट हो गया!",
+    "passwordSetSuccessDesc": "अब आप द्वि-कारक प्रमाणीकरण सक्षम कर सकते हैं।",
+    "verifyFailed": "सत्यापन ईमेल भेजने में विफल",
+    "verifySuccess": "सत्यापन ईमेल भेज दिया गया!",
+    "verifySuccessDesc": "{email} पर अपना इनबॉक्स देखें",
+    "emailChangeVerifySuccess": "सत्यापन ईमेल भेज दिया गया!",
+    "emailChangeVerifySuccessDesc": "हमने स्वामित्व सत्यापित करने के लिए {email} पर एक लिंक भेजा है।",
+    "emailChangeIncorrectPassword": "गलत वर्तमान पासवर्ड।",
+    "emailChange2faRequired": "2FA पासकोड आवश्यक है।",
+    "emailChange2faInvalid": "अमान्य 2FA पासकोड।",
+    "emailChangeFailed": "ईमेल परिवर्तन शुरू करने में विफल।"
   }
 }
