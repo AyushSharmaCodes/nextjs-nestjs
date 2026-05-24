@@ -35,7 +35,7 @@ async function bootstrap(): Promise<void> {
   // ═══════════════════════════════════════
   // 2. Graceful Shutdown
   // ═══════════════════════════════════════
-  app.enableShutdownHooks();
+  // Handled via custom signal listeners at the end of bootstrap() to ensure process.exit(0) is called.
 
   // ═══════════════════════════════════════
   // 3. Security Middlewares
@@ -120,13 +120,13 @@ async function bootstrap(): Promise<void> {
   appLogger.log(`🌍 Environment: ${cfg.nodeEnv}`);
 
   // ═══════════════════════════════════════
-  // 9. Graceful Shutdown Handlers
+  // 9. Graceful Shutdown Signal Handlers
   // ═══════════════════════════════════════
   const shutdown = async (signal: string) => {
     appLogger.log(`Received ${signal}. Starting graceful shutdown...`);
     try {
       await app.close();
-      appLogger.log('Graceful shutdown complete.');
+      appLogger.log('Graceful shutdown complete. Exiting process.');
       process.exit(0);
     } catch (err: unknown) {
       appLogger.error('Failed to shut down gracefully:', err);

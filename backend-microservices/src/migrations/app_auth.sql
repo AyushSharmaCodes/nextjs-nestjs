@@ -32,24 +32,6 @@ INSERT INTO app_auth.roles (name, description, "isSystem") VALUES
     ('CUSTOMER', 'Standard customer access', true)
 ON CONFLICT (name) DO NOTHING;
 
-CREATE TABLE IF NOT EXISTS app_auth.permissions (
-    id          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-    action      TEXT NOT NULL,
-    resource    TEXT NOT NULL,
-    description TEXT,
-    "createdAt"  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    "updatedAt"  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE (action, resource)
-);
-
-CREATE TABLE IF NOT EXISTS app_auth.role_permissions (
-    id            TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-    "roleId"       TEXT NOT NULL REFERENCES app_auth.roles(id) ON DELETE CASCADE,
-    "permissionId" TEXT NOT NULL REFERENCES app_auth.permissions(id) ON DELETE CASCADE,
-    "createdAt"    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE ("roleId", "permissionId")
-);
-
 -- 4. USER ACCOUNTS & CREDENTIALS
 CREATE TABLE IF NOT EXISTS app_auth."user" (
     id               TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,

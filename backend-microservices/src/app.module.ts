@@ -29,6 +29,7 @@ import { EventDomainModule } from './modules/event/event-domain.module';
 import { AnalyticsDomainModule } from './modules/analytics/analytics-domain.module';
 import { CronDomainModule } from './modules/cron/cron-domain.module';
 import { CscModule } from './modules/csc/csc.module';
+import { SupabaseModule } from './modules/supabase/supabase.module';
 
 // Shared providers
 import { TracingInterceptor } from './common/interceptors/tracing.interceptor';
@@ -88,6 +89,7 @@ import { ManagerPermissionsGuard } from './modules/auth/guards/manager-permissio
     AnalyticsDomainModule,
     CronDomainModule,
     CscModule,
+    SupabaseModule,
   ],
   providers: [
     // Global throttler guard

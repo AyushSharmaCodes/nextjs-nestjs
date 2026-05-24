@@ -23,7 +23,7 @@ import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
           min: config.get<number>('DB_POOL_MIN', 2),
         },
         entities: [__dirname + '/../../modules/**/*.entity{.ts,.js}'],
-        synchronize: false,
+        synchronize: config.get('NODE_ENV') === 'development',
         logging: config.get('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],

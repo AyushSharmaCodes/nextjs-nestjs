@@ -8,6 +8,10 @@
       {
         "include": "infrastructure/i18n/locales/**/*.json",
         "watchAssets": true
+      },
+      {
+        "include": "modules/communication/templates/**/*",
+        "watchAssets": true
       }
     ]
   }

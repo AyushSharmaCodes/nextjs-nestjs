@@ -52,8 +52,6 @@ export default async function middleware(request: NextRequest) {
       let userRoles: string[] = [];
       let meResStatus = 200;
       let sessionDataValid = false;
-      let isTwoFactorEnabled = false;
-      let isTwoFactorVerified = true;
 
       // 2. Validate JWT locally at the Edge (Fast path)
       if (jwtToken && serverEnv.BETTER_AUTH_SECRET) {
@@ -64,8 +62,6 @@ export default async function middleware(request: NextRequest) {
           if (role) {
             userRoles = [role];
           }
-          isTwoFactorEnabled = (payload.user as { twoFactorEnabled?: boolean })?.twoFactorEnabled ?? false;
-          isTwoFactorVerified = (payload.session as { twoFactorVerified?: boolean })?.twoFactorVerified ?? true;
           const requiresRole = path.includes('/admin') || path.includes('/manager');
           sessionDataValid = !requiresRole || userRoles.length > 0;
         } catch (jwtError: unknown) {
@@ -91,15 +87,7 @@ export default async function middleware(request: NextRequest) {
           if (authContext?.role) {
             userRoles = [authContext.role];
           }
-          isTwoFactorEnabled = authContext?.twoFactorEnabled ?? false;
-          isTwoFactorVerified = authContext?.twoFactorVerified ?? !isTwoFactorEnabled;
         }
-      }
-
-      // 4. Handle Unauthenticated / 2FA Pending
-      const isTwoFactorPending = isTwoFactorEnabled && !isTwoFactorVerified;
-      if (isTwoFactorPending) {
-        return buildAuthRedirect(request, locale, '/auth/verify');
       }
 
       if (meResStatus >= 400) {

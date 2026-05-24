@@ -9,7 +9,6 @@
  *  - BetterAuthGuard (session validation)
  *  - RolesGuard (RBAC)
  *  - BootstrapService (admin seed)
- *  - AuthAuditListener (event-driven audit logging)
  *  - AuthEventEmitter (SOLE event emission point — wraps EventEmitter2)
  *  - SessionModule (device parser, GeoIP, risk assessment, suspicious session)
  *
@@ -30,7 +29,6 @@ import { AuthRepository } from './auth.repository';
 import { BootstrapService } from './bootstrap/bootstrap.service';
 import { BetterAuthGuard } from './guards/better-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { AuthAuditListener } from './listeners/auth-audit.listener';
 import { AuthEventEmitterModule } from './events/auth-event-emitter.module';
 import { SessionModule } from './session/session.module';
 
@@ -50,7 +48,6 @@ import { SessionModule } from './session/session.module';
     BootstrapService,
     BetterAuthGuard,
     RolesGuard,
-    AuthAuditListener,
     // AuthEventEmitter is provided by AuthEventEmitterModule (imported above)
   ],
   exports: [

@@ -29,8 +29,6 @@ model User {
 
   sessions        Session[]
   accounts        Account[]
-  securityEvents  SecurityEvent[]   @relation("UserSecurityEvents")
-  otpEmailHistory OTPEmailHistory[] @relation("UserOtpHistory")
   twoFactor       TwoFactor?
   deviceSessions  DeviceSession[]   @relation("UserDeviceSessions")
   roleRelation    Role              @relation(fields: [role], references: [name], onDelete: Restrict)
@@ -126,73 +124,10 @@ model Role {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
 
-  permissions RolePermission[]
   users       User[]
   profiles    Profile[]        @relation("ProfileRole")
 
   @@map("roles")
-  @@schema("app_auth")
-}
-
-model Permission {
-  id          String   @id @default(uuid())
-  action      String
-  resource    String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  rolePermissions RolePermission[]
-
-  @@unique([action, resource])
-  @@map("permissions")
-  @@schema("app_auth")
-}
-
-model RolePermission {
-  id           String     @id @default(uuid())
-  roleId       String
-  permissionId String
-  createdAt    DateTime   @default(now())
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-
-  @@unique([roleId, permissionId])
-  @@map("role_permissions")
-  @@schema("app_auth")
-}
-
-model SecurityEvent {
-  id            String   @id @default(uuid())
-  userId        String?
-  email         String?
-  eventType     String
-  status        String
-  ipAddress     String?
-  userAgent     String?
-  correlationId String?
-  metadata      Json?
-  createdAt     DateTime @default(now())
-  user          User?    @relation("UserSecurityEvents", fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([eventType, createdAt])
-  @@index([userId, createdAt])
-  @@map("security_events")
-  @@schema("app_auth")
-}
-
-model OTPEmailHistory {
-  id        String   @id @default(uuid())
-  userId    String?
-  email     String
-  subject   String
-  body      String
-  status    String
-  createdAt DateTime @default(now())
-  user      User?    @relation("UserOtpHistory", fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([userId])
-  @@map("otp_email_history")
   @@schema("app_auth")
 }
 
@@ -368,8 +303,6 @@ model Profile {
   addresses                 UserAddress[]
   managerPermissionGrants   ManagerPermissionGrant[] @relation("ManagerGrants")
   adminPermissionGrants     ManagerPermissionGrant[] @relation("AdminGrants")
-  adminActivityLogs         AdminActivityLog[]       @relation("AdminLogs")
-  targetManagerActivityLogs AdminActivityLog[]       @relation("TargetManagerLogs")
   actorAuditLogs            AuditLog[]               @relation("ActorAuditLogs")
   
   @@index([userId])
@@ -470,25 +403,6 @@ model ManagerPermissionGrant {
   @@index([managerProfileId, isActive])
   @@index([expiresAt])
   @@map("manager_permission_grants")
-  @@schema("app_user")
-}
-
-model AdminActivityLog {
-  id                String   @id @default(uuid())
-  adminProfileId    String
-  adminProfile      Profile  @relation("AdminLogs", fields: [adminProfileId], references: [id], onDelete: Restrict)
-  actionType        String
-  targetManagerId   String
-  targetManager     Profile  @relation("TargetManagerLogs", fields: [targetManagerId], references: [id], onDelete: Restrict)
-  permissionSlug    String?
-  note              String?
-  ipAddress         String?
-  userAgent         String?
-  createdAt         DateTime @default(now())
-
-  @@index([adminProfileId, createdAt(sort: Desc)])
-  @@index([targetManagerId, createdAt(sort: Desc)])
-  @@map("admin_activity_log")
   @@schema("app_user")
 }
 

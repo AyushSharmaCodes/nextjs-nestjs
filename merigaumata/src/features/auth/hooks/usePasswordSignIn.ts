@@ -4,6 +4,7 @@ import { authClient } from '@/lib/auth-client';
 import { toast } from '@/shared/lib/toast';
 import { loginSchema } from '../schemas/auth.schema';
 import { normalizeError } from '@/shared/lib/errors/api-error';
+import type { Role } from '../types/auth.types';
 
 export function usePasswordSignIn(
   locale: string,
@@ -42,12 +43,39 @@ export function usePasswordSignIn(
       if (res.error) {
         throw res.error;
       } else {
-        toast.success('Successfully signed in!', { description: 'Welcome back!' });
-        // Carry the ?next= param forward so VerifyForm redirects to the
-        // originally requested page after session is confirmed.
         const next = searchParams.get('next');
-        const verifyPath = `/${locale}/auth/verify${next ? `?next=${encodeURIComponent(next)}` : ''}`;
-        router.replace(verifyPath);
+        const isTwoFactorRequired = !res.data || (res.data as Record<string, unknown>).twoFactorRedirect === true;
+
+        if (isTwoFactorRequired) {
+          toast.info('Two-Factor Authentication required', {
+            description: 'Please enter your verification code to continue.',
+          });
+          const verifyPath = `/${locale}/auth/verify${next ? `?next=${encodeURIComponent(next)}` : ''}`;
+          router.replace(verifyPath);
+        } else {
+          toast.success('Successfully signed in!', { description: 'Welcome back!' });
+
+          // Directly redirect to destination based on user role (avoiding /auth/verify detour)
+          const rawUser = res.data?.user as Record<string, unknown> | undefined;
+          const userRole = (rawUser?.role as string | undefined)?.toUpperCase() ?? 'CUSTOMER';
+          
+          let destination = `/${locale}`;
+          if (userRole === 'ADMIN') {
+            destination = `/${locale}/admin`;
+          } else if (userRole === 'MANAGER') {
+            destination = `/${locale}/manager`;
+          }
+
+          if (next) {
+            try {
+              const decoded = decodeURIComponent(next);
+              if (decoded.startsWith('/') && !decoded.includes('//') && !decoded.includes('auth/')) {
+                destination = decoded;
+              }
+            } catch {}
+          }
+          router.replace(destination);
+        }
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);

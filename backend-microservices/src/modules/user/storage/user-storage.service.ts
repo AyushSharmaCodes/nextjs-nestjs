@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { AppConfigService } from '../../../infrastructure/config/app-config.service';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { Injectable, Inject } from '@nestjs/common';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { SUPABASE_CLIENT } from '../../supabase/supabase.module';
 import { STORAGE_BUCKETS } from '../../storage/constants';
 import {
   UploadFailedException,
@@ -10,14 +10,10 @@ import {
 
 @Injectable()
 export class UserStorageService {
-  private supabase: SupabaseClient;
-
-  constructor(private readonly config: AppConfigService) {
-    this.supabase = createClient(
-      this.config.supabaseUrl,
-      this.config.supabaseServiceRoleKey
-    );
-  }
+  constructor(
+    @Inject(SUPABASE_CLIENT)
+    private readonly supabase: SupabaseClient,
+  ) {}
 
   async uploadAvatar(userId: string, fileBuffer: Buffer, mimeType: string, ext: string): Promise<string> {
     const path = `${userId}/avatar.${ext}`;

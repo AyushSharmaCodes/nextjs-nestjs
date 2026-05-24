@@ -96,22 +96,26 @@ function emitVerificationEmailEvent(user: BetterAuthEmailUser, url: string, toke
   const newEmail = tokenPayload?.updateTo;
 
   if (newEmail) {
-    GlobalEventDispatcher.emit(AUTH_EVENTS.EMAIL_CHANGE_REQUESTED, {
-      ...basePayload(user.id, currentEmail),
-      newEmail,
-      verifyUrl: url,
-      verifyToken: token,
-      expiresAt,
-    } satisfies EmailChangeRequestedPayload);
+    setImmediate(() => {
+      GlobalEventDispatcher.emit(AUTH_EVENTS.EMAIL_CHANGE_REQUESTED, {
+        ...basePayload(user.id, currentEmail),
+        newEmail,
+        verifyUrl: url,
+        verifyToken: token,
+        expiresAt,
+      } satisfies EmailChangeRequestedPayload);
+    });
     return;
   }
 
-  GlobalEventDispatcher.emit(AUTH_EVENTS.EMAIL_VERIFICATION_REQUESTED, {
-    ...basePayload(user.id, user.email),
-    verifyUrl: url,
-    verifyToken: token,
-    expiresAt,
-  } satisfies EmailVerificationRequestedPayload);
+  setImmediate(() => {
+    GlobalEventDispatcher.emit(AUTH_EVENTS.EMAIL_VERIFICATION_REQUESTED, {
+      ...basePayload(user.id, user.email),
+      verifyUrl: url,
+      verifyToken: token,
+      expiresAt,
+    } satisfies EmailVerificationRequestedPayload);
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -385,8 +389,12 @@ const twoFactorSessionSync = () => {
                 if (session?.session?.token) {
                   sessionToken = session.session.token;
                 }
-              } catch {
-                // ignore
+              } catch (err: unknown) {
+                logger.warn(
+                  `[Two-Factor Session Sync] Failed to get session from context: ${
+                    err instanceof Error ? err.message : String(err)
+                  }`,
+                );
               }
             }
 
@@ -426,6 +434,7 @@ const securitySessionRotation = () => {
               context.path === '/reset-password' ||
               context.path === '/change-password' ||
               context.path === '/two-factor/enable' ||
+              context.path === '/two-factor/verify-totp' ||
               context.path === '/two-factor/disable'
             );
           },
@@ -458,12 +467,12 @@ const securitySessionRotation = () => {
                   });
                   logger.log(`[Security] Rotated sessions for user ${sessionRecord.userId}`);
 
-                  // ── Emit TWO_FA_ENABLED after /two-factor/enable ──────────────
-                  if (ctx.path === '/two-factor/enable') {
+                  // ── Emit TWO_FA_ENABLED after 2FA activation is complete ────────
+                  if (ctx.path === '/two-factor/enable' || ctx.path === '/two-factor/verify-totp') {
                     const user = await prismaClient.user.findUnique({
                       where: { id: sessionRecord.userId },
                     });
-                    if (user) {
+                    if (user && user.twoFactorEnabled) {
                       GlobalEventDispatcher.emit(AUTH_EVENTS.TWO_FA_ENABLED, {
                         ...basePayload(user.id, user.email),
                         enabledAt: new Date().toISOString(),
@@ -721,15 +730,17 @@ export const auth = betterAuth({
       // Expiry: BA default is 1 hour for reset tokens
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
-      GlobalEventDispatcher.emit(AUTH_EVENTS.PASSWORD_RESET_REQUESTED, {
-        ...basePayload(user.id, user.email),
+      setImmediate(() => {
+        GlobalEventDispatcher.emit(AUTH_EVENTS.PASSWORD_RESET_REQUESTED, {
+          ...basePayload(user.id, user.email),
 
-        resetUrl: url,
-        resetToken: token,
-        expiresAt,
-        ipAddress: 'unknown', // no request context in BA callback — enrich via middleware if needed
-        userAgent: 'unknown',
-      } satisfies PasswordResetRequestedPayload);
+          resetUrl: url,
+          resetToken: token,
+          expiresAt,
+          ipAddress: 'unknown', // no request context in BA callback — enrich via middleware if needed
+          userAgent: 'unknown',
+        } satisfies PasswordResetRequestedPayload);
+      });
     },
   },
 
@@ -756,17 +767,20 @@ export const auth = betterAuth({
         // BA magic link token TTL is typically 5 minutes
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
 
-        GlobalEventDispatcher.emit(AUTH_EVENTS.MAGIC_LINK_REQUESTED, {
-          ...basePayload(user.id, email),
-          magicLinkUrl: url,
-          expiresAt,
-        } satisfies MagicLinkRequestedPayload);
+        setImmediate(() => {
+          GlobalEventDispatcher.emit(AUTH_EVENTS.MAGIC_LINK_REQUESTED, {
+            ...basePayload(user.id, email),
+            magicLinkUrl: url,
+            expiresAt,
+          } satisfies MagicLinkRequestedPayload);
+        });
       },
     }),
 
     twoFactor({
       allowPasswordless: true,
       skipVerificationOnEnable: false,
+      issuer: 'MeriGauMata',
       otpOptions: {
         period: 600, // 10 minutes
         /**
@@ -776,32 +790,47 @@ export const auth = betterAuth({
         sendOTP: async ({ user, otp }: { user: { id: string; email: string }; otp: string }) => {
           const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-          GlobalEventDispatcher.emit(AUTH_EVENTS.TWO_FA_CODE_REQUESTED, {
-            ...basePayload(user.id, user.email),
-            totpCode: otp,
-            expiresAt,
-            deviceHint: 'unknown', // no UA context in BA hook
-          } satisfies TwoFaCodeRequestedPayload);
+          setImmediate(() => {
+            GlobalEventDispatcher.emit(AUTH_EVENTS.TWO_FA_CODE_REQUESTED, {
+              ...basePayload(user.id, user.email),
+              totpCode: otp,
+              expiresAt,
+              deviceHint: 'unknown', // no UA context in BA hook
+            } satisfies TwoFaCodeRequestedPayload);
+          });
         },
       },
     }),
 
     emailOTP({
+      otpLength: 6,
       /**
        * OTP_REQUESTED — fired when the emailOTP plugin sends a verification code.
        * Covers: sign-up email verification, login OTP, and OTP-based email change verification.
        * `type` can be 'sign-in' | 'email-verification' | 'forget-password' | 'change-email'
        */
       sendVerificationOTP: async ({ email, otp, type }: { email: string; otp: string; type: string }) => {
-        const user = await prismaClient.user.findUnique({
-          where: { email },
+        logger.log(`[EmailOTP] sendVerificationOTP callback invoked: email=${email}, type=${type}`);
+        
+        let user = await prismaClient.user.findFirst({
+          where: { email: { equals: email, mode: 'insensitive' } },
           select: { id: true },
         });
 
         if (!user) {
-          logger.warn(`[EmailOTP] User not found for email ${email} — event not emitted`);
+          logger.warn(`[EmailOTP] Case-insensitive lookup failed for ${email}. Attempting exact findUnique...`);
+          user = await prismaClient.user.findUnique({
+            where: { email },
+            select: { id: true },
+          });
+        }
+
+        if (!user) {
+          logger.error(`[EmailOTP] User not found in database for email "${email}". Event NOT emitted!`);
           return;
         }
+
+        logger.log(`[EmailOTP] User found: id=${user.id}. Dispatching OTP verification email asynchronously.`);
 
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
@@ -814,13 +843,16 @@ export const auth = betterAuth({
         };
         const purpose = purposeMap[type] ?? 'EMAIL_VERIFICATION';
 
-        GlobalEventDispatcher.emit(AUTH_EVENTS.OTP_REQUESTED, {
-          ...basePayload(user.id, email),
-          otpCode: otp,
-          purpose,
-          expiresAt,
-          attemptCount: 1, // BA doesn't expose attempt count in this hook
-        } satisfies OtpRequestedPayload);
+        // Dispatch completely asynchronously to bypass any hook promise blocks
+        setImmediate(() => {
+          GlobalEventDispatcher.emit(AUTH_EVENTS.OTP_REQUESTED, {
+            ...basePayload(user.id, email),
+            otpCode: otp,
+            purpose,
+            expiresAt,
+            attemptCount: 1, // BA doesn't expose attempt count in this hook
+          } satisfies OtpRequestedPayload);
+        });
       },
     }),
 
@@ -895,7 +927,7 @@ export const auth = betterAuth({
           ACCOUNT_LOCKED: 'చాలా విఫల ప్రయత్నాల కారణంగా మీ ఖాతా తాత్కాలికంగా లాక్ అయింది.',
           ACCOUNT_DISABLED: 'మీ ఖాతా నిలిపివేయబడింది. సహాయం కోసం సంప్రదించండి.',
           TOKEN_GENERATION_FAILED: 'మీ సెషన్ సృష్టించడంలో సమస్య ఏర్పడింది.',
-          DB_WRITE_FAILED: 'డేటాబేస్ లోపం సంభవించింది. మళ్ళీ ప్రయత్నించండి.',
+          DB_WRITE_FAILED: 'ఆరోపణ కోడ్ గడువు ముగిసింది. మళ్ళీ ప్రయత్నించండి.',
         },
       },
     }),

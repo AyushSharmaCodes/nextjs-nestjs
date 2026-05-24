@@ -8,6 +8,7 @@ import { AppConfigService } from '../../config/app-config.service';
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
+  private readonly pool: Pool;
 
   constructor(private readonly appConfig: AppConfigService) {
     const connectionString = appConfig.databaseUrl;
@@ -17,6 +18,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       adapter,
       log: ['query', 'info', 'warn', 'error'],
     });
+    this.pool = pool;
   }
 
   async onModuleInit() {
@@ -58,5 +60,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   async onModuleDestroy() {
     await this.$disconnect();
+    try {
+      await this.pool.end();
+      this.logger.log('Prisma database connection pool closed.');
+    } catch (err: unknown) {
+      this.logger.error('Failed to close Prisma database connection pool:', err);
+    }
   }
 }

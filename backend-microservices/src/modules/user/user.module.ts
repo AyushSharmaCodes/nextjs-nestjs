@@ -13,7 +13,6 @@ import { DeleteAddressCommand } from './commands/delete-address.command';
 import { GetProfileQuery } from './queries/get-profile.query';
 import { ListUsersQuery } from './queries/list-users.query';
 import { GetUserAddressesQuery } from './queries/get-user-addresses.query';
-import { GetPermissionsForRoleQuery } from './queries/get-permissions-for-role.query';
 
 import { AdminManagerController } from './admin/admin-manager.controller';
 import { AdminManagerService } from './admin/admin-manager.service';
@@ -46,7 +45,6 @@ import { ManagerService } from './manager/manager.service';
     GetProfileQuery,
     ListUsersQuery,
     GetUserAddressesQuery,
-    GetPermissionsForRoleQuery,
     AdminManagerService,
     AdminManagerRepository,
     // Guard applied locally via @UseGuards(ResourceOwnerGuard) in UserController
