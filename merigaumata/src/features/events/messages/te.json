@@ -66,5 +66,27 @@
     "hours": "ఉదయం 10:00 - సాయంత్రం 4:00",
     "location": "మథుర సేంద్రీయ ఫార్మ్",
     "description": "పంచగవ్య మూలకాలను ఉపయోగించి ఆధునిక గృహ తోటల కోసం పురాతన పద్ధతులను నేర్చుకోండి. సేంద్రీయ ఎరువుల తయారీలో ప్రత్యక్ష అనుభవం."
+  },
+  "bookingConfirmed": "Booking Confirmed!",
+  "thankYouRegistering": "Thank you for registering for this gathering.",
+  "bookingId": "Booking ID",
+  "processing": "Processing...",
+  "slotSingle": "Slot",
+  "slotMultiple": "Slots",
+  "filters": {
+    "searchPlaceholder": "Search by name or type",
+    "dateLabel": "Date",
+    "locationLabel": "Location",
+    "typeLabel": "Type",
+    "select": "Select",
+    "searchButton": "Search",
+    "anyDate": "Any Date",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "may2026": "May 2026",
+    "june2026": "June 2026",
+    "july2026": "July 2026",
+    "anyLocation": "Any Location",
+    "allTypes": "All Types"
   }
 }

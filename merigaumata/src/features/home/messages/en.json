@@ -15,6 +15,9 @@
     "subtitle": "Sacred Vedic Essence"
   },
   "carousel": {
+    "goToSlide": "Go to slide {index}",
+    "prevSlide": "Previous slide",
+    "nextSlide": "Next slide",
     "slide1": {
       "title": "Nurturing Life, Honoring the Sacred.",
       "subtitle": "Discover authentic cow-based products, participate in uplifting events, and support our mission of cow welfare.",
@@ -83,5 +86,41 @@
   "metadata": {
     "title": "MeriGauMata - Cow Welfare & Natural Products",
     "description": "E-commerce platform for cow-based products, events, and donations."
+  },
+  "footer": {
+    "brandByline": "Sacred Vedic Essence",
+    "brandDescription": "Dedicated to the timeless wisdom of the Vedic tradition, MeriGauMata is your gateway to authentic, cow-based wellness and spiritual products. Beyond our curated marketplace of Gavyas and natural essentials, we serve as a vibrant community hub for Gau Seva. Join us in our mission through event registrations, impactful donation programs, and insightful blogs that bridge the gap between ancient heritage and modern living. Embrace the purity of the Mother Cow and support a sustainable, sacred future with every contribution.",
+    "quickLinks": "Quick Links",
+    "customerService": "Customer Service",
+    "contactUs": "Contact Us",
+    "shippingReturns": "Shipping & Returns",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "ancientRoots": "Ancient Roots",
+    "address": "14/14, New Shahganj Rd, Opp. Kothi\nMeena Bazar, Agra\nUttar Pradesh - 282010",
+    "panIndiaShipping": "Pan India Shipping",
+    "freeOver": "Free over ₹999",
+    "secureCheckout": "100% Secure Checkout",
+    "trustedPartners": "Trusted partners",
+    "dedicatedSupport": "Dedicated Support",
+    "supportHours": "Mon - Sat, 9am - 6pm",
+    "authenticProducts": "Authentic Products",
+    "qualityGuaranteed": "Vedic quality guaranteed",
+    "supportHeritage": "Support Our Heritage",
+    "directDonations": "Direct Bank Donations for Gaushala",
+    "bankNameLabel": "Name",
+    "bankLabel": "Bank",
+    "bankBranchLabel": "Branch",
+    "bankAcIfscLabel": "A/C No & IFSC",
+    "bankName": "MeriGauMata",
+    "bank": "SBI",
+    "bankBranch": "Mumbai",
+    "bankAcIfsc": "1234567890 • BANK0001234",
+    "allRightsReserved": "ALL RIGHTS RESERVED",
+    "developedBy": "Developed by",
+    "contact": "Contact",
+    "vePure": "100% Vedic Pure",
+    "supportGaushala": "Support Our Gaushala",
+    "directDonationInfo": "Direct Bank Donation Info"
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { AppIcon } from '@/shared/icons';
 import { ManagerAccount } from '../types/admin.types';
 
@@ -17,6 +18,7 @@ export function ManagerProvisioner({
   deleteManager,
   translateIfKey
 }: ManagerProvisionerProps) {
+  const t = useTranslations('admin.managers');
   const [newManager, setNewManager] = useState({
     name: '',
     email: '',
@@ -31,13 +33,13 @@ export function ManagerProvisioner({
   const handleCreateManager = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newManager.name || !newManager.email) {
-      alert('Please fill out all manager details.');
+      alert(t('alertFillDetails'));
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newManager.email)) {
-      alert('Please provide a valid email address.');
+      alert(t('alertValidEmail'));
       return;
     }
 
@@ -73,22 +75,22 @@ export function ManagerProvisioner({
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       <div>
-        <h2 className="text-xl font-bold text-foreground tracking-tight">Provision Manager Accounts</h2>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Setup secure manager profiles and toggle explicit resource access layers.</p>
+        <h2 className="text-xl font-bold text-foreground tracking-tight">{t('provisionTitle')}</h2>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('provisionSubtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         
         {/* Left Column: Form */}
         <form onSubmit={handleCreateManager} className="xl:col-span-5 space-y-5 p-6 rounded-xl border border-border bg-neutral-50/50 dark:bg-neutral-900/40 h-max">
-          <h3 className="font-bold text-sm uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-2">Create New Manager</h3>
+          <h3 className="font-bold text-sm uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-2">{t('createNewManager')}</h3>
           
           <div className="space-y-1">
-            <label className="text-[13px] font-bold text-neutral-700 dark:text-neutral-300">Full Name</label>
+            <label className="text-[13px] font-bold text-neutral-700 dark:text-neutral-300">{t('name')}</label>
             <input 
               type="text" 
               required 
-              placeholder="e.g. Madhav Das" 
+              placeholder={t('placeholderName')}
               value={newManager.name}
               onChange={e => setNewManager(prev => ({ ...prev, name: e.target.value }))}
               className="w-full px-4 py-2.5 border rounded-xl dark:bg-neutral-900 dark:border-neutral-800 text-foreground text-sm focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-700" 
@@ -96,11 +98,11 @@ export function ManagerProvisioner({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[13px] font-bold text-neutral-700 dark:text-neutral-300">Manager Email</label>
+            <label className="text-[13px] font-bold text-neutral-700 dark:text-neutral-300">{t('email')}</label>
             <input 
               type="email" 
               required 
-              placeholder="e.g. manager@merigaumata.com" 
+              placeholder={t('placeholderEmail')}
               value={newManager.email}
               onChange={e => setNewManager(prev => ({ ...prev, email: e.target.value }))}
               className="w-full px-4 py-2.5 border rounded-xl dark:bg-neutral-900 dark:border-neutral-800 text-foreground text-sm focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-700" 
@@ -109,7 +111,7 @@ export function ManagerProvisioner({
 
           {/* Checkbox Privileges */}
           <div className="space-y-3 pt-2">
-            <label className="text-[13px] font-bold text-neutral-700 dark:text-neutral-300 block">Grant Operation Access</label>
+            <label className="text-[13px] font-bold text-neutral-700 dark:text-neutral-300 block">{t('privileges')}</label>
             
             <div className="space-y-2">
               <button
@@ -122,7 +124,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <AppIcon name="calendar" className="w-3.5 h-3.5" /> Manage Events Tab
+                  <AppIcon name="calendar" className="w-3.5 h-3.5" /> {t('eventsPrivilege')}
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -137,7 +139,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <AppIcon name="products" className="w-3.5 h-3.5" /> Manage Products Tab
+                  <AppIcon name="products" className="w-3.5 h-3.5" /> {t('productsPrivilege')}
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -152,7 +154,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <AppIcon name="heart" className="w-3.5 h-3.5" /> Cow Welfare Support
+                  <AppIcon name="heart" className="w-3.5 h-3.5" /> {t('welfarePrivilege')}
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -167,7 +169,7 @@ export function ManagerProvisioner({
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <AppIcon name="dollar" className="w-3.5 h-3.5" /> Financials & Donations
+                  <AppIcon name="dollar" className="w-3.5 h-3.5" /> {t('donationsPrivilege')}
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
               </button>
@@ -178,17 +180,17 @@ export function ManagerProvisioner({
             type="submit" 
             className="w-full py-2.5 rounded-xl bg-foreground text-background font-bold text-[13px] tracking-wide flex items-center justify-center gap-2 shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all focus:outline-none"
           >
-            <AppIcon name="userPlus" className="w-4 h-4" /> Provision Account
+            <AppIcon name="userPlus" className="w-4 h-4" /> {t('createBtn')}
           </button>
         </form>
 
         {/* Right Column: Manager Roster */}
         <div className="xl:col-span-7 space-y-4">
-          <h3 className="font-bold text-sm uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Active Managers Roster</h3>
+          <h3 className="font-bold text-sm uppercase tracking-wider text-neutral-400 dark:text-neutral-500">{t('activeAccounts')}</h3>
           
           {managers.length === 0 ? (
             <div className="p-8 text-center border border-dashed border-border rounded-xl text-neutral-500">
-              No manager profiles registered yet.
+              {t('noManagers')}
             </div>
           ) : (
             <div className="space-y-4">
@@ -205,35 +207,37 @@ export function ManagerProvisioner({
                     <div className="flex flex-wrap gap-1.5">
                       {manager.permissions.events && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
-                          Events
+                          {t('eventsPill')}
                         </span>
                       )}
                       {manager.permissions.products && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600 border border-blue-500/20">
-                          Products
+                          {t('productsPill')}
                         </span>
                       )}
                       {manager.permissions.welfare && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                          Welfare
+                          {t('welfarePill')}
                         </span>
                       )}
                       {manager.permissions.donations && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-600 border border-purple-500/20">
-                          Financials
+                          {t('donationsPill')}
                         </span>
                       )}
                     </div>
                   </div>
 
                   <div className="flex sm:flex-col justify-end items-end gap-2">
-                    <span className="text-[11px] text-neutral-400 dark:text-neutral-500 font-medium">Registered: {manager.createdAt}</span>
+                    <span className="text-[11px] text-neutral-400 dark:text-neutral-500 font-medium">
+                      {t('registeredDate', { date: manager.createdAt })}
+                    </span>
                     
                     {manager.id !== 'default-mgr-1' && manager.email !== 'manager@merigaumata.com' && (
                       <button 
                         onClick={() => deleteManager(manager.id)}
                         className="p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors mt-1 focus:outline-none"
-                        title="Delete Manager"
+                        title={t('deleteManagerTooltip')}
                       >
                         <AppIcon name="trash" className="w-4 h-4" />
                       </button>

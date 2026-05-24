@@ -85,11 +85,38 @@ export const normalizeError = (error: unknown): ApiError => {
     }
 
     // Map Better Auth specific codes to our system codes
-    if (code === 'INVALID_EMAIL_OR_PASSWORD') {
+    if (code === 'INVALID_EMAIL_OR_PASSWORD' || code === 'INVALID_PASSWORD') {
       code = 'AUTH_001';
-    }
-    if (code === 'EMAIL_NOT_VERIFIED') {
+    } else if (code === 'EMAIL_ALREADY_EXISTS' || code === 'USER_ALREADY_EXISTS') {
+      code = 'AUTH_002';
+    } else if (code === 'EMAIL_NOT_VERIFIED') {
       code = 'AUTH_003';
+    } else if (code === 'OTP_EXPIRED') {
+      code = 'AUTH_004';
+    } else if (code === 'OTP_INVALID') {
+      code = 'AUTH_005';
+    } else if (code === 'MAGIC_LINK_EXPIRED') {
+      code = 'AUTH_006';
+    } else if (code === 'MAGIC_LINK_INVALID') {
+      code = 'AUTH_007';
+    } else if (code === 'MAGIC_LINK_ALREADY_USED') {
+      code = 'AUTH_008';
+    } else if (code === 'TOKEN_EXPIRED' || code === 'SESSION_EXPIRED') {
+      code = 'AUTH_009';
+    } else if (code === 'TOKEN_INVALID' || code === 'SESSION_INVALID') {
+      code = 'AUTH_010';
+    } else if (code === 'REFRESH_TOKEN_REUSE') {
+      code = 'AUTH_011';
+    } else if (code === 'GOOGLE_AUTH_FAILED') {
+      code = 'AUTH_012';
+    } else if (code === 'ACCOUNT_LOCKED') {
+      code = 'AUTH_013';
+    } else if (code === 'ACCOUNT_DISABLED') {
+      code = 'AUTH_014';
+    } else if (code === 'TOKEN_GENERATION_FAILED') {
+      code = 'AUTH_050';
+    } else if (code === 'DB_WRITE_FAILED') {
+      code = 'AUTH_051';
     }
 
     // Fallbacks

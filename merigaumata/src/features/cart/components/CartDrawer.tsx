@@ -151,7 +151,7 @@ export function CartDrawer() {
               <button 
                 onClick={closeCart}
                 className="p-2 -mr-2 text-stone-400 hover:text-[#2E1F30] dark:hover:text-white transition-colors cursor-pointer"
-                aria-label="Close cart"
+                aria-label={t('closeCartAriaLabel')}
               >
                 <AppIcon name="close" className="w-5 h-5" strokeWidth={2} />
               </button>
@@ -266,7 +266,7 @@ export function CartDrawer() {
                               <div className="flex flex-col items-end shrink-0 text-right">
                                 {item.isFree ? (
                                   <>
-                                    <span className="text-emerald-600 dark:text-emerald-400 font-black text-xs tracking-wider uppercase">FREE!</span>
+                                    <span className="text-emerald-600 dark:text-emerald-400 font-black text-xs tracking-wider uppercase">{t('freeLabel')}</span>
                                     <span className="text-[10px] text-stone-400 line-through">₹{item.price.toLocaleString()}</span>
                                   </>
                                 ) : (
@@ -290,7 +290,7 @@ export function CartDrawer() {
                                 <button 
                                   onClick={() => removeItem(item.id, item.variant)}
                                   className="p-2 text-stone-450 hover:text-red-650 dark:hover:text-red-400 hover:bg-stone-100 dark:hover:bg-stone-850 transition-colors border border-stone-200 dark:border-stone-800 rounded-none shrink-0 cursor-pointer"
-                                  aria-label="Remove item"
+                                  aria-label={t('removeItemAriaLabel')}
                                 >
                                   <AppIcon name="trash" className="w-3.5 h-3.5" />
                                 </button>

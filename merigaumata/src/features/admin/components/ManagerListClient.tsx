@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { AdminShell } from './ui/AdminShell';
 import { DataTable } from './ui/DataTable';
 import { SearchInput } from './ui/SearchInput';
@@ -20,6 +21,8 @@ interface ManagerRow {
 
 export function ManagerListClient() {
   const router = useRouter();
+  const t = useTranslations('admin.managersList');
+  const locale = useLocale();
   const [search, setSearch] = useState('');
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
@@ -32,7 +35,7 @@ export function ManagerListClient() {
   const columns = [
     {
       key: 'name',
-      header: 'Manager',
+      header: t('columns.manager'),
       render: (row: ManagerRow) => (
         <div>
           <div className="font-medium text-foreground">{row.name}</div>
@@ -42,12 +45,12 @@ export function ManagerListClient() {
     },
     {
       key: 'status',
-      header: 'Status',
+      header: t('columns.status'),
       render: (row: ManagerRow) => <StatusBadge status={row.status} />,
     },
     {
       key: 'lastActive',
-      header: 'Last Active',
+      header: t('columns.lastActive'),
       render: (row: ManagerRow) => (
         <span className="text-sm text-muted">{new Date(row.lastActive).toLocaleDateString()}</span>
       ),
@@ -62,21 +65,21 @@ export function ManagerListClient() {
 
   return (
     <AdminShell
-      title="Managers"
+      title={t('title')}
       actions={
         <button
           onClick={() => setDrawerOpen(true)}
           className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Add Manager
+          {t('addManager')}
         </button>
       }
     >
       <div className="flex flex-col gap-4">
         <div className="w-full max-w-sm">
           <SearchInput
-            placeholder="Search managers..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -86,18 +89,18 @@ export function ManagerListClient() {
           data={data}
           columns={columns}
           keyExtractor={(row) => row.id}
-          onRowClick={(row) => router.push(`/en/admin/managers/${row.id}`)}
+          onRowClick={(row) => router.push(`/${locale}/admin/managers/${row.id}`)}
         />
       </div>
 
       <DrawerPanel
         isOpen={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title="Invite Manager"
+        title={t('inviteTitle')}
       >
         <form onSubmit={handleCreateManager} className="flex flex-col gap-6">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Email Address</label>
+            <label className="block text-sm font-medium text-foreground mb-1">{t('emailLabel')}</label>
             <input
               type="email"
               required
@@ -107,7 +110,7 @@ export function ManagerListClient() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">First Name</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t('firstNameLabel')}</label>
               <input
                 type="text"
                 required
@@ -115,7 +118,7 @@ export function ManagerListClient() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Last Name</label>
+              <label className="block text-sm font-medium text-foreground mb-1">{t('lastNameLabel')}</label>
               <input
                 type="text"
                 required
@@ -130,13 +133,13 @@ export function ManagerListClient() {
               onClick={() => setDrawerOpen(false)}
               className="px-4 py-2 text-sm font-medium text-foreground border border-surface-border rounded-lg hover:bg-surface-hover"
             >
-              Cancel
+              {t('cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700"
             >
-              Send Invite
+              {t('sendInvite')}
             </button>
           </div>
         </form>

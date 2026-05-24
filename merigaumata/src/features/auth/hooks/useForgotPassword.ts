@@ -47,7 +47,11 @@ export function useForgotPassword(
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);
-      setError(apiError.message);
+      const errorKey =
+        apiError.code && apiError.code !== 'UNKNOWN' && apiError.code !== 'AUTH_ERROR'
+          ? apiError.code
+          : apiError.message;
+      setError(errorKey);
       toast.error('Failed to send reset link', { description: apiError.message });
     } finally {
       setLoading(false);

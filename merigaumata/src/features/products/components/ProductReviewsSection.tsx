@@ -156,7 +156,7 @@ export function ProductReviewsSection({
                 <input 
                   type="text" 
                   {...register('name')}
-                  placeholder="Enter your name"
+                  placeholder={t('review.yourNamePlaceholder')}
                   className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-[#1B8057]"
                 />
                 {errors.name && (
@@ -172,7 +172,7 @@ export function ProductReviewsSection({
                 <textarea 
                   rows={4}
                   {...register('text')}
-                  placeholder="Tell us about your experience with this product"
+                  placeholder={t('review.yourReviewPlaceholder')}
                   className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-1 focus:ring-[#1B8057] resize-none"
                 />
                 {errors.text && (
@@ -206,7 +206,7 @@ export function ProductReviewsSection({
             ))}
           </div>
           <span className="text-xs font-semibold text-stone-500 uppercase tracking-widest">
-            Based on {totalReviewsCount + 211} reviews
+            {t('review.basedOn', { count: totalReviewsCount + 211 })}
           </span>
         </div>
 
@@ -246,7 +246,7 @@ export function ProductReviewsSection({
           <Search className="w-4 h-4 text-stone-400 mr-2" />
           <input 
             type="text" 
-            placeholder="Search reviews..." 
+            placeholder={t('review.searchPlaceholder')} 
             value={reviewSearchQuery}
             onChange={(e) => setReviewSearchQuery(e.target.value)}
             className="bg-transparent text-xs w-full focus:outline-none text-stone-800 dark:text-stone-200"
@@ -260,8 +260,8 @@ export function ProductReviewsSection({
             onChange={(e) => setReviewsSortOrder(e.target.value)}
             className="bg-white dark:bg-stone-900 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 rounded-full px-4 py-2 focus:outline-none cursor-pointer"
           >
-            <option value="relevant">Most Relevant</option>
-            <option value="recent">Newest Reviews</option>
+            <option value="relevant">{t('review.sortMostRelevant')}</option>
+            <option value="recent">{t('review.sortNewest')}</option>
           </select>
 
           <select 
@@ -269,14 +269,14 @@ export function ProductReviewsSection({
             onChange={(e) => setSelectedRatingFilter(e.target.value)}
             className="bg-white dark:bg-stone-900 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 rounded-full px-4 py-2 focus:outline-none cursor-pointer"
           >
-            <option value="all">All Ratings</option>
-            <option value="5">5 Stars only</option>
-            <option value="4">4 Stars only</option>
+            <option value="all">{t('review.filterAllRatings')}</option>
+            <option value="5">{t('review.filter5Stars')}</option>
+            <option value="4">{t('review.filter4Stars')}</option>
           </select>
 
           <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest flex items-center gap-1.5 ml-2">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-            With Media Content
+            {t('review.withMedia')}
           </span>
         </div>
 
@@ -285,7 +285,7 @@ export function ProductReviewsSection({
       {/* Dynamic reviews list rendering */}
       <div className="space-y-6">
         {isLoading ? (
-          <div className="text-center py-12 text-stone-500 text-sm font-light">Loading reviews...</div>
+          <div className="text-center py-12 text-stone-500 text-sm font-light">{t('review.loading')}</div>
         ) : filteredReviews.length > 0 ? (
           filteredReviews.map((rev) => (
             <div key={rev.id} className="border-b border-stone-200/40 dark:border-stone-800/40 pb-6 last:border-0">
@@ -338,7 +338,7 @@ export function ProductReviewsSection({
 
               {/* Review Helpfulness Voting buttons */}
               <div className="flex items-center gap-4 text-[10px] sm:text-xs font-bold text-stone-500 uppercase tracking-widest">
-                <span>Was this review helpful?</span>
+                <span>{t('review.helpful')}</span>
                 <button 
                   onClick={() => handleHelpfulClick(rev.id, true)}
                   className="flex items-center gap-1 hover:text-[#2E1F30] cursor-pointer"
@@ -359,7 +359,7 @@ export function ProductReviewsSection({
           ))
         ) : (
           <div className="text-center py-12 text-stone-500 text-sm font-light">
-            No matching reviews found. Try adjusting your query or filter filters.
+            {t('review.noResults')}
           </div>
         )}
       </div>

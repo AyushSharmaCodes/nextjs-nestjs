@@ -29,5 +29,8 @@
   "pay": "भुगतान",
   "securedBy": "मेरीगौमाता पेमेंट्स द्वारा सुरक्षित • shopflo द्वारा संचालित",
   "unlocked": "अनलॉक",
-  "freeDeliveryLimit": "₹1,000 (मुफ़्त डिलीवरी)"
+  "freeDeliveryLimit": "₹1,000 (मुफ़्त डिलीवरी)",
+  "freeLabel": "मुफ़्त!",
+  "closeCartAriaLabel": "गाड़ी बंद करें",
+  "removeItemAriaLabel": "वस्तु हटाएं"
 }

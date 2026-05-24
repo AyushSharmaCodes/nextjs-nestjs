@@ -48,7 +48,11 @@ export function useOtpFlow(
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);
-      setError(apiError.message);
+      const errorKey =
+        apiError.code && apiError.code !== 'UNKNOWN' && apiError.code !== 'AUTH_ERROR'
+          ? apiError.code
+          : apiError.message;
+      setError(errorKey);
       toast.error('Failed to send code', { description: apiError.message });
     } finally {
       setLoading(false);
@@ -73,7 +77,11 @@ export function useOtpFlow(
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);
-      setError(apiError.message);
+      const errorKey =
+        apiError.code && apiError.code !== 'UNKNOWN' && apiError.code !== 'AUTH_ERROR'
+          ? apiError.code
+          : apiError.message;
+      setError(errorKey);
       toast.error('Failed to resend code', { description: apiError.message });
     } finally {
       setLoading(false);
@@ -107,7 +115,11 @@ export function useOtpFlow(
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);
-      setError(apiError.message);
+      const errorKey =
+        apiError.code && apiError.code !== 'UNKNOWN' && apiError.code !== 'AUTH_ERROR'
+          ? apiError.code
+          : apiError.message;
+      setError(errorKey);
       setOtpCode(['', '', '', '', '', '']);
       const firstInput = document.getElementById('otp-0');
       firstInput?.focus();

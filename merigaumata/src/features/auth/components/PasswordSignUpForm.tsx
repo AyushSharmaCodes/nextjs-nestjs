@@ -113,7 +113,7 @@ export const PasswordSignUpForm: React.FC<PasswordSignUpFormProps> = ({
             {t('passwordLabel')}
           </label>
           <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-bold">
-            {t('passwordLabel')} {t('agreeTerms') ? 'Length' : 'Length'}: {password.length}
+            {t('lengthLabel')} {password.length}
           </span>
         </div>
         <div className="relative">
@@ -174,7 +174,7 @@ export const PasswordSignUpForm: React.FC<PasswordSignUpFormProps> = ({
 
       <div className="space-y-1.5">
         <label className="text-[11px] font-black tracking-wider uppercase text-neutral-500 dark:text-neutral-400 ml-1">
-          {t('agreeTerms') ? 'Confirm Password' : 'Confirm Password'}
+          {t('confirmPasswordLabel')}
         </label>
         <div className="relative">
           <input 

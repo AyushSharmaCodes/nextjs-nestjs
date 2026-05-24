@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { AdminShell } from './ui/AdminShell';
 import { PermissionMatrix, PermissionDefinition, PermissionGrant } from './PermissionMatrix';
 import { StatusBadge } from './ui/StatusBadge';
@@ -12,6 +13,7 @@ import { logger } from '@/shared/lib/logger';
 
 export function ManagerDetailClient({ managerId }: { managerId: string }) {
   const router = useRouter();
+  const t = useTranslations('admin.managerDetail');
   const [isRevokeDialogOpen, setRevokeDialogOpen] = useState(false);
 
   // Mock data for UI Layout
@@ -56,17 +58,17 @@ export function ManagerDetailClient({ managerId }: { managerId: string }) {
 
   return (
     <AdminShell
-      title="Manager Details"
+      title={t('title')}
       actions={
         <div className="flex gap-2">
           <button
             onClick={() => router.back()}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-surface-border bg-surface text-foreground rounded-lg hover:bg-surface-hover transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back
+            <ArrowLeft className="w-4 h-4" /> {t('back')}
           </button>
           <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-            <Save className="w-4 h-4" /> Save Changes
+            <Save className="w-4 h-4" /> {t('saveChanges')}
           </button>
         </div>
       }
@@ -93,16 +95,16 @@ export function ManagerDetailClient({ managerId }: { managerId: string }) {
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-500/10 rounded-lg hover:bg-red-500/20 transition-colors"
             >
               <ShieldAlert className="w-4 h-4" />
-              Suspend Manager
+              {t('suspendManager')}
             </button>
           </div>
         </div>
 
         {/* Permissions Section */}
         <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Access Control & Permissions</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">{t('accessControlTitle')}</h3>
           <p className="text-sm text-muted mb-6">
-            Configure fine-grained access control for this manager. Changes require saving to take effect.
+            {t('accessControlDesc')}
           </p>
           
           <PermissionMatrix
@@ -118,9 +120,9 @@ export function ManagerDetailClient({ managerId }: { managerId: string }) {
         isOpen={isRevokeDialogOpen}
         onClose={() => setRevokeDialogOpen(false)}
         onConfirm={() => logger.info('Manager Suspended')}
-        title="Suspend Manager Account"
-        description={`Are you sure you want to suspend ${manager.name}? They will immediately lose access to the admin portal and all associated permissions.`}
-        confirmText="Yes, Suspend"
+        title={t('suspendDialogTitle')}
+        description={t('suspendDialogDesc', { name: manager.name })}
+        confirmText={t('confirmSuspend')}
         isDangerous={true}
       />
     </AdminShell>

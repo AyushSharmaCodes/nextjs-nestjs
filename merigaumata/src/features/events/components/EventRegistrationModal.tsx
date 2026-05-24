@@ -79,10 +79,10 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
             {registerMutation.isSuccess ? (
               <div className="flex flex-col items-center justify-center text-center py-12 animate-in zoom-in duration-300">
                 <StatusIcon status="success" size="xl" className="text-emerald-500 mb-6 animate-bounce" showBackground={false} />
-                <h2 className="text-3xl font-serif font-bold text-stone-900 dark:text-white mb-3">Booking Confirmed!</h2>
-                <p className="text-stone-500 dark:text-stone-400 text-sm mb-2">Thank you for registering for this gathering.</p>
+                <h2 className="text-3xl font-serif font-bold text-stone-900 dark:text-white mb-3">{t('bookingConfirmed')}</h2>
+                <p className="text-stone-500 dark:text-stone-400 text-sm mb-2">{t('thankYouRegistering')}</p>
                 <div className="bg-stone-50 dark:bg-neutral-800 px-6 py-3 rounded-2xl border border-stone-100 dark:border-stone-700 mt-4 text-xs font-mono font-bold tracking-wider text-stone-600 dark:text-stone-300">
-                  ID: {registerMutation.data?.bookingId}
+                  {t('bookingId')}: {registerMutation.data?.bookingId}
                 </div>
               </div>
             ) : (
@@ -100,7 +100,7 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                         type="text" 
                         {...register('firstName')}
                         className={`bg-stone-50 dark:bg-neutral-800 border ${errors.firstName ? 'border-red-500 focus:ring-red-500/20' : 'border-stone-200 dark:border-neutral-700 focus:border-orange-500 focus:ring-orange-500/20'} px-4 py-3 rounded-xl outline-none focus:ring-2 transition-all text-sm text-stone-900 dark:text-white`}
-                        placeholder="John"
+                        placeholder={t('firstName')}
                       />
                       {errors.firstName && (
                         <span className="text-xs text-red-500 font-semibold">{t(errors.firstName.message as Parameters<typeof t>[0])}</span>
@@ -112,7 +112,7 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                         type="text" 
                         {...register('lastName')}
                         className={`bg-stone-50 dark:bg-neutral-800 border ${errors.lastName ? 'border-red-500 focus:ring-red-500/20' : 'border-stone-200 dark:border-neutral-700 focus:border-orange-500 focus:ring-orange-500/20'} px-4 py-3 rounded-xl outline-none focus:ring-2 transition-all text-sm text-stone-900 dark:text-white`}
-                        placeholder="Doe"
+                        placeholder={t('lastName')}
                       />
                       {errors.lastName && (
                         <span className="text-xs text-red-500 font-semibold">{t(errors.lastName.message as Parameters<typeof t>[0])}</span>
@@ -126,7 +126,7 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                       type="email" 
                       {...register('email')}
                       className={`bg-stone-50 dark:bg-neutral-800 border ${errors.email ? 'border-red-500 focus:ring-red-500/20' : 'border-stone-200 dark:border-neutral-700 focus:border-orange-500 focus:ring-orange-500/20'} px-4 py-3 rounded-xl outline-none focus:ring-2 transition-all text-sm text-stone-900 dark:text-white`}
-                      placeholder="john@example.com"
+                      placeholder={t('email')}
                     />
                     {errors.email && (
                       <span className="text-xs text-red-500 font-semibold">{t(errors.email.message as Parameters<typeof t>[0])}</span>
@@ -139,7 +139,7 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                       type="tel" 
                       {...register('phone')}
                       className={`bg-stone-50 dark:bg-neutral-800 border ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : 'border-stone-200 dark:border-neutral-700 focus:border-orange-500 focus:ring-orange-500/20'} px-4 py-3 rounded-xl outline-none focus:ring-2 transition-all text-sm text-stone-900 dark:text-white`}
-                      placeholder="+91 98765 43210"
+                      placeholder={t('phone')}
                     />
                     {errors.phone && (
                       <span className="text-xs text-red-500 font-semibold">{t(errors.phone.message as Parameters<typeof t>[0])}</span>
@@ -155,7 +155,7 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                     >
                       {Array.from({ length: Math.min(5, event.slotsAvailable || 5) }).map((_, i) => (
                         <option key={i + 1} value={i + 1}>
-                          {i + 1} {i + 1 === 1 ? 'Slot' : 'Slots'}
+                          {i + 1} {i + 1 === 1 ? t('slotSingle') : t('slotMultiple')}
                         </option>
                       ))}
                     </select>
@@ -173,7 +173,7 @@ export function EventRegistrationModal({ event, isOpen, onClose }: EventRegistra
                       {registerMutation.isPending ? (
                         <>
                           <AppIcon name="loading" size="sm" className="animate-spin" />
-                          <span>Processing...</span>
+                          <span>{t('processing')}</span>
                         </>
                       ) : (
                         <>

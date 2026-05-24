@@ -74,24 +74,24 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
   };
 
   const dateOptions = [
-    { label: 'Any Date', value: '' },
-    { label: 'Upcoming', value: 'upcoming' },
-    { label: 'Past', value: 'past' },
-    { label: 'May 2026', value: '2026-05' },
-    { label: 'June 2026', value: '2026-06' },
-    { label: 'July 2026', value: '2026-07' }
+    { label: t('filters.anyDate'), value: '' },
+    { label: t('filters.upcoming'), value: 'upcoming' },
+    { label: t('filters.past'), value: 'past' },
+    { label: t('filters.may2026'), value: '2026-05' },
+    { label: t('filters.june2026'), value: '2026-06' },
+    { label: t('filters.july2026'), value: '2026-07' }
   ];
 
   const currentDateVal = searchParams.get('date') || '';
-  const currentDateLabel = dateOptions.find(o => o.value === currentDateVal)?.label || 'Select';
+  const currentDateLabel = dateOptions.find(o => o.value === currentDateVal)?.label || t('filters.select');
 
   const currentLocationVal = searchParams.get('location') || '';
   const currentLocationLabel = currentLocationVal 
     ? currentLocationVal.length > 15 ? currentLocationVal.substring(0, 15) + '...' : currentLocationVal
-    : 'Select';
+    : t('filters.select');
 
   const currentTypeVal = searchParams.get('type') || '';
-  const currentTypeLabel = currentTypeVal || 'Select';
+  const currentTypeLabel = currentTypeVal || t('filters.select');
 
   return (
     <div ref={containerRef} className="relative z-30 w-full">
@@ -106,7 +106,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
             key={searchVal}
             type="text" 
             name="search"
-            placeholder="Search by name or type" 
+            placeholder={t('filters.searchPlaceholder')} 
             defaultValue={searchVal}
             className="flex-1 py-2.5 bg-transparent focus:outline-none w-full text-[14.5px] placeholder:text-stone-400/80 text-stone-900 dark:text-white"
           />
@@ -133,7 +133,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
             >
               <span className="text-[10.5px] font-black uppercase tracking-widest text-[#1B8057] flex items-center gap-1.5 animate-pulse">
                 <AppIcon name="events" size="xs" />
-                Date
+                {t('filters.dateLabel')}
               </span>
               <span className="text-sm font-semibold text-stone-500 dark:text-stone-300 mt-0.5 flex items-center gap-1">
                 {currentDateLabel}
@@ -172,7 +172,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
             >
               <span className="text-[10.5px] font-black uppercase tracking-widest text-[#1B8057] flex items-center gap-1.5">
                 <AppIcon name="mapPin" size="xs" />
-                Location
+                {t('filters.locationLabel')}
               </span>
               <span className="text-sm font-semibold text-stone-500 dark:text-stone-300 mt-0.5 flex items-center gap-1">
                 {currentLocationLabel}
@@ -193,7 +193,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
                   }}
                   className={`block w-full text-left px-4 py-2 text-xs font-semibold hover:bg-stone-50 dark:hover:bg-stone-850 transition-colors ${currentLocationVal === '' ? 'text-[#1B8057] bg-stone-50/55' : 'text-stone-700 dark:text-stone-300'}`}
                 >
-                  Any Location
+                  {t('filters.anyLocation')}
                 </button>
                 {locations.map((loc) => (
                   <button
@@ -221,7 +221,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
             >
               <span className="text-[10.5px] font-black uppercase tracking-widest text-[#1B8057] flex items-center gap-1.5">
                 <AppIcon name="tag" size="xs" />
-                Type
+                {t('filters.typeLabel')}
               </span>
               <span className="text-sm font-semibold text-stone-500 dark:text-stone-300 mt-0.5 flex items-center gap-1">
                 {currentTypeLabel}
@@ -242,7 +242,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
                   }}
                   className={`block w-full text-left px-4 py-2 text-xs font-semibold hover:bg-stone-50 dark:hover:bg-stone-850 transition-colors ${currentTypeVal === '' ? 'text-[#1B8057] bg-stone-50/55' : 'text-stone-700 dark:text-stone-300'}`}
                 >
-                  All Types
+                  {t('filters.allTypes')}
                 </button>
                 {types.map((type) => (
                   <button
@@ -269,7 +269,7 @@ export function EventFiltersBar({ locations, types }: EventFiltersBarProps) {
           className="bg-emerald-50 dark:bg-stone-800 p-3.5 rounded-2xl border border-emerald-100 dark:border-stone-750 text-[#1B8057] dark:text-emerald-450 hover:bg-[#1B8057] hover:text-white dark:hover:bg-[#1B8057] dark:hover:text-white transition-all w-full lg:w-auto flex items-center justify-center gap-2 active:scale-95 shadow-sm shrink-0 cursor-pointer"
         >
           <AppIcon name="search" size="md" />
-          <span className="lg:hidden font-bold uppercase tracking-wider text-xs">Search</span>
+          <span className="lg:hidden font-bold uppercase tracking-wider text-xs">{t('filters.searchButton')}</span>
         </button>
       </form>
     </div>

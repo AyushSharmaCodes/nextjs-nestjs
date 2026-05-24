@@ -64,7 +64,7 @@ export function NotificationDropdown() {
       <button
         onClick={toggleDropdown}
         className="relative p-2.5 rounded-[12px] bg-earth-50 dark:bg-earth-900 border border-earth-200/50 dark:border-earth-800/80 hover:bg-earth-100 dark:hover:bg-earth-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 active:scale-95"
-        aria-label="Notification Center"
+        aria-label={t('openNotifications')}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -188,7 +188,7 @@ export function NotificationDropdown() {
                           onClick={() => deleteMutation.mutate([n.id])}
                           disabled={deleteMutation.isPending}
                           className="p-1.5 rounded-[8px] bg-earth-50 dark:bg-earth-855 hover:bg-red-50 dark:hover:bg-red-950/30 text-foreground/45 hover:text-red-500 dark:hover:text-red-400 shadow-sm border border-earth-200/40 dark:border-earth-800 active:scale-90 disabled:opacity-50 transition-all duration-150 flex items-center justify-center"
-                          title="Dismiss notification"
+                          title={t('dismiss')}
                         >
                           <AppIcon name="trash" className="w-3.5 h-3.5" />
                         </button>

@@ -13,5 +13,13 @@
   "noArticles": "వ్యాసాలేవీ కనుగొనబడలేదు.",
   "related": "సంబంధిత వ్యాసాలు",
   "share": "షేర్ చేయండి",
-  "by": "రాసినవారు"
+  "by": "రాసినవారు",
+  "prevSlide": "Previous slide",
+  "nextSlide": "Next slide",
+  "goToSlide": "Go to slide {index}",
+  "saveForLater": "Save for later",
+  "removeFromSaved": "Remove from saved",
+  "shareOnFacebook": "Share on Facebook",
+  "shareOnTwitter": "Share on Twitter",
+  "shareOnLinkedIn": "Share on LinkedIn"
 }

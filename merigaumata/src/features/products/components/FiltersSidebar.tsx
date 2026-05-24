@@ -75,11 +75,11 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
 
   // Localize preset titles or format cleanly
   const presetPrices = [
-    { label: 'All Prices', min: '', max: '' },
-    { label: 'Under ₹30', min: '', max: '30' },
-    { label: '₹30 to ₹60', min: '30', max: '60' },
-    { label: '₹60 to ₹90', min: '60', max: '90' },
-    { label: 'Over ₹90', min: '90', max: '' },
+    { labelKey: 'priceAll', min: '', max: '' },
+    { labelKey: 'priceUnder30', min: '', max: '30' },
+    { labelKey: 'price30to60', min: '30', max: '60' },
+    { labelKey: 'price60to90', min: '60', max: '90' },
+    { labelKey: 'priceOver90', min: '90', max: '' },
   ];
 
   const handlePriceApply = (e: React.FormEvent) => {
@@ -177,7 +177,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
                   return (
                     <button
                       type="button"
-                      key={preset.label}
+                      key={preset.labelKey}
                       onClick={() => applyPriceRange(preset.min, preset.max)}
                       className={`block w-full text-left text-xs py-1 transition-all ${
                         isActive 
@@ -185,7 +185,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
                           : 'text-tertiary-600 dark:text-tertiary-300 hover:text-tertiary-950 dark:hover:text-white hover:translate-x-1'
                       }`}
                     >
-                      {preset.label}
+                      {t(preset.labelKey as Parameters<typeof t>[0])}
                     </button>
                   );
                 })}
@@ -197,7 +197,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] text-stone-400 font-bold">₹</span>
                   <input
                     type="number"
-                    placeholder="Min"
+                    placeholder={t('priceMin')}
                     value={minInput}
                     onChange={(e) => setMinInput(e.target.value)}
                     className="w-full pl-5 pr-1 py-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-850 text-stone-900 dark:text-white text-xs rounded-full focus:outline-none focus:ring-1 focus:ring-[#1B8057] placeholder:text-stone-400/80"
@@ -208,7 +208,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] text-stone-400 font-bold">₹</span>
                   <input
                     type="number"
-                    placeholder="Max"
+                    placeholder={t('priceMax')}
                     value={maxInput}
                     onChange={(e) => setMaxInput(e.target.value)}
                     className="w-full pl-5 pr-1 py-1.5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-850 text-stone-900 dark:text-white text-xs rounded-full focus:outline-none focus:ring-1 focus:ring-[#1B8057] placeholder:text-stone-400/80"
@@ -218,7 +218,7 @@ export function FiltersSidebar({ categories, categoryCounts }: FiltersSidebarPro
                   type="submit"
                   className="px-3.5 py-1.5 bg-[#1B8057] hover:bg-[#156343] text-white text-[10.5px] font-black uppercase tracking-wider rounded-full active:scale-95 transition-all shadow-sm"
                 >
-                  Go
+                  {t('priceGo')}
                 </button>
               </form>
             </motion.div>

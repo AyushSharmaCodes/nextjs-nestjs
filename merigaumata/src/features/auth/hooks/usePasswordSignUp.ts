@@ -72,7 +72,11 @@ export function usePasswordSignUp(
       }
     } catch (err: unknown) {
       const apiError = normalizeError(err);
-      setError(apiError.message);
+      const errorKey =
+        apiError.code && apiError.code !== 'UNKNOWN' && apiError.code !== 'AUTH_ERROR'
+          ? apiError.code
+          : apiError.message;
+      setError(errorKey);
       toast.error('Registration Failed', { description: apiError.message });
     } finally {
       setLoading(false);

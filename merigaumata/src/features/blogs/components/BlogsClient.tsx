@@ -120,14 +120,14 @@ export default function BlogsClient({ initialPosts = [] }: BlogsClientProps) {
               <button 
                 onClick={prevSlide}
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm cursor-pointer"
-                aria-label="Previous slide"
+                aria-label={t('prevSlide')}
               >
                 <AppIcon name="chevronLeft" className="w-6 h-6" />
               </button>
               <button 
                 onClick={nextSlide}
                 className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm cursor-pointer"
-                aria-label="Next slide"
+                aria-label={t('nextSlide')}
               >
                 <AppIcon name="chevronRight" className="w-6 h-6" />
               </button>
@@ -139,7 +139,7 @@ export default function BlogsClient({ initialPosts = [] }: BlogsClientProps) {
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
                     className={`w-2 h-2 rounded-full transition-all cursor-pointer ${idx === currentSlide ? 'w-6 bg-primary-500' : 'bg-white/50 hover:bg-white/80'}`}
-                    aria-label={`Go to slide ${idx + 1}`}
+                    aria-label={t('goToSlide', { index: idx + 1 })}
                   />
                 ))}
               </div>
@@ -174,8 +174,8 @@ export default function BlogsClient({ initialPosts = [] }: BlogsClientProps) {
                       <button
                         onClick={(e) => toggleReadLater(e, post.id)}
                         className={`absolute top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all shadow-sm z-10 cursor-pointer ${isSaved ? 'bg-primary-500 text-white' : 'bg-white/80 dark:bg-black/50 text-tertiary-700 dark:text-tertiary-200 hover:bg-white dark:hover:bg-black/80'}`}
-                        aria-label={isSaved ? 'Remove from saved' : 'Save for later'}
-                        title={isSaved ? 'Remove from saved' : 'Save for later'}
+                        aria-label={isSaved ? t('removeFromSaved') : t('saveForLater')}
+                        title={isSaved ? t('removeFromSaved') : t('saveForLater')}
                       >
                         <AppIcon name="bookmark" className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
                       </button>
@@ -208,13 +208,13 @@ export default function BlogsClient({ initialPosts = [] }: BlogsClientProps) {
                       </div>
                       
                       <div className="flex items-center gap-1">
-                        <button onClick={(e) => handleShare(e, 'facebook', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#1877F2] transition-colors cursor-pointer" aria-label="Share on Facebook">
+                        <button onClick={(e) => handleShare(e, 'facebook', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#1877F2] transition-colors cursor-pointer" aria-label={t('shareOnFacebook')}>
                           <AppIcon name="facebook" size="xs" className="w-4 h-4" />
                         </button>
-                        <button onClick={(e) => handleShare(e, 'twitter', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#1DA1F2] transition-colors cursor-pointer" aria-label="Share on Twitter">
+                        <button onClick={(e) => handleShare(e, 'twitter', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#1DA1F2] transition-colors cursor-pointer" aria-label={t('shareOnTwitter')}>
                           <AppIcon name="twitter" size="xs" className="w-4 h-4" />
                         </button>
-                        <button onClick={(e) => handleShare(e, 'linkedin', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#0A66C2] transition-colors cursor-pointer" aria-label="Share on LinkedIn">
+                        <button onClick={(e) => handleShare(e, 'linkedin', post.title, post.id)} className="p-2 text-tertiary-400 hover:text-[#0A66C2] transition-colors cursor-pointer" aria-label={t('shareOnLinkedIn')}>
                           <AppIcon name="linkedin" size="xs" className="w-4 h-4" />
                         </button>
                       </div>

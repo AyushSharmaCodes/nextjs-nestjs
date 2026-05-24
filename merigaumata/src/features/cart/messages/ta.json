@@ -29,5 +29,8 @@
   "pay": "செலுத்து",
   "securedBy": "மேரிகோமாதா கொடுப்பனவுகள் மூலம் பாதுகாப்பானது • shopflo மூலம் இயக்கப்படுகிறது",
   "unlocked": "திறக்கப்பட்டது",
-  "freeDeliveryLimit": "₹1,000 (இலவச டெலிவரி)"
+  "freeDeliveryLimit": "₹1,000 (இலவச டெலிவரி)",
+  "freeLabel": "இலவசம்!",
+  "closeCartAriaLabel": "வண்டி மூடு",
+  "removeItemAriaLabel": "பொருளை நீக்கு"
 }

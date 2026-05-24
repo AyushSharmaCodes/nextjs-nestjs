@@ -52,15 +52,15 @@ export function ManagerDashboardClient() {
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/10 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-500/20 uppercase tracking-wider">
-                Sanctuary Portal
+                {tManager('portalBadge')}
               </span>
               <span className="text-neutral-300 dark:text-neutral-700">|</span>
               <span className="text-xs text-neutral-400 dark:text-neutral-500 font-semibold">{managerProfile?.email}</span>
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground font-serif">
-              Manager Panel: <span className="text-primary-600 dark:text-primary-400">{managerProfile ? translateIfKey(managerProfile.name) : 'Loading Profile...'}</span>
+              {tManager('managerPanel')} <span className="text-primary-600 dark:text-primary-400">{managerProfile ? translateIfKey(managerProfile.name) : tManager('loadingProfile')}</span>
             </h1>
-            <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-0.5">Control assigned operations and log holy Gau Shala resource parameters.</p>
+            <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-0.5">{tManager('dashboardSubtitle')}</p>
           </div>
           
           <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ export function ManagerDashboardClient() {
               onClick={() => window.location.href = '/en/profile'}
               className="px-4 py-2 border border-border bg-card rounded-xl text-neutral-600 dark:text-neutral-400 font-semibold text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors focus:outline-none cursor-pointer"
             >
-              Back to Profile
+              {tManager('backToProfile')}
             </button>
           </div>
         </div>
@@ -80,7 +80,7 @@ export function ManagerDashboardClient() {
           <div className="w-full lg:w-[260px] shrink-0 bg-card p-4 rounded-[14px] border border-border shadow-sm flex flex-col gap-6">
             <div>
               <h4 className="text-[11px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3 px-3 flex items-center justify-between">
-                Operations Panel 
+                {tManager('operationsPanelTitle')} 
                 <AppIcon name="sliders" className="w-3 h-3 text-neutral-400" />
               </h4>
               <nav className="space-y-1">
@@ -151,24 +151,24 @@ export function ManagerDashboardClient() {
             {/* Manager Details Summary */}
             <div className="mt-auto pt-6 border-t border-border">
               <div className="p-3 bg-neutral-50 dark:bg-neutral-900/30 rounded-xl border border-border flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider block">Access Permissions</span>
+                <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider block">{tManager('accessPermissions')}</span>
                 
                 <div className="space-y-1.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-400">
                   <div className="flex items-center gap-2">
                     <span className={`w-1.5 h-1.5 rounded-full ${hasAccess('events') ? 'bg-green-500' : 'bg-red-400'}`}></span>
-                    Events Module: {hasAccess('events') ? 'Granted' : 'Restricted'}
+                    {tManager('modules.events')}: {hasAccess('events') ? tManager('granted') : tManager('restricted')}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`w-1.5 h-1.5 rounded-full ${hasAccess('products') ? 'bg-green-500' : 'bg-red-400'}`}></span>
-                    Products Module: {hasAccess('products') ? 'Granted' : 'Restricted'}
+                    {tManager('modules.products')}: {hasAccess('products') ? tManager('granted') : tManager('restricted')}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`w-1.5 h-1.5 rounded-full ${hasAccess('welfare') ? 'bg-green-500' : 'bg-red-400'}`}></span>
-                    Welfare Module: {hasAccess('welfare') ? 'Granted' : 'Restricted'}
+                    {tManager('modules.welfare')}: {hasAccess('welfare') ? tManager('granted') : tManager('restricted')}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`w-1.5 h-1.5 rounded-full ${hasAccess('donations') ? 'bg-green-500' : 'bg-red-400'}`}></span>
-                    Donations: {hasAccess('donations') ? 'Granted' : 'Restricted'}
+                    {tManager('modules.donations')}: {hasAccess('donations') ? tManager('granted') : tManager('restricted')}
                   </div>
                 </div>
               </div>
@@ -191,7 +191,7 @@ export function ManagerDashboardClient() {
                 <div className="p-4 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-border flex items-center gap-3 text-left">
                   <AppIcon name="lock" className="w-4 h-4 text-amber-500 shrink-0" />
                   <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
-                    Administrator grants access dynamically through Local Storage controls.
+                    {tManager('adminLockControls')}
                   </span>
                 </div>
               </div>

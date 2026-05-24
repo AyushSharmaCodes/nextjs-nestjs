@@ -29,5 +29,8 @@
   "pay": "చెల్లించు",
   "securedBy": "మేరిగోమాత పేమెంట్స్ ద్వారా సురక్షితం • ప్రొవైడెడ్ బై shopflo",
   "unlocked": "అన్‌లాక్ చేయబడింది",
-  "freeDeliveryLimit": "₹1,000 (ఉచిత డెలివరీ)"
+  "freeDeliveryLimit": "₹1,000 (ఉచిత డెలివరీ)",
+  "freeLabel": "ఉచితం!",
+  "closeCartAriaLabel": "బండి మూయి",
+  "removeItemAriaLabel": "వస్తువును తొలగించు"
 }

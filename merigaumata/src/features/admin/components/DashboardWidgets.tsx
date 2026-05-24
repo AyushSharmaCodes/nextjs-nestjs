@@ -149,10 +149,10 @@ export function SalesRevenueChart() {
       
       <div className="flex items-center gap-4 mb-4 text-sm text-foreground/60">
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-indigo-200"></span> One-Time Revenue
+          <span className="h-2.5 w-2.5 rounded-full bg-indigo-200"></span> {t('oneTimeRevenue')}
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-indigo-500"></span> Recurring Revenue
+          <span className="h-2.5 w-2.5 rounded-full bg-indigo-500"></span> {t('recurringRevenue')}
         </div>
       </div>
 
@@ -181,6 +181,7 @@ const categoryData = [
 ];
 
 export function TopCategoriesChart() {
+  const t = useTranslations('admin.AdminDashboard');
   const total = categoryData.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
@@ -188,10 +189,10 @@ export function TopCategoriesChart() {
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           <span className="h-5 w-5 rounded-full border-2 border-foreground/50 flex items-center justify-center"><AppIcon name="arrowUpRight" className="h-3 w-3" /></span>
-          Top Categories
+          {t('topCategories')}
         </h3>
         <button className="text-sm font-semibold text-foreground/70 bg-earth-50 hover:bg-earth-100 px-3 py-1.5 rounded-lg transition-colors">
-          See All
+          {t('seeAll')}
         </button>
       </div>
 
@@ -216,7 +217,7 @@ export function TopCategoriesChart() {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-xs text-foreground/50 font-medium">Total Sales</span>
+          <span className="text-xs text-foreground/50 font-medium">{t('totalSales')}</span>
           <span className="text-xl font-bold text-foreground">$125,000</span>
         </div>
       </div>
@@ -248,15 +249,16 @@ const activities = [
 ];
 
 export function RecentActivityFeed() {
+  const t = useTranslations('admin.AdminDashboard');
   return (
     <div className="bg-card rounded-2xl p-6 border border-earth-200 shadow-sm flex flex-col h-full">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           <AppIcon name="refresh" className="h-5 w-5 text-foreground/50" />
-          Recent Activity
+          {t('recentActivity')}
         </h3>
         <button className="text-sm font-semibold text-foreground/70 bg-earth-50 hover:bg-earth-100 px-3 py-1.5 rounded-lg transition-colors">
-          See All
+          {t('seeAll')}
         </button>
       </div>
 
@@ -292,19 +294,20 @@ const productsData = [
 ];
 
 export function TopProductsTable() {
+  const t = useTranslations('admin.AdminDashboard');
   return (
     <div className="bg-card rounded-2xl p-6 border border-earth-200 shadow-sm flex flex-col h-full overflow-hidden">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           <AppIcon name="box" className="h-5 w-5 text-foreground/50" />
-          Top Products
+          {t('topProducts')}
         </h3>
         <div className="flex gap-2">
           <button className="flex items-center gap-1.5 text-sm font-semibold text-foreground border border-earth-200 bg-white hover:bg-earth-50 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
-            Sort <AppIcon name="chevronDown" className="h-4 w-4 text-foreground/50" />
+            {t('sort')} <AppIcon name="chevronDown" className="h-4 w-4 text-foreground/50" />
           </button>
           <button className="flex items-center gap-1.5 text-sm font-semibold text-foreground border border-earth-200 bg-white hover:bg-earth-50 px-3 py-1.5 rounded-lg transition-colors shadow-sm">
-            <AppIcon name="filter" className="h-4 w-4 text-foreground/50" /> Filter
+            <AppIcon name="filter" className="h-4 w-4 text-foreground/50" /> {t('filter')}
           </button>
         </div>
       </div>
@@ -313,11 +316,11 @@ export function TopProductsTable() {
         <table className="w-full min-w-[600px] text-left border-collapse">
           <thead>
             <tr className="border-b border-earth-200 text-xs text-foreground/50 font-medium">
-              <th className="pb-3 font-medium">Product</th>
-              <th className="pb-3 font-medium text-right">Stocks</th>
-              <th className="pb-3 font-medium text-right">Price</th>
-              <th className="pb-3 font-medium text-right">Sales</th>
-              <th className="pb-3 font-medium text-right">Earnings</th>
+              <th className="pb-3 font-medium">{t('product')}</th>
+              <th className="pb-3 font-medium text-right">{t('stocks')}</th>
+              <th className="pb-3 font-medium text-right">{t('price')}</th>
+              <th className="pb-3 font-medium text-right">{t('sales')}</th>
+              <th className="pb-3 font-medium text-right">{t('earnings')}</th>
             </tr>
           </thead>
           <tbody className="text-sm">
@@ -353,14 +356,15 @@ const recentOrders = [
 ];
 
 export function RecentOrdersTable() {
+  const t = useTranslations('admin.AdminDashboard');
   return (
     <div className="bg-white rounded-[20px] p-6 shadow-sm border border-slate-200/30 flex flex-col w-full overflow-hidden">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-slate-800">
-          Recent Orders
+          {t('recentOrders')}
         </h3>
         <button className="text-sm font-semibold text-purple-600 hover:text-purple-700 transition-colors">
-          See All
+          {t('seeAll')}
         </button>
       </div>
 
@@ -368,14 +372,14 @@ export function RecentOrdersTable() {
         <table className="w-full min-w-[900px] text-left border-collapse">
           <thead>
             <tr className="border-b border-slate-100 text-xs text-slate-400 font-medium">
-              <th className="pb-3 font-semibold pl-2">No</th>
-              <th className="pb-3 font-semibold">Order ID</th>
-              <th className="pb-3 font-semibold">Order Date</th>
-              <th className="pb-3 font-semibold">Product Name</th>
-              <th className="pb-3 font-semibold">Customers</th>
-              <th className="pb-3 font-semibold">Total Amount</th>
-              <th className="pb-3 font-semibold">Status</th>
-              <th className="pb-3 font-semibold text-center">Action</th>
+              <th className="pb-3 font-semibold pl-2">{t('no')}</th>
+              <th className="pb-3 font-semibold">{t('orderId')}</th>
+              <th className="pb-3 font-semibold">{t('orderDate')}</th>
+              <th className="pb-3 font-semibold">{t('productName')}</th>
+              <th className="pb-3 font-semibold">{t('customers')}</th>
+              <th className="pb-3 font-semibold">{t('totalAmount')}</th>
+              <th className="pb-3 font-semibold">{t('status')}</th>
+              <th className="pb-3 font-semibold text-center">{t('action')}</th>
             </tr>
           </thead>
           <tbody className="text-sm">
@@ -394,7 +398,7 @@ export function RecentOrdersTable() {
                 <td className="py-4 font-semibold text-slate-700">{order.amount}</td>
                 <td className="py-4">
                   <span className={clsx("px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center justify-center", order.statusColor)}>
-                    {order.status}
+                    {t(order.status === 'Order Pending' ? 'orderPending' : order.status === 'Order Processing' ? 'orderProcessing' : order.status === 'Order Shipped' ? 'orderShipped' : 'orderDelivered')}
                   </span>
                 </td>
                 <td className="py-4">

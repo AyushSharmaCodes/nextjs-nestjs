@@ -123,7 +123,7 @@ export function AdminTopbar({ onOpenSidebar, title = "Dashboard" }: AdminTopbarP
         <button 
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="p-2 text-foreground/50 hover:text-foreground transition-colors cursor-pointer"
-          aria-label="Toggle theme"
+          aria-label={t('toggleTheme')}
         >
           <AppIcon name="sun" className="h-5 w-5 dark:hidden" />
           <AppIcon name="moon" className="h-5 w-5 hidden dark:block" />
@@ -137,7 +137,7 @@ export function AdminTopbar({ onOpenSidebar, title = "Dashboard" }: AdminTopbarP
           <DropdownMenu.Trigger asChild>
             <button className="flex items-center gap-2 hover:bg-earth-50 dark:hover:bg-earth-900/50 p-0.5 rounded-full transition-colors ml-1 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50">
               <div className="h-8 w-8 rounded-full bg-earth-200 overflow-hidden border border-earth-200 dark:border-earth-700 shadow-inner flex-shrink-0">
-                 <img src="https://i.pravatar.cc/100?img=5" alt="Current User" className="h-full w-full object-cover" />
+                 <img src="https://i.pravatar.cc/100?img=5" alt={t('currentUser')} className="h-full w-full object-cover" />
               </div>
             </button>
           </DropdownMenu.Trigger>

@@ -17,13 +17,13 @@ export function AdminAnalytics() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="mb-4">
-        <h2 className="text-2xl font-bold text-foreground">Dashboard Overview</h2>
+        <h2 className="text-2xl font-bold text-foreground">{t('dashboardOverview')}</h2>
       </div>
 
       {/* Top Gradient KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <GradientKpiCard
-          title="Today Orders"
+          title={t('todayOrders')}
           value="$0.00"
           icon="products"
           gradientFrom="from-[#B9D0FF]"
@@ -33,7 +33,7 @@ export function AdminAnalytics() {
           credit="$0.00"
         />
         <GradientKpiCard
-          title="Yesterday Orders"
+          title={t('yesterdayOrders')}
           value="$0.00"
           icon="package"
           gradientFrom="from-[#BDF5D1]"
@@ -43,21 +43,21 @@ export function AdminAnalytics() {
           credit="$0.00"
         />
         <GradientKpiCard
-          title="This Month"
+          title={t('thisMonth')}
           value="$6,155.56"
           icon="calendar"
           gradientFrom="from-[#FBCFE8]"
           gradientTo="to-[#E9D5FF]"
         />
         <GradientKpiCard
-          title="Last Month"
+          title={t('lastMonth')}
           value="$23,422.25"
           icon="clock"
           gradientFrom="from-[#A9F5E8]"
           gradientTo="to-[#D6F8E8]"
         />
         <GradientKpiCard
-          title="All-Time Sales"
+          title={t('allTimeSales')}
           value="$1,328,698.95"
           icon="trendingUp"
           gradientFrom="from-[#E8DBFD]"
@@ -68,13 +68,13 @@ export function AdminAnalytics() {
       {/* Small KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <SmallKpiCard
-          title="Total Order"
+          title={t('totalOrder')}
           value="1404"
           icon="layers"
           iconColor="text-orange-500"
         />
         <SmallKpiCard
-          title="Orders Pending"
+          title={t('ordersPending')}
           value="107"
           icon="loader"
           iconColor="text-blue-500"
@@ -82,13 +82,13 @@ export function AdminAnalytics() {
           badgeColor="bg-red-50 text-red-500"
         />
         <SmallKpiCard
-          title="Orders Processing"
+          title={t('ordersProcessing')}
           value="42"
           icon="box"
           iconColor="text-purple-500"
         />
         <SmallKpiCard
-          title="Orders Delivered"
+          title={t('ordersDelivered')}
           value="136"
           icon="checkCircle2"
           iconColor="text-green-500"

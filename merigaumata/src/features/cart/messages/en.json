@@ -29,5 +29,8 @@
   "pay": "PAY",
   "securedBy": "Secured by Merigaumata Payments • Powered by shopflo",
   "unlocked": "Unlocked",
-  "freeDeliveryLimit": "₹1,000 (Free Delivery)"
+  "freeDeliveryLimit": "₹1,000 (Free Delivery)",
+  "freeLabel": "FREE!",
+  "closeCartAriaLabel": "Close cart",
+  "removeItemAriaLabel": "Remove item"
 }

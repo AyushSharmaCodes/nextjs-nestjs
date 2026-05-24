@@ -11,5 +11,10 @@
     "profile": "Accessing your profile...",
     "about": "Loading Goshala story...",
     "admin": "Loading admin portal..."
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "renderingCrashDesc": "A rendering crash occurred in the interface. The issue has been automatically logged and reported to our engineering team.",
+    "reloadInterface": "Reload Interface"
   }
 }

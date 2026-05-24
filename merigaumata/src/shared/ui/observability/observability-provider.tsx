@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { useReportWebVitals } from 'next/web-vitals';
 import * as Sentry from '@sentry/nextjs';
+import { useTranslations } from 'next-intl';
 import { initLogTape, logger } from '@/shared/lib/logger';
 import { logError } from '@/shared/lib/errors';
 
@@ -11,10 +12,20 @@ import { logError } from '@/shared/lib/errors';
  * Catches unhandled client rendering crashes, logs them via LogTape, and reports them to Sentry.
  */
 class ClientErrorBoundary extends React.Component<
-  { children: React.ReactNode },
+  { 
+    children: React.ReactNode;
+    somethingWentWrong: string;
+    renderingCrashDesc: string;
+    reloadInterface: string;
+  },
   { hasError: boolean }
 > {
-  constructor(props: { children: React.ReactNode }) {
+  constructor(props: { 
+    children: React.ReactNode;
+    somethingWentWrong: string;
+    renderingCrashDesc: string;
+    reloadInterface: string;
+  }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -37,9 +48,9 @@ class ClientErrorBoundary extends React.Component<
           <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-3xl">
             ⚠️
           </div>
-          <h2 className="text-2xl font-bold tracking-tight mb-2">Something went wrong</h2>
+          <h2 className="text-2xl font-bold tracking-tight mb-2">{this.props.somethingWentWrong}</h2>
           <p className="text-muted-foreground max-w-md mb-6">
-            A rendering crash occurred in the interface. The issue has been automatically logged and reported to our engineering team.
+            {this.props.renderingCrashDesc}
           </p>
           <button
             onClick={() => {
@@ -48,7 +59,7 @@ class ClientErrorBoundary extends React.Component<
             }}
             className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold rounded-lg shadow-sm hover:opacity-90 transition-all duration-200"
           >
-            Reload Interface
+            {this.props.reloadInterface}
           </button>
         </div>
       );
@@ -63,6 +74,8 @@ class ClientErrorBoundary extends React.Component<
  * Wraps root components to manage client-side monitoring.
  */
 export default function ObservabilityProvider({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('errors');
+
   // 1. Initialize LogTape on client mount
   useEffect(() => {
     initLogTape();
@@ -103,5 +116,13 @@ export default function ObservabilityProvider({ children }: { children: React.Re
     }
   });
 
-  return <ClientErrorBoundary>{children}</ClientErrorBoundary>;
+  return (
+    <ClientErrorBoundary
+      somethingWentWrong={t('somethingWentWrong')}
+      renderingCrashDesc={t('renderingCrashDesc')}
+      reloadInterface={t('reloadInterface')}
+    >
+      {children}
+    </ClientErrorBoundary>
+  );
 }

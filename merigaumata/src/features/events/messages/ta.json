@@ -66,5 +66,27 @@
     "hours": "காலை 10:00 - மாலை 4:00",
     "location": "மதுரா இயற்கை பண்ணை",
     "description": "பஞ்சகவ்ய கூறுகளைப் பயன்படுத்தி நவீன வீட்டுத் தோட்டங்களுக்கான பண்டைய நுட்பங்களைக் கற்றுக்கொள்ளுங்கள். இயற்கை உரங்களைத் தயாரிப்பதில் நேரடி அனுபவம்."
+  },
+  "bookingConfirmed": "Booking Confirmed!",
+  "thankYouRegistering": "Thank you for registering for this gathering.",
+  "bookingId": "Booking ID",
+  "processing": "Processing...",
+  "slotSingle": "Slot",
+  "slotMultiple": "Slots",
+  "filters": {
+    "searchPlaceholder": "Search by name or type",
+    "dateLabel": "Date",
+    "locationLabel": "Location",
+    "typeLabel": "Type",
+    "select": "Select",
+    "searchButton": "Search",
+    "anyDate": "Any Date",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "may2026": "May 2026",
+    "june2026": "June 2026",
+    "july2026": "July 2026",
+    "anyLocation": "Any Location",
+    "allTypes": "All Types"
   }
 }

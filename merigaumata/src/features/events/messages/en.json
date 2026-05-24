@@ -66,5 +66,27 @@
     "hours": "10:00 AM - 4:00 PM",
     "location": "Mathura Organic Farm",
     "description": "Learn ancient techniques for modern home gardens using Panchgavya elements. Hands-on experience with preparing organic fertilizers natively."
+  },
+  "bookingConfirmed": "Booking Confirmed!",
+  "thankYouRegistering": "Thank you for registering for this gathering.",
+  "bookingId": "Booking ID",
+  "processing": "Processing...",
+  "slotSingle": "Slot",
+  "slotMultiple": "Slots",
+  "filters": {
+    "searchPlaceholder": "Search by name or type",
+    "dateLabel": "Date",
+    "locationLabel": "Location",
+    "typeLabel": "Type",
+    "select": "Select",
+    "searchButton": "Search",
+    "anyDate": "Any Date",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "may2026": "May 2026",
+    "june2026": "June 2026",
+    "july2026": "July 2026",
+    "anyLocation": "Any Location",
+    "allTypes": "All Types"
   }
 }

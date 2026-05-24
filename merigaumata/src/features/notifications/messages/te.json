@@ -23,5 +23,7 @@
   "rowsPerPage": "Rows per page",
   "pageOf": "Page {page} of {total}",
   "toastMarkedRead": "Notifications marked as read",
-  "toastDeleted": "Notifications deleted successfully"
+  "toastDeleted": "Notifications deleted successfully",
+  "dismiss": "Dismiss notification",
+  "openNotifications": "Notification Center"
 }
